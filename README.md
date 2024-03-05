@@ -94,7 +94,7 @@ On Windows, the recommended selectors, in order of reliability are:
 | XPath selector             | `"xpath"`                |                                                                                      |
 | CSS selector               | `"css selector"`         | Only ID, class or `name` attribute selectors. IDs are interpreted as automation IDs. |
 
-Using the Selenium C# client requires extending the `OpenQA.Selenium.By` class:
+Using the Selenium C# client, the selectors are:
 
 ```C#
 driver.FindElement(By.Id("TextBox")).Click(); // Matches by automation ID
@@ -188,7 +188,7 @@ const result = driver.executeScript("powerShell", [{ command: `1+1` }]);
 | GET    | /session/{session id}/element/{element id}/property/{name}     | Get Element Property           |                    |
 | GET    | /session/{session id}/element/{element id}/css/{property name} | Get Element CSS Value          | N/A                |
 | GET    | /session/{session id}/element/{element id}/text                | Get Element Text               | :white_check_mark: |
-| GET    | /session/{session id}/element/{element id}/name                | Get Element Tag Name           |                    |
+| GET    | /session/{session id}/element/{element id}/name                | Get Element Tag Name           | :white_check_mark: |
 | GET    | /session/{session id}/element/{element id}/rect                | Get Element Rect               | :white_check_mark: |
 | GET    | /session/{session id}/element/{element id}/enabled             | Is Element Enabled             | :white_check_mark: |
 | GET    | /session/{session id}/element/{element id}/computedrole        | Get Computed Role              |                    |
