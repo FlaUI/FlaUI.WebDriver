@@ -100,8 +100,8 @@ namespace FlaUI.WebDriver.UITests
 
             driver.Close();
 
-            var windowHandleAfterOpenCloseOtherWindow = driver.CurrentWindowHandle;
-            Assert.That(windowHandleAfterOpenCloseOtherWindow, Is.EqualTo(initialWindowHandle));
+            // See https://www.w3.org/TR/webdriver2/#get-window-handle: Should throw if window does not exist
+            Assert.Throws<NoSuchWindowException>(() => _ = driver.CurrentWindowHandle);
         }
 
         [Test]
