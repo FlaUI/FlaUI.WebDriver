@@ -46,13 +46,6 @@ namespace FlaUI.WebDriver
                 {
                     throw WebDriverResponseException.UnsupportedOperation("This operation is not supported for Root app");
                 }
-                if (CurrentWindowWithHandle.Window.IsMainWindow)
-                {
-                    // When expanding menus, calling `GetMainWindow` again is necessary to be able to find the expanded menu items
-                    // This seems to be a bug (it isn't solved by using `CacheRequest.ForceNoCache()`)
-                    // https://github.com/FlaUI/FlaUI/issues/598
-                    return App.GetMainWindow(Automation);
-                }
                 return CurrentWindowWithHandle.Window;
             }
             set
