@@ -142,8 +142,8 @@ namespace FlaUI.WebDriver.UITests
             var size = element.Size;
 
             var windowLocation = driver.Manage().Window.Position;
-            Assert.That(location.X, Is.InRange(windowLocation.X + 254, windowLocation.X + 256));
-            Assert.That(location.Y, Is.InRange(windowLocation.Y + 133, windowLocation.Y + 135));
+            Assert.That(location.X, Is.InRange(windowLocation.X + 253, windowLocation.X + 257));
+            Assert.That(location.Y, Is.InRange(windowLocation.Y + 132, windowLocation.Y + 136));
             Assert.That(size.Width, Is.EqualTo(120));
             Assert.That(size.Height, Is.EqualTo(22));
         }

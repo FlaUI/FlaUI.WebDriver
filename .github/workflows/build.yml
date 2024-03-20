@@ -1,0 +1,50 @@
+name: build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: windows-latest
+
+    env:
+      Configuration: Release
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: ./src
+
+    - name: Build
+      run: dotnet build --no-restore --configuration $env:Configuration
+      working-directory: ./src
+
+    - name: Test
+      run: dotnet test --no-build --configuration $env:Configuration --verbosity normal
+      working-directory: ./src
+  
+    # Unfortunately, --no-build does not seem to work when we publish a specific project, so we use --no-restore instead
+    - name: Publish
+      run: dotnet publish FlaUI.WebDriver/FlaUI.WebDriver.csproj --no-restore --configuration $env:Configuration --self-contained
+      working-directory: ./src
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: FlaUI.WebDriver
+        path: ./src/FlaUI.WebDriver/bin/Release/win-x64/publish

@@ -18,4 +18,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FlaUI.WebDriver\FlaUI.WebDriver.csproj" />
+    <ProjectReference Include="..\TestApplications\WpfApplication\WpfApplication.csproj" />
+  </ItemGroup>
+
 </Project>

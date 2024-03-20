@@ -9,7 +9,7 @@ namespace FlaUI.WebDriver.UITests
     [SetUpFixture]
     public class WebDriverFixture
     {
-        public static readonly Uri WebDriverUrl = new Uri("http://localhost:4723/");
+        public static readonly Uri WebDriverUrl = new Uri("http://localhost:9723/");
 
         private Process _webDriverProcess;
 

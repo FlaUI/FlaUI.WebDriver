@@ -5,12 +5,11 @@ namespace FlaUI.WebDriver.UITests.TestUtil
 {
     public class TestAppProcess : IDisposable
     {
-        private const string TestAppPath = "..\\..\\..\\..\\TestApplications\\WpfApplication\\bin\\WpfApplication.exe";
         private readonly Process _process;
 
         public TestAppProcess()
         {
-            _process = Process.Start(TestAppPath);
+            _process = Process.Start(TestApplication.FullPath);
             while (_process.MainWindowHandle == IntPtr.Zero)
             {
                 System.Threading.Thread.Sleep(100);
