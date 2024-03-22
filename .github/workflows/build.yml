@@ -39,8 +39,9 @@ jobs:
       working-directory: ./src
   
     # Unfortunately, --no-build does not seem to work when we publish a specific project, so we use --no-restore instead
+    # Skip adding a web.config for IIS, as we will always use Kestrel (IsTransformWebConfigDisabled=true)
     - name: Publish
-      run: dotnet publish FlaUI.WebDriver/FlaUI.WebDriver.csproj --no-restore --configuration $env:Configuration --self-contained
+      run: dotnet publish FlaUI.WebDriver/FlaUI.WebDriver.csproj --no-restore --configuration $env:Configuration --self-contained /p:IsTransformWebConfigDisabled=true
       working-directory: ./src
 
     - name: Upload build artifacts
