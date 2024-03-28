@@ -1,5 +1,7 @@
 # FlaUI.WebDriver
 
+[![build](https://github.com/FlaUI/FlaUI.WebDriver/actions/workflows/build.yml/badge.svg)](https://github.com/FlaUI/FlaUI.WebDriver/actions/workflows/build.yml)
+
 FlaUI.WebDriver is a [W3C WebDriver2](https://www.w3.org/TR/webdriver2/) implementation using FlaUI's automation. It currently only supports UIA3.
 
 > [!IMPORTANT]
