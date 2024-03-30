@@ -19,10 +19,7 @@ namespace FlaUI.WebDriver.UITests
             string assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             Directory.SetCurrentDirectory(assemblyDir);
 
-            var assemblyConfigurationAttribute = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyConfigurationAttribute>();
-            var buildConfigurationName = assemblyConfigurationAttribute?.Configuration;
-
-            var webDriverPath = $"..\\..\\..\\..\\FlaUI.WebDriver\\bin\\{buildConfigurationName}\\FlaUI.WebDriver.exe";
+            string webDriverPath = Path.Combine(Directory.GetCurrentDirectory(), "FlaUI.WebDriver.exe");
             var webDriverArguments = $"--urls={WebDriverUrl}";
             var webDriverProcessStartInfo = new ProcessStartInfo(webDriverPath, webDriverArguments)
             {
