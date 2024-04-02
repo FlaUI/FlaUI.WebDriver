@@ -7,9 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: windows-latest
 
     env:
@@ -49,3 +47,9 @@ jobs:
       with:
         name: FlaUI.WebDriver
         path: ./src/FlaUI.WebDriver/bin/Release/win-x64/publish
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: ./src/FlaUI.WebDriver/bin/Release/win-x64/publish/*.*
