@@ -21,7 +21,7 @@ namespace FlaUI.WebDriver.UITests
         [TearDown]
         public void Teardown()
         {
-            driver?.Quit();
+            driver?.Dispose();
         }
 
         [Test]
