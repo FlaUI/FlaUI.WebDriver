@@ -9,7 +9,7 @@ namespace FlaUI.WebDriver.UITests
     [TestFixture]
     public class ActionsTests
     {
-        private RemoteWebDriver driver;
+        private RemoteWebDriver _driver;
 
         [SetUp]
         public void Setup()
