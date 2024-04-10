@@ -6,8 +6,8 @@ namespace FlaUI.WebDriver.UITests.TestUtil
     public static class TestApplication
     {
 
-        private static readonly string _currentDirectory = Directory.GetCurrentDirectory();
-        private static readonly string _solutionDirectory = FindSolutionDirectory(_currentDirectory);
+        private static readonly string s_currentDirectory = Directory.GetCurrentDirectory();
+        private static readonly string s_solutionDirectory = FindSolutionDirectory(s_currentDirectory);
 
         private static string FindSolutionDirectory(string currentDirectory)
         {
@@ -18,7 +18,7 @@ namespace FlaUI.WebDriver.UITests.TestUtil
             return currentDirectory;
         }
 
-        public static string FullPath => Path.Combine(_solutionDirectory, "TestApplications", "WpfApplication", "bin", "Release", "WpfApplication.exe");
+        public static string FullPath => Path.Combine(s_solutionDirectory, "TestApplications", "WpfApplication", "bin", "Release", "WpfApplication.exe");
     } 
     
 }
