@@ -48,13 +48,20 @@ namespace FlaUI.WebDriver.Controllers
                 {
                     app = null;
                 }
-                else
-                {
+                else 
+                { 
                     capabilities.TryGetValue("appium:appArguments", out var appArguments);
                     try
                     {
-                        var processStartInfo = new ProcessStartInfo(appPath, appArguments ?? "");
-                        app = Core.Application.Launch(processStartInfo);
+                        if (appPath.EndsWith("!App"))
+                        {
+                            app = Core.Application.LaunchStoreApp(appPath, appArguments);
+                        }
+                        else
+                        {
+                            var processStartInfo = new ProcessStartInfo(appPath, appArguments ?? "");
+                            app = Core.Application.Launch(processStartInfo);
+                        }
                     }
                     catch(Exception e)
                     {
