@@ -135,5 +135,56 @@ namespace FlaUI.WebDriver.UITests
 
             Assert.That(title, Is.EqualTo("FlaUI WPF Test App"));
         }
+
+        [Test, Explicit("Takes too long (one minute)")]
+        public void NewCommandTimeout_DefaultValue_OneMinute()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(60) + WebDriverFixture.SessionCleanupInterval*2);
+
+            Assert.That(() => driver.Title, Throws.TypeOf<WebDriverException>().With.Message.Matches("No active session with ID '.*'"));
+        }
+
+        [Test]
+        public void NewCommandTimeout_Expired_EndsSession()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            driverOptions.AddAdditionalOption("appium:newCommandTimeout", 1);
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1) + WebDriverFixture.SessionCleanupInterval * 2);
+
+            Assert.That(() => driver.Title, Throws.TypeOf<WebDriverException>().With.Message.Matches("No active session with ID '.*'"));
+        }
+
+        [Test]
+        public void NewCommandTimeout_ReceivedCommandsBeforeExpiry_DoesNotEndSession()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            driverOptions.AddAdditionalOption("appium:newCommandTimeout", WebDriverFixture.SessionCleanupInterval.TotalSeconds * 4);
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            System.Threading.Thread.Sleep(WebDriverFixture.SessionCleanupInterval * 2);
+            _ = driver.Title;
+            System.Threading.Thread.Sleep(WebDriverFixture.SessionCleanupInterval * 2);
+            _ = driver.Title;
+            System.Threading.Thread.Sleep(WebDriverFixture.SessionCleanupInterval * 2);
+
+            Assert.That(() => driver.Title, Throws.Nothing);
+        }
+
+        [Test]
+        public void NewCommandTimeout_NotExpired_DoesNotEndSession()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            driverOptions.AddAdditionalOption("appium:newCommandTimeout", 240);
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            System.Threading.Thread.Sleep(WebDriverFixture.SessionCleanupInterval * 2);
+
+            Assert.That(() => driver.Title, Throws.Nothing);
+        }
     }
 }

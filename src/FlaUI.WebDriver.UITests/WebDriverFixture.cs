@@ -9,7 +9,8 @@ namespace FlaUI.WebDriver.UITests
     [SetUpFixture]
     public class WebDriverFixture
     {
-        public static readonly Uri WebDriverUrl = new Uri("http://localhost:9723/");
+        public static readonly Uri WebDriverUrl = new Uri("http://localhost:4723/");
+        public static readonly TimeSpan SessionCleanupInterval = TimeSpan.FromSeconds(1);
 
         private Process _webDriverProcess;
 
@@ -20,7 +21,7 @@ namespace FlaUI.WebDriver.UITests
             Directory.SetCurrentDirectory(assemblyDir);
 
             string webDriverPath = Path.Combine(Directory.GetCurrentDirectory(), "FlaUI.WebDriver.exe");
-            var webDriverArguments = $"--urls={WebDriverUrl}";
+            var webDriverArguments = $"--urls={WebDriverUrl} --SessionCleanup:SchedulingIntervalSeconds={SessionCleanupInterval.TotalSeconds}";
             var webDriverProcessStartInfo = new ProcessStartInfo(webDriverPath, webDriverArguments)
             {
                 RedirectStandardError = true,

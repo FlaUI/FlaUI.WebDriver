@@ -21,5 +21,10 @@ namespace FlaUI.WebDriver
         {
             Sessions.Remove(session);
         }
+
+        public List<Session> FindTimedOut()
+        {
+            return Sessions.Where(session => session.IsTimedOut).ToList();
+        }
     }
 }

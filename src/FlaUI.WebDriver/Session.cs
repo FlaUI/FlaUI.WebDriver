@@ -66,6 +66,16 @@ namespace FlaUI.WebDriver
             }
         }
 
+        public bool IsTimedOut => (DateTime.UtcNow - LastNewCommandTimeUtc) > NewCommandTimeout;
+
+        public TimeSpan NewCommandTimeout { get; internal set; } = TimeSpan.FromSeconds(60);
+        public DateTime LastNewCommandTimeUtc { get; internal set; } = DateTime.UtcNow;
+
+        public void SetLastCommandTimeToNow()
+        {
+            LastNewCommandTimeUtc = DateTime.UtcNow;
+        }
+
         public KnownElement GetOrAddKnownElement(AutomationElement element)
         {
             var result = KnownElementsByElementReference.Values.FirstOrDefault(knownElement => knownElement.Element.Equals(element));
