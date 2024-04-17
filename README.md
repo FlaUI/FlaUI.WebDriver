@@ -31,7 +31,7 @@ The following capabilities are supported:
 
 ## Getting Started
 
-This driver currenlty is only available by building from source. Start the web driver service with:
+This driver currenlty can be downloaded as an executable. Start the web driver service with:
 
 ```PowerShell
 ./FlaUI.WebDriver.exe --urls=http://localhost:4723/
