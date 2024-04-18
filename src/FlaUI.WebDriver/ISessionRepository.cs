@@ -5,5 +5,6 @@
         void Add(Session session);
         void Delete(Session session);
         Session? FindById(string sessionId);
+        List<Session> FindTimedOut();
     }
 }

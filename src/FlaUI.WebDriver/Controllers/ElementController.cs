@@ -219,6 +219,7 @@ namespace FlaUI.WebDriver.Controllers
             {
                 throw WebDriverResponseException.SessionNotFound(sessionId);
             }
+            session.SetLastCommandTimeToNow();
             return session;
         }
     }

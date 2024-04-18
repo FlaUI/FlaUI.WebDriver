@@ -40,6 +40,20 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(newSession, Throws.TypeOf<WebDriverArgumentException>().With.Message.EqualTo("Starting app 'C:\\NotExisting.exe' with arguments '' threw an exception: An error occurred trying to start process 'C:\\NotExisting.exe' with working directory '.'. The system cannot find the file specified."));
         }
 
+        [TestCase(123)]
+        [TestCase(false)]
+        public void NewSession_AppNotAString_Throws(object value)
+        {
+            var driverOptions = new FlaUIDriverOptions()
+            {
+                PlatformName = "Windows"
+            };
+            driverOptions.AddAdditionalOption("appium:app", value);
+
+            Assert.That(() => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions),
+                Throws.TypeOf<WebDriverArgumentException>().With.Message.EqualTo("Capability appium:app must be a string"));
+        }
+
         [Test]
         public void NewSession_AppTopLevelWindow_IsSupported()
         {
@@ -91,7 +105,7 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test, Ignore("Sometimes multiple processes are left open")]
-        public void NewSession_MultipleMatchingAppTopLevelWindowTitleMatch_ReturnsError()
+        public void NewSession_AppTopLevelWindowTitleMatchMultipleMatching_ReturnsError()
         {
             using var testAppProcess = new TestAppProcess();
             using var testAppProcess1 = new TestAppProcess();
@@ -125,6 +139,33 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(newSession, Throws.TypeOf<WebDriverArgumentException>().With.Message.EqualTo("Process with main window title matching 'FlaUI Not Existing' could not be found"));
         }
 
+        [TestCase(123)]
+        [TestCase(false)]
+        public void NewSession_AppTopLevelWindowTitleMatchNotAString_Throws(object value)
+        {
+            var driverOptions = new FlaUIDriverOptions()
+            {
+                PlatformName = "Windows"
+            };
+            driverOptions.AddAdditionalOption("appium:appTopLevelWindowTitleMatch", value);
+
+            Assert.That(() => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions),
+                Throws.TypeOf<WebDriverArgumentException>().With.Message.EqualTo("Capability appium:appTopLevelWindowTitleMatch must be a string"));
+        }
+
+        [TestCase("(invalid")]
+        public void NewSession_AppTopLevelWindowTitleMatchInvalidRegex_Throws(string value)
+        {
+            var driverOptions = new FlaUIDriverOptions()
+            {
+                PlatformName = "Windows"
+            };
+            driverOptions.AddAdditionalOption("appium:appTopLevelWindowTitleMatch", value);
+
+            Assert.That(() => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions),
+                Throws.TypeOf<WebDriverArgumentException>().With.Message.EqualTo("Capability appium:appTopLevelWindowTitleMatch '(invalid' is not a valid regular expression: Invalid pattern '(invalid' at offset 8. Not enough )'s."));
+        }
+
         [TestCase("")]
         [TestCase("FlaUI")]
         public void NewSession_AppTopLevelWindowInvalidFormat_ReturnsError(string appTopLevelWindowString)
@@ -136,6 +177,20 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(newSession, Throws.TypeOf<WebDriverArgumentException>().With.Message.EqualTo($"Capability appium:appTopLevelWindow '{appTopLevelWindowString}' is not a valid hexadecimal string"));
         }
 
+        [TestCase(123)]
+        [TestCase(false)]
+        public void NewSession_AppTopLevelWindowNotAString_ReturnsError(object value)
+        {
+            var driverOptions = new FlaUIDriverOptions()
+            {
+                PlatformName = "Windows"
+            };
+            driverOptions.AddAdditionalOption("appium:appTopLevelWindow", value);
+
+            Assert.That(() => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions),
+                Throws.TypeOf<WebDriverArgumentException>().With.Message.EqualTo("Capability appium:appTopLevelWindow must be a string"));
+        }
+
         [Test]
         public void GetTitle_Default_IsSupported()
         {
@@ -145,6 +200,69 @@ namespace FlaUI.WebDriver.UITests
             var title = driver.Title;
 
             Assert.That(title, Is.EqualTo("FlaUI WPF Test App"));
+        }
+
+        [Test, Explicit("Takes too long (one minute)")]
+        public void NewCommandTimeout_DefaultValue_OneMinute()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(60) + WebDriverFixture.SessionCleanupInterval*2);
+
+            Assert.That(() => driver.Title, Throws.TypeOf<WebDriverException>().With.Message.Matches("No active session with ID '.*'"));
+        }
+
+        [Test]
+        public void NewCommandTimeout_Expired_EndsSession()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            driverOptions.AddAdditionalOption("appium:newCommandTimeout", 1);
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1) + WebDriverFixture.SessionCleanupInterval * 2);
+
+            Assert.That(() => driver.Title, Throws.TypeOf<WebDriverException>().With.Message.Matches("No active session with ID '.*'"));
+        }
+
+        [Test]
+        public void NewCommandTimeout_ReceivedCommandsBeforeExpiry_DoesNotEndSession()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            driverOptions.AddAdditionalOption("appium:newCommandTimeout", WebDriverFixture.SessionCleanupInterval.TotalSeconds * 4);
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            System.Threading.Thread.Sleep(WebDriverFixture.SessionCleanupInterval * 2);
+            _ = driver.Title;
+            System.Threading.Thread.Sleep(WebDriverFixture.SessionCleanupInterval * 2);
+            _ = driver.Title;
+            System.Threading.Thread.Sleep(WebDriverFixture.SessionCleanupInterval * 2);
+
+            Assert.That(() => driver.Title, Throws.Nothing);
+        }
+
+        [Test]
+        public void NewCommandTimeout_NotExpired_DoesNotEndSession()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            driverOptions.AddAdditionalOption("appium:newCommandTimeout", 240);
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            System.Threading.Thread.Sleep(WebDriverFixture.SessionCleanupInterval * 2);
+
+            Assert.That(() => driver.Title, Throws.Nothing);
+        }
+
+        [TestCase("123")]
+        [TestCase(false)]
+        [TestCase("not a number")]
+        public void NewCommandTimeout_InvalidValue_Throws(object value)
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            driverOptions.AddAdditionalOption("appium:newCommandTimeout", value);
+
+            Assert.That(() => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions), 
+                Throws.TypeOf<WebDriverArgumentException>().With.Message.EqualTo("Capability appium:newCommandTimeout must be a number"));
         }
     }
 }

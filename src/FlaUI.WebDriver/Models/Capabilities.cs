@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json;
 
 namespace FlaUI.WebDriver.Models
 {
     public class Capabilities
     {
-        public Dictionary<string, string>? AlwaysMatch { get; set; }
-        public List<Dictionary<string, string>>? FirstMatch { get; set; }
+        public Dictionary<string, JsonElement>? AlwaysMatch { get; set; }
+        public List<Dictionary<string, JsonElement>>? FirstMatch { get; set; }
     }
 }
