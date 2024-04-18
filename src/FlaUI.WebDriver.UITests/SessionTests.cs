@@ -102,6 +102,17 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(newSession, Throws.TypeOf<WebDriverArgumentException>().With.Message.EqualTo("Found multiple (2) processes with main window title matching 'FlaUI WPF Test App'"));
         }
 
+        [Test, Explicit("GitHub actions runner doesn't have calculator installed")]
+        public void NewSession_UwpApp_IsSupported()
+        {
+            var driverOptions = FlaUIDriverOptions.App("Microsoft.WindowsCalculator_8wekyb3d8bbwe!App");
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            var title = driver.Title;
+
+            Assert.That(title, Is.EqualTo("Calculator"));
+        }
+
         [Test]
         public void NewSession_AppTopLevelWindowTitleMatchNotFound_ReturnsError()
         {
