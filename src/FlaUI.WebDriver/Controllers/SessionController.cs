@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -42,25 +43,24 @@ namespace FlaUI.WebDriver.Controllers
                     Message = "Required capabilities did not match. Capability `platformName` with value `windows` is required"
                 });
             }
-            if (capabilities.TryGetValue("appium:app", out var appPath))
+            if (TryGetStringCapability(capabilities, "appium:app", out var appPath))
             {
-                if (appPath.GetString() == "Root")
+                if (appPath == "Root")
                 {
                     app = null;
                 }
                 else 
-                { 
-                    bool hasArguments = capabilities.TryGetValue("appium:appArguments", out var appArgumentsValue);
-                    var appArguments = hasArguments ? appArgumentsValue.GetString()! : "";
+                {
+                    TryGetStringCapability(capabilities, "appium:appArguments", out var appArguments);
                     try
                     {
-                        if (appPath.GetString()!.EndsWith("!App"))
+                        if (appPath.EndsWith("!App"))
                         {
-                            app = Core.Application.LaunchStoreApp(appPath.GetString()!, appArguments);
+                            app = Core.Application.LaunchStoreApp(appPath, appArguments);
                         }
                         else
                         {
-                            var processStartInfo = new ProcessStartInfo(appPath.GetString()!, appArguments);
+                            var processStartInfo = new ProcessStartInfo(appPath, appArguments ?? "");
                             app = Core.Application.Launch(processStartInfo);
                         }
                     }
@@ -70,14 +70,14 @@ namespace FlaUI.WebDriver.Controllers
                     }
                 }
             }
-            else if(capabilities.TryGetValue("appium:appTopLevelWindow", out var appTopLevelWindowString))
+            else if (TryGetStringCapability(capabilities, "appium:appTopLevelWindow", out var appTopLevelWindowString))
             {
-                Process process = GetProcessByMainWindowHandle(appTopLevelWindowString.GetString()!);
+                Process process = GetProcessByMainWindowHandle(appTopLevelWindowString);
                 app = Core.Application.Attach(process);
             }
-            else if (capabilities.TryGetValue("appium:appTopLevelWindowTitleMatch", out var appTopLevelWindowTitleMatch))
+            else if (TryGetStringCapability(capabilities, "appium:appTopLevelWindowTitleMatch", out var appTopLevelWindowTitleMatch))
             {
-                Process? process = GetProcessByMainWindowTitle(appTopLevelWindowTitleMatch.GetString()!);
+                Process? process = GetProcessByMainWindowTitle(appTopLevelWindowTitleMatch);
                 app = Core.Application.Attach(process);
             }
             else
@@ -85,9 +85,9 @@ namespace FlaUI.WebDriver.Controllers
                 throw WebDriverResponseException.InvalidArgument("One of appium:app, appium:appTopLevelWindow or appium:appTopLevelWindowTitleMatch must be passed as a capability");
             }
             var session = new Session(app);
-            if(capabilities.TryGetValue("appium:newCommandTimeout", out var newCommandTimeout))
+            if(TryGetNumberCapability(capabilities, "appium:newCommandTimeout", out var newCommandTimeout))
             {
-                session.NewCommandTimeout = TimeSpan.FromSeconds(newCommandTimeout.GetDouble());
+                session.NewCommandTimeout = TimeSpan.FromSeconds(newCommandTimeout);
             }
             _sessionRepository.Add(session);
             _logger.LogInformation("Created session with ID {SessionId} and capabilities {Capabilities}", session.SessionId, capabilities);
@@ -96,6 +96,40 @@ namespace FlaUI.WebDriver.Controllers
                 SessionId = session.SessionId,
                 Capabilities = capabilities
             }));
+        }
+
+        private static bool TryGetStringCapability(Dictionary<string, JsonElement> capabilities, string key, [MaybeNullWhen(false)] out string value)
+        {
+            if(capabilities.TryGetValue(key, out var valueJson))
+            {
+                if(valueJson.ValueKind != JsonValueKind.String)
+                {
+                    throw WebDriverResponseException.InvalidArgument($"Capability {key} must be a string");
+                }
+
+                value = valueJson.GetString();
+                return value != null;
+            }
+
+            value = null;
+            return false;
+        }
+
+        private static bool TryGetNumberCapability(Dictionary<string, JsonElement> capabilities, string key, out double value)
+        {
+            if (capabilities.TryGetValue(key, out var valueJson))
+            {
+                if (valueJson.ValueKind != JsonValueKind.Number)
+                {
+                    throw WebDriverResponseException.InvalidArgument($"Capability {key} must be a number");
+                }
+
+                value = valueJson.GetDouble();
+                return true;
+            }
+
+            value = default;
+            return false;
         }
 
         private static Process GetProcessByMainWindowTitle(string appTopLevelWindowTitleMatch)
