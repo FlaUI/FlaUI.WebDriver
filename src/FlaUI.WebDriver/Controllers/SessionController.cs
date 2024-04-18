@@ -48,13 +48,21 @@ namespace FlaUI.WebDriver.Controllers
                 {
                     app = null;
                 }
-                else
-                {
-                    bool hasArguments = capabilities.TryGetValue("appium:appArguments", out var appArguments);
+                else 
+                { 
+                    bool hasArguments = capabilities.TryGetValue("appium:appArguments", out var appArgumentsValue);
+                    var appArguments = hasArguments ? appArgumentsValue.GetString()! : "";
                     try
                     {
-                        var processStartInfo = new ProcessStartInfo(appPath.GetString()!, hasArguments ? appArguments.GetString()! : "");
-                        app = Core.Application.Launch(processStartInfo);
+                        if (appPath.GetString()!.EndsWith("!App"))
+                        {
+                            app = Core.Application.LaunchStoreApp(appPath.GetString()!, appArguments);
+                        }
+                        else
+                        {
+                            var processStartInfo = new ProcessStartInfo(appPath.GetString()!, appArguments);
+                            app = Core.Application.Launch(processStartInfo);
+                        }
                     }
                     catch(Exception e)
                     {
