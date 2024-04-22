@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -29,9 +30,10 @@ namespace FlaUI.WebDriver.Controllers
         public async Task<ActionResult> CreateNewSession([FromBody] CreateSessionRequest request)
         {
             var possibleCapabilities = GetPossibleCapabilities(request);
-            var matchingCapabilities = possibleCapabilities.Where(
-                capabilities => capabilities.TryGetValue("platformName", out var platformName) && platformName.GetString()?.ToLowerInvariant() == "windows"
-            );
+            IDictionary<string, JsonElement>? matchedCapabilities = null;
+            IEnumerable<IDictionary<string, JsonElement>> matchingCapabilities = possibleCapabilities
+                .Where(capabilities => IsMatchingCapabilitySet(capabilities, out matchedCapabilities))
+                .Select(capabillities => matchedCapabilities!);
 
             Core.Application? app;
             var capabilities = matchingCapabilities.FirstOrDefault();
@@ -40,7 +42,7 @@ namespace FlaUI.WebDriver.Controllers
                 return WebDriverResult.Error(new ErrorResponse
                 {
                     ErrorCode = "session not created",
-                    Message = "Required capabilities did not match. Capability `platformName` with value `windows` is required"
+                    Message = "Required capabilities did not match. Capability `platformName` with value `windows` is required, and one of appium:app, appium:appTopLevelWindow or appium:appTopLevelWindowTitleMatch must be passed as a capability"
                 });
             }
             if (TryGetStringCapability(capabilities, "appium:app", out var appPath))
@@ -61,6 +63,10 @@ namespace FlaUI.WebDriver.Controllers
                         else
                         {
                             var processStartInfo = new ProcessStartInfo(appPath, appArguments ?? "");
+                            if(TryGetStringCapability(capabilities, "appium:appWorkingDir", out var appWorkingDir))
+                            {
+                                processStartInfo.WorkingDirectory = appWorkingDir;
+                            }
                             app = Core.Application.Launch(processStartInfo);
                         }
                     }
@@ -98,7 +104,60 @@ namespace FlaUI.WebDriver.Controllers
             }));
         }
 
-        private static bool TryGetStringCapability(Dictionary<string, JsonElement> capabilities, string key, [MaybeNullWhen(false)] out string value)
+        private bool IsMatchingCapabilitySet(IDictionary<string, JsonElement> capabilities, out IDictionary<string, JsonElement> matchedCapabilities)
+        {
+            matchedCapabilities = new Dictionary<string, JsonElement>();
+            if (TryGetStringCapability(capabilities, "platformName", out var platformName)
+                && platformName.ToLowerInvariant() == "windows")
+            {
+                matchedCapabilities.Add("platformName", capabilities["platformName"]);
+            }
+            else
+            {
+                return false;
+            }
+
+            if (TryGetStringCapability(capabilities, "appium:app", out var appPath))
+            {
+                matchedCapabilities.Add("appium:app", capabilities["appium:app"]);
+
+                if (appPath != "Root")
+                {
+                    if(TryGetStringCapability(capabilities, "appium:appArguments", out _))
+                    {
+                        matchedCapabilities.Add("appium:appArguments", capabilities["appium:appArguments"]);
+                    }
+                    if (!appPath.EndsWith("!App"))
+                    {
+                        if (TryGetStringCapability(capabilities, "appium:appWorkingDir", out _))
+                        {
+                            matchedCapabilities.Add("appium:appWorkingDir", capabilities["appium:appWorkingDir"]);
+                        }
+                    }
+                }
+            }
+            else if (TryGetStringCapability(capabilities, "appium:appTopLevelWindow", out _))
+            {
+                matchedCapabilities.Add("appium:appTopLevelWindow", capabilities["appium:appTopLevelWindow"]);
+            }
+            else if (TryGetStringCapability(capabilities, "appium:appTopLevelWindowTitleMatch", out _))
+            {
+                matchedCapabilities.Add("appium:appTopLevelWindowTitleMatch", capabilities["appium:appTopLevelWindowTitleMatch"]);
+            }
+            else
+            {
+                return false;
+            }
+
+            if (TryGetNumberCapability(capabilities, "appium:newCommandTimeout", out _))
+            {
+                matchedCapabilities.Add("appium:newCommandTimeout", capabilities["appium:newCommandTimeout"]); ;
+            }
+
+            return matchedCapabilities.Count == capabilities.Count;
+        }
+
+        private static bool TryGetStringCapability(IDictionary<string, JsonElement> capabilities, string key, [MaybeNullWhen(false)] out string value)
         {
             if(capabilities.TryGetValue(key, out var valueJson))
             {
@@ -115,7 +174,7 @@ namespace FlaUI.WebDriver.Controllers
             return false;
         }
 
-        private static bool TryGetNumberCapability(Dictionary<string, JsonElement> capabilities, string key, out double value)
+        private static bool TryGetNumberCapability(IDictionary<string, JsonElement> capabilities, string key, out double value)
         {
             if (capabilities.TryGetValue(key, out var valueJson))
             {
@@ -178,14 +237,14 @@ namespace FlaUI.WebDriver.Controllers
             return process;
         }
 
-        private static IEnumerable<Dictionary<string, JsonElement>> GetPossibleCapabilities(CreateSessionRequest request)
+        private static IEnumerable<IDictionary<string, JsonElement>> GetPossibleCapabilities(CreateSessionRequest request)
         {
             var requiredCapabilities = request.Capabilities.AlwaysMatch ?? new Dictionary<string, JsonElement>();
             var allFirstMatchCapabilities = request.Capabilities.FirstMatch ?? new List<Dictionary<string, JsonElement>>(new[] { new Dictionary<string, JsonElement>() });
             return allFirstMatchCapabilities.Select(firstMatchCapabilities => MergeCapabilities(firstMatchCapabilities, requiredCapabilities));
         }
 
-        private static Dictionary<string, JsonElement> MergeCapabilities(Dictionary<string, JsonElement> firstMatchCapabilities, Dictionary<string, JsonElement> requiredCapabilities)
+        private static IDictionary<string, JsonElement> MergeCapabilities(IDictionary<string, JsonElement> firstMatchCapabilities, IDictionary<string, JsonElement> requiredCapabilities)
         {
             var duplicateKeys = firstMatchCapabilities.Keys.Intersect(requiredCapabilities.Keys);
             if (duplicateKeys.Any())
