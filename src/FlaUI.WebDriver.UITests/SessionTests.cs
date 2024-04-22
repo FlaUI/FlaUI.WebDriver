@@ -10,13 +10,23 @@ namespace FlaUI.WebDriver.UITests
     public class SessionTests
     {
         [Test]
-        public void NewSession_CapabilitiesDoNotMatch_ReturnsError()
+        public void NewSession_PlatformNameMissing_ReturnsError()
         {
             var emptyOptions = FlaUIDriverOptions.Empty();
 
             var newSession = () => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, emptyOptions);
 
-            Assert.That(newSession, Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("Required capabilities did not match. Capability `platformName` with value `windows` is required (SessionNotCreated)"));
+            Assert.That(newSession, Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("Required capabilities did not match. Capability `platformName` with value `windows` is required, and one of appium:app, appium:appTopLevelWindow or appium:appTopLevelWindowTitleMatch must be passed as a capability (SessionNotCreated)"));
+        }
+
+        [Test]
+        public void NewSession_AllAppCapabilitiesMissing_ReturnsError()
+        {
+            var emptyOptions = FlaUIDriverOptions.Empty();
+            emptyOptions.AddAdditionalOption("appium:platformName", "windows");
+            var newSession = () => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, emptyOptions);
+
+            Assert.That(newSession, Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("Required capabilities did not match. Capability `platformName` with value `windows` is required, and one of appium:app, appium:appTopLevelWindow or appium:appTopLevelWindowTitleMatch must be passed as a capability (SessionNotCreated)"));
         }
 
         [Test]
@@ -52,6 +62,28 @@ namespace FlaUI.WebDriver.UITests
 
             Assert.That(() => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions),
                 Throws.TypeOf<WebDriverArgumentException>().With.Message.EqualTo("Capability appium:app must be a string"));
+        }
+
+        [Test]
+        public void NewSession_AppWorkingDir_IsSupported()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            driverOptions.AddAdditionalOption("appium:appWorkingDir", "C:\\");
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            var title = driver.Title;
+
+            Assert.That(title, Is.EqualTo("FlaUI WPF Test App"));
+        }
+
+        [Test]
+        public void NewSession_NotSupportedCapability_Throws()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            driverOptions.AddAdditionalOption("unknown:unknown", "value");
+
+            Assert.That(() => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions),
+                Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("Required capabilities did not match. Capability `platformName` with value `windows` is required, and one of appium:app, appium:appTopLevelWindow or appium:appTopLevelWindowTitleMatch must be passed as a capability (SessionNotCreated)"));
         }
 
         [Test]

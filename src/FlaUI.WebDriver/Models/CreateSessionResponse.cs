@@ -6,6 +6,6 @@ namespace FlaUI.WebDriver.Models
     public class CreateSessionResponse
     {
         public string SessionId { get; set; } = null!;
-        public Dictionary<string, JsonElement> Capabilities { get; set; } = new Dictionary<string, JsonElement>();
+        public IDictionary<string, JsonElement> Capabilities { get; set; } = new Dictionary<string, JsonElement>();
     }
 }
