@@ -56,8 +56,16 @@ namespace FlaUI.WebDriver.Controllers
 
         private static async Task<ActionResult> FindElementFrom(Func<AutomationElement> startNode, FindElementRequest findElementRequest, Session session)
         {
-            var condition = GetCondition(session.Automation.ConditionFactory, findElementRequest.Using, findElementRequest.Value);
-            AutomationElement? element = await Wait.Until(() => startNode().FindFirstDescendant(condition), element => element != null, session.ImplicitWaitTimeout);
+            AutomationElement? element;
+            if (findElementRequest.Using == "xpath") 
+            { 
+                element = await Wait.Until(() => startNode().FindFirstByXPath(findElementRequest.Value), element => element != null, session.ImplicitWaitTimeout);
+            }
+            else 
+            { 
+                var condition = GetCondition(session.Automation.ConditionFactory, findElementRequest.Using, findElementRequest.Value);
+                element = await Wait.Until(() => startNode().FindFirstDescendant(condition), element => element != null, session.ImplicitWaitTimeout);
+            }
 
             if (element == null)
             {
@@ -73,8 +81,16 @@ namespace FlaUI.WebDriver.Controllers
 
         private static async Task<ActionResult> FindElementsFrom(Func<AutomationElement> startNode, FindElementRequest findElementRequest, Session session)
         {
-            var condition = GetCondition(session.Automation.ConditionFactory, findElementRequest.Using, findElementRequest.Value);
-            AutomationElement[] elements = await Wait.Until(() => startNode().FindAllDescendants(condition), elements => elements.Length > 0, session.ImplicitWaitTimeout);
+            AutomationElement[] elements;
+            if (findElementRequest.Using == "xpath")
+            {
+                elements = await Wait.Until(() => startNode().FindAllByXPath(findElementRequest.Value), elements => elements.Length > 0, session.ImplicitWaitTimeout);
+            }
+            else
+            {
+                var condition = GetCondition(session.Automation.ConditionFactory, findElementRequest.Using, findElementRequest.Value);
+                elements = await Wait.Until(() => startNode().FindAllDescendants(condition), elements => elements.Length > 0, session.ImplicitWaitTimeout);
+            }
 
             if (elements.Length == 0)
             {

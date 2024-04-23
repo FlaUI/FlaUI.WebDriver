@@ -9,6 +9,17 @@ namespace FlaUI.WebDriver.UITests
     public class FindElementsTests
     {
         [Test]
+        public void FindElement_ByXPath_ReturnsElement()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            var element = driver.FindElement(By.XPath("//Text"));
+
+            Assert.That(element, Is.Not.Null);
+        }
+
+        [Test]
         public void FindElement_ByAccessibilityId_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();

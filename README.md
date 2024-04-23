@@ -95,7 +95,7 @@ On Windows, the recommended selectors, in order of reliability are:
 | Link text selector         | `"link text"`            | :white_check_mark:                                                                   |
 | Partial link text selector | `"partial link text"`    | :white_check_mark:                                                                   |
 | Tag name                   | `"tag name"`             | :white_check_mark:                                                                   |
-| XPath selector             | `"xpath"`                |                                                                                      |
+| XPath selector             | `"xpath"`                | :white_check_mark:                                                                   |
 | CSS selector               | `"css selector"`         | Only ID, class or `name` attribute selectors. IDs are interpreted as automation IDs. |
 
 Using the Selenium C# client, the selectors are:
@@ -107,6 +107,7 @@ driver.FindElement(By.ClassName("TextBox")).Click();
 driver.FindElement(By.LinkText("Button")).Click();
 driver.FindElement(By.PartialLinkText("Button")).Click();
 driver.FindElement(By.TagName("RadioButton")).Click();
+driver.FindElement(By.XPath("//RadioButton")).Click();
 ```
 
 Using the WebdriverIO JavaScript client (see [WebdriverIO Selectors guide](https://webdriver.io/docs/selectors):
@@ -118,6 +119,7 @@ await driver.$('.TextBox').click();
 await driver.$('=Button').click();
 await driver.$('*=Button').click();
 await driver.$('<RadioButton />').click();
+await driver.$('//RadioButton').click();
 ```
 
 ## Windows
