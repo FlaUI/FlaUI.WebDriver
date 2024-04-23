@@ -20,6 +20,7 @@ namespace FlaUI.WebDriver.UITests.TestUtil
             {
                 PlatformName = "Windows"
             };
+            options.AddAdditionalOption("appium:automationName", "FlaUI");
             options.AddAdditionalOption("appium:app", path);
             return options;
         }
@@ -30,6 +31,7 @@ namespace FlaUI.WebDriver.UITests.TestUtil
             {
                 PlatformName = "Windows"
             };
+            options.AddAdditionalOption("appium:automationName", "FlaUI");
             options.AddAdditionalOption("appium:appTopLevelWindow", windowHandle);
             return options;
         }
@@ -40,6 +42,7 @@ namespace FlaUI.WebDriver.UITests.TestUtil
             {
                 PlatformName = "Windows"
             };
+            options.AddAdditionalOption("appium:automationName", "FlaUI");
             options.AddAdditionalOption("appium:appTopLevelWindowTitleMatch", match);
             return options;
         }
