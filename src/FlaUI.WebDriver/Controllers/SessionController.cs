@@ -95,6 +95,15 @@ namespace FlaUI.WebDriver.Controllers
             {
                 session.NewCommandTimeout = TimeSpan.FromSeconds(newCommandTimeout);
             }
+            if (capabilities.TryGetValue("timeouts", out var valueJson))
+            {
+                var timeoutsConfiguration = JsonSerializer.Deserialize<TimeoutsConfiguration>(valueJson);
+                if (timeoutsConfiguration == null)
+                {
+                    throw WebDriverResponseException.InvalidArgument("Could not deserialize timeouts capability");
+                }
+                session.TimeoutsConfiguration = timeoutsConfiguration;
+            }
             _sessionRepository.Add(session);
             _logger.LogInformation("Created session with ID {SessionId} and capabilities {Capabilities}", session.SessionId, capabilities);
             return await Task.FromResult(WebDriverResult.Success(new CreateSessionResponse()
@@ -133,24 +142,24 @@ namespace FlaUI.WebDriver.Controllers
 
                 if (appPath != "Root")
                 {
-                    if(TryGetStringCapability(capabilities, "appium:appArguments", out _))
+                    if(capabilities.ContainsKey("appium:appArguments"))
                     {
                         matchedCapabilities.Add("appium:appArguments", capabilities["appium:appArguments"]);
                     }
                     if (!appPath.EndsWith("!App"))
                     {
-                        if (TryGetStringCapability(capabilities, "appium:appWorkingDir", out _))
+                        if (capabilities.ContainsKey("appium:appWorkingDir"))
                         {
                             matchedCapabilities.Add("appium:appWorkingDir", capabilities["appium:appWorkingDir"]);
                         }
                     }
                 }
             }
-            else if (TryGetStringCapability(capabilities, "appium:appTopLevelWindow", out _))
+            else if (capabilities.ContainsKey("appium:appTopLevelWindow"))
             {
                 matchedCapabilities.Add("appium:appTopLevelWindow", capabilities["appium:appTopLevelWindow"]);
             }
-            else if (TryGetStringCapability(capabilities, "appium:appTopLevelWindowTitleMatch", out _))
+            else if (capabilities.ContainsKey("appium:appTopLevelWindowTitleMatch"))
             {
                 matchedCapabilities.Add("appium:appTopLevelWindowTitleMatch", capabilities["appium:appTopLevelWindowTitleMatch"]);
             }
@@ -159,9 +168,14 @@ namespace FlaUI.WebDriver.Controllers
                 return false;
             }
 
-            if (TryGetNumberCapability(capabilities, "appium:newCommandTimeout", out _))
+            if (capabilities.ContainsKey("appium:newCommandTimeout"))
             {
                 matchedCapabilities.Add("appium:newCommandTimeout", capabilities["appium:newCommandTimeout"]); ;
+            }
+
+            if (capabilities.ContainsKey("timeouts"))
+            {
+                matchedCapabilities.Add("timeouts", capabilities["timeouts"]);
             }
 
             return matchedCapabilities.Count == capabilities.Count;

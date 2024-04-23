@@ -58,6 +58,7 @@ public class FlaUIDriverOptions : DriverOptions
         {
             PlatformName = "windows"
         };
+        options.AddAdditionalOption("appium:automationName", "flaui");
         options.AddAdditionalOption("appium:app", path);
         return options;
     }
@@ -79,6 +80,7 @@ import { remote } from 'webdriverio'
 const driver = await remote({
     capabilities: {
         platformName: 'windows',
+        'appium:automationName': 'flaui'
         'appium:app': 'C:\\YourApp.exe'
     }
 });
