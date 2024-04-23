@@ -42,7 +42,7 @@ namespace FlaUI.WebDriver.Controllers
                 return WebDriverResult.Error(new ErrorResponse
                 {
                     ErrorCode = "session not created",
-                    Message = "Required capabilities did not match. Capability `platformName` with value `windows` is required, and one of appium:app, appium:appTopLevelWindow or appium:appTopLevelWindowTitleMatch must be passed as a capability"
+                    Message = "Required capabilities did not match. Capability `platformName` with value `windows` is required, capability 'appium:automationName' with value `FlaUI` is required, and one of appium:app, appium:appTopLevelWindow or appium:appTopLevelWindowTitleMatch must be passed as a capability"
                 });
             }
             if (TryGetStringCapability(capabilities, "appium:app", out var appPath))
@@ -111,6 +111,16 @@ namespace FlaUI.WebDriver.Controllers
                 && platformName.ToLowerInvariant() == "windows")
             {
                 matchedCapabilities.Add("platformName", capabilities["platformName"]);
+            }
+            else
+            {
+                return false;
+            }
+
+            if (TryGetStringCapability(capabilities, "appium:automationName", out var automationName)
+                && automationName.ToLowerInvariant() == "flaui")
+            {
+                matchedCapabilities.Add("appium:automationName", capabilities["appium:automationName"]);
             }
             else
             {
