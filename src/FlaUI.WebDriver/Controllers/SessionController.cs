@@ -95,6 +95,15 @@ namespace FlaUI.WebDriver.Controllers
             {
                 session.NewCommandTimeout = TimeSpan.FromSeconds(newCommandTimeout);
             }
+            if (capabilities.TryGetValue("timeouts", out var valueJson))
+            {
+                var timeoutsConfiguration = JsonSerializer.Deserialize<TimeoutsConfiguration>(valueJson);
+                if (timeoutsConfiguration == null)
+                {
+                    throw WebDriverResponseException.InvalidArgument("Could not deserialize timeouts capability");
+                }
+                session.TimeoutsConfiguration = timeoutsConfiguration;
+            }
             _sessionRepository.Add(session);
             _logger.LogInformation("Created session with ID {SessionId} and capabilities {Capabilities}", session.SessionId, capabilities);
             return await Task.FromResult(WebDriverResult.Success(new CreateSessionResponse()
@@ -159,9 +168,14 @@ namespace FlaUI.WebDriver.Controllers
                 return false;
             }
 
-            if (TryGetNumberCapability(capabilities, "appium:newCommandTimeout", out _))
+            if (capabilities.ContainsKey("appium:newCommandTimeout"))
             {
                 matchedCapabilities.Add("appium:newCommandTimeout", capabilities["appium:newCommandTimeout"]); ;
+            }
+
+            if (capabilities.ContainsKey("timeouts"))
+            {
+                matchedCapabilities.Add("timeouts", capabilities["timeouts"]);
             }
 
             return matchedCapabilities.Count == capabilities.Count;
