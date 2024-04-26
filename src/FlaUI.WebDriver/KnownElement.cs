@@ -1,5 +1,4 @@
 ﻿using FlaUI.Core.AutomationElements;
-using System;
 
 namespace FlaUI.WebDriver
 {

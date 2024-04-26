@@ -1,6 +1,5 @@
 ﻿using FlaUI.WebDriver.Models;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace FlaUI.WebDriver
 {

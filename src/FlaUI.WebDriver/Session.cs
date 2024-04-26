@@ -1,9 +1,6 @@
 ﻿using FlaUI.Core;
 using FlaUI.Core.AutomationElements;
 using FlaUI.UIA3;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace FlaUI.WebDriver
 {

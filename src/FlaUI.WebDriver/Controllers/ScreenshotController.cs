@@ -1,8 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System.IO;
-using System.Threading.Tasks;
-using System;
 using FlaUI.Core.AutomationElements;
 using System.Drawing;
 

@@ -1,11 +1,6 @@
 ﻿using FlaUI.Core.AutomationElements;
 using FlaUI.WebDriver.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FlaUI.WebDriver.Controllers
 {

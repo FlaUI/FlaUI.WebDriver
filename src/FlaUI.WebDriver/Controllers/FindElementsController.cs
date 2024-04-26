@@ -1,11 +1,7 @@
 ﻿using FlaUI.WebDriver.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System;
-using Microsoft.Extensions.Logging;
 using FlaUI.Core.Conditions;
 using FlaUI.Core.Definitions;
-using System.Linq;
 using FlaUI.Core.AutomationElements;
 using System.Text.RegularExpressions;
 

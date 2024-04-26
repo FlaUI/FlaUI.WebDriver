@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace FlaUI.WebDriver.Models
+﻿namespace FlaUI.WebDriver.Models
 {
     public class ActionItem
     {

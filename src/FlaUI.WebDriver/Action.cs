@@ -1,5 +1,4 @@
 ﻿using FlaUI.WebDriver.Models;
-using System;
 
 namespace FlaUI.WebDriver
 {
