@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FlaUI.WebDriver
+﻿namespace FlaUI.WebDriver
 {
     public class WebDriverResponseException : Exception
     {

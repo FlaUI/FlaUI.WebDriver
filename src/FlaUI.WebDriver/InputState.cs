@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace FlaUI.WebDriver
+﻿namespace FlaUI.WebDriver
 {
     public class InputState
     {

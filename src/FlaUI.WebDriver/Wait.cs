@@ -1,7 +1,4 @@
-﻿using System.Threading.Tasks;
-using System;
-
-namespace FlaUI.WebDriver
+﻿namespace FlaUI.WebDriver
 {
     public static class Wait
     {

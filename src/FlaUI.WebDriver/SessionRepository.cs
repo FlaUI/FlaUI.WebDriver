@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace FlaUI.WebDriver
+﻿namespace FlaUI.WebDriver
 {
     public class SessionRepository : ISessionRepository
     {

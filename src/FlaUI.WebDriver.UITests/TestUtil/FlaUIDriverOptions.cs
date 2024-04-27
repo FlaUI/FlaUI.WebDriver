@@ -1,5 +1,4 @@
 ﻿using OpenQA.Selenium;
-using System;
 
 namespace FlaUI.WebDriver.UITests.TestUtil
 {

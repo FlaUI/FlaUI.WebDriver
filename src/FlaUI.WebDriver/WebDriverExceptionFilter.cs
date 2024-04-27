@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using FlaUI.WebDriver.Models;
 using Microsoft.AspNetCore.Mvc;
-using FlaUI.Core.Logging;
-using Microsoft.Extensions.Logging;
-using System.Windows.Forms.Design;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FlaUI.WebDriver
 {
