@@ -193,7 +193,7 @@ const result = driver.executeScript("powerShell", [{ command: `1+1` }]);
 | POST   | /session/{session id}/shadow/{shadow id}/element               | Find Element From Shadow Root  | N/A                |
 | POST   | /session/{session id}/shadow/{shadow id}/elements              | Find Elements From Shadow Root | N/A                |
 | GET    | /session/{session id}/element/{element id}/selected            | Is Element Selected            | :white_check_mark: |
-| GET    | /session/{session id}/element/{element id}/attribute/{name}    | Get Element Attribute          |                    |
+| GET    | /session/{session id}/element/{element id}/attribute/{name}    | Get Element Attribute          | :white_check_mark: |
 | GET    | /session/{session id}/element/{element id}/property/{name}     | Get Element Property           |                    |
 | GET    | /session/{session id}/element/{element id}/css/{property name} | Get Element CSS Value          | N/A                |
 | GET    | /session/{session id}/element/{element id}/text                | Get Element Text               | :white_check_mark: |
