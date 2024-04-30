@@ -91,6 +91,14 @@ namespace FlaUI.WebDriver.Controllers
             {
                 text = element.Patterns.Text.Pattern.DocumentRange.GetText(int.MaxValue);
             }
+            else if (element.Patterns.Value.IsSupported)
+            {
+                text = element.Patterns.Value.Pattern.Value.ToString();
+            }
+            else if (element.Patterns.RangeValue.IsSupported)
+            {
+                text = element.Patterns.RangeValue.Pattern.Value.ToString();
+            }
             else
             {
                 text = GetRenderedText(element);
