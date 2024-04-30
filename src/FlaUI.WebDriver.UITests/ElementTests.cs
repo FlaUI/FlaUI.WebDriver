@@ -211,12 +211,13 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(activeElement.Text, Is.EqualTo("Invoked!"));
         }
 
-        [TestCase(["Name", "Label"])]
-        public void GetAttribute_Label_ReturnsValue(string attributeName, string expectedValue)
+        [TestCase(["ClassName", "TextBox"])]
+        [TestCase(["FrameworkId", "WPF"])]
+        public void GetAttribute_TextBox_ReturnsValue(string attributeName, string expectedValue)
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
-            var element = driver.FindElement(ExtendedBy.AccessibilityId("Label"));
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
 
             var value = element.GetAttribute(attributeName);
 
