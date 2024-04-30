@@ -210,5 +210,17 @@ namespace FlaUI.WebDriver.UITests
 
             Assert.That(activeElement.Text, Is.EqualTo("Invoked!"));
         }
+
+        [TestCase(["Name", "Label"])]
+        public void GetAttribute_Label_ReturnsValue(string attributeName, string expectedValue)
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("Label"));
+
+            var value = element.GetAttribute(attributeName);
+
+            Assert.That(value, Is.EqualTo(expectedValue));
+        }
     }
 }
