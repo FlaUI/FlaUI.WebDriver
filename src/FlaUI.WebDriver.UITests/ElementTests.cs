@@ -1,6 +1,7 @@
 ﻿using FlaUI.WebDriver.UITests.TestUtil;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Appium.Windows;
 using OpenQA.Selenium.Remote;
 using System;
 
@@ -13,7 +14,7 @@ namespace FlaUI.WebDriver.UITests
         public void GetText_Label_ReturnsRenderedText()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("Label"));
 
             var text = element.Text;
@@ -25,7 +26,7 @@ namespace FlaUI.WebDriver.UITests
         public void GetText_TextBox_ReturnsTextBoxText()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
 
             var text = element.Text;
@@ -37,7 +38,7 @@ namespace FlaUI.WebDriver.UITests
         public void GetText_Button_ReturnsButtonText()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("InvokableButton"));
 
             var text = element.Text;
@@ -49,7 +50,7 @@ namespace FlaUI.WebDriver.UITests
         public void Selected_NotCheckedCheckbox_ReturnsFalse()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("SimpleCheckBox"));
 
             var selected = element.Selected;
@@ -61,7 +62,7 @@ namespace FlaUI.WebDriver.UITests
         public void Selected_CheckedCheckbox_ReturnsTrue()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("SimpleCheckBox"));
             element.Click();
 
@@ -74,7 +75,7 @@ namespace FlaUI.WebDriver.UITests
         public void Selected_NotCheckedRadioButton_ReturnsFalse()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("RadioButton1"));
 
             var selected = element.Selected;
@@ -86,7 +87,7 @@ namespace FlaUI.WebDriver.UITests
         public void Selected_CheckedRadioButton_ReturnsTrue()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("RadioButton1"));
             element.Click();
 
@@ -99,7 +100,7 @@ namespace FlaUI.WebDriver.UITests
         public void SendKeys_Default_IsSupported()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
 
             element.SendKeys("Hello World!");
@@ -111,7 +112,7 @@ namespace FlaUI.WebDriver.UITests
         public void Clear_Default_IsSupported()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
 
             element.Clear();
@@ -123,7 +124,7 @@ namespace FlaUI.WebDriver.UITests
         public void Click_Default_IsSupported()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("InvokableButton"));
 
             element.Click();
@@ -135,7 +136,7 @@ namespace FlaUI.WebDriver.UITests
         public void GetElementRect_Default_IsSupported()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("EditableCombo"));
 
             var location = element.Location;
@@ -164,7 +165,7 @@ namespace FlaUI.WebDriver.UITests
         public void GetElementEnabled_Enabled_ReturnsTrue(string elementAccessibilityId)
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId(elementAccessibilityId));
 
             var enabled = element.Enabled;
@@ -188,7 +189,7 @@ namespace FlaUI.WebDriver.UITests
         public void GetElementEnabled_Disabled_ReturnsFalse(string elementAccessibilityId)
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             driver.FindElement(ExtendedBy.NonCssName("_Edit")).Click();
             driver.FindElement(ExtendedBy.NonCssName("Disable Form")).Click();
             var element = driver.FindElement(ExtendedBy.AccessibilityId(elementAccessibilityId));
@@ -202,7 +203,7 @@ namespace FlaUI.WebDriver.UITests
         public void ActiveElement_Default_IsSupported()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("InvokableButton"));
             element.Click();
 

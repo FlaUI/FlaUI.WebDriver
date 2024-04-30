@@ -1,7 +1,7 @@
-﻿using FlaUI.WebDriver.UITests.TestUtil;
+﻿using System;
+using FlaUI.WebDriver.UITests.TestUtil;
 using NUnit.Framework;
-using OpenQA.Selenium.Remote;
-using System;
+using OpenQA.Selenium.Appium.Windows;
 
 namespace FlaUI.WebDriver.UITests
 {
@@ -12,7 +12,7 @@ namespace FlaUI.WebDriver.UITests
         public void SetTimeouts_Default_IsSupported()
         {
             var driverOptions = FlaUIDriverOptions.RootApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(3);
 
@@ -23,7 +23,7 @@ namespace FlaUI.WebDriver.UITests
         public void GetTimeouts_Default_ReturnsDefaultTimeouts()
         {
             var driverOptions = FlaUIDriverOptions.RootApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var timeouts = driver.Manage().Timeouts();
 

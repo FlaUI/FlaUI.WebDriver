@@ -1,8 +1,8 @@
+using System.Linq;
 using FlaUI.WebDriver.UITests.TestUtil;
 using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
-using System.Linq;
+using OpenQA.Selenium.Appium.Windows;
 
 namespace FlaUI.WebDriver.UITests
 {
@@ -12,7 +12,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElement_ByXPath_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var element = driver.FindElement(By.XPath("//Text"));
 
@@ -23,7 +23,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElement_ByAccessibilityId_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
 
@@ -34,7 +34,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElement_ById_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var element = driver.FindElement(By.Id("TextBox"));
 
@@ -45,7 +45,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElement_ByName_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var element = driver.FindElement(By.Name("Test Label"));
 
@@ -56,7 +56,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElement_ByNativeName_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var element = driver.FindElement(ExtendedBy.NonCssName("Test Label"));
 
@@ -67,7 +67,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElement_ByNativeClassName_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var element = driver.FindElement(ExtendedBy.NonCssClassName("TextBlock"));
 
@@ -78,7 +78,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElement_ByClassName_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var element = driver.FindElement(By.ClassName("TextBlock"));
 
@@ -89,7 +89,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElement_ByLinkText_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var element = driver.FindElement(By.LinkText("Invoke me!"));
 
@@ -100,7 +100,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElement_ByPartialLinkText_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var element = driver.FindElement(By.PartialLinkText("Invoke"));
 
@@ -111,7 +111,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElement_ByTagName_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var element = driver.FindElement(By.TagName("Text"));
 
@@ -122,7 +122,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElement_NotExisting_TimesOut()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var findElement = () => driver.FindElement(ExtendedBy.AccessibilityId("NotExisting"));
 
@@ -133,7 +133,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElementFromElement_InsideElement_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var fromElement = driver.FindElement(By.TagName("Tab"));
 
             var foundElement = fromElement.FindElement(ExtendedBy.AccessibilityId("TextBox"));
@@ -145,7 +145,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElementFromElement_OutsideElement_TimesOut()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var fromElement = driver.FindElement(ExtendedBy.AccessibilityId("ListBox"));
 
             var findElement = () => fromElement.FindElement(ExtendedBy.AccessibilityId("TextBox"));
@@ -157,7 +157,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElementsFromElement_InsideElement_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var fromElement = driver.FindElement(By.TagName("Tab"));
 
             var foundElements = fromElement.FindElements(By.TagName("RadioButton"));
@@ -169,7 +169,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElementsFromElement_OutsideElement_TimesOut()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var fromElement = driver.FindElement(ExtendedBy.AccessibilityId("ListBox"));
 
             var findElements = () => fromElement.FindElements(ExtendedBy.AccessibilityId("TextBox"));
@@ -181,7 +181,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElements_Default_ReturnsElements()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var elements = driver.FindElements(By.TagName("RadioButton"));
 
@@ -192,7 +192,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElements_NotExisting_TimesOut()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var findElements = () => driver.FindElements(ExtendedBy.AccessibilityId("NotExisting"));
 
@@ -203,7 +203,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElement_InOtherWindow_TimesOut()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             OpenAndSwitchToAnotherWindow(driver);
 
             var findElement = () => driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
@@ -217,7 +217,7 @@ namespace FlaUI.WebDriver.UITests
         public void FindElements_InOtherWindow_TimesOut()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             OpenAndSwitchToAnotherWindow(driver);
 
             var findElements = () => driver.FindElements(ExtendedBy.AccessibilityId("TextBox"));
@@ -227,7 +227,7 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(elementsInNewWindow, Has.Count.EqualTo(1));
         }
 
-        private static void OpenAndSwitchToAnotherWindow(RemoteWebDriver driver)
+        private static void OpenAndSwitchToAnotherWindow(WindowsDriver driver)
         {
             var initialWindowHandles = new[] { driver.CurrentWindowHandle };
             OpenAnotherWindow(driver);
@@ -236,7 +236,7 @@ namespace FlaUI.WebDriver.UITests
             driver.SwitchTo().Window(newWindowHandle);
         }
 
-        private static void OpenAnotherWindow(RemoteWebDriver driver)
+        private static void OpenAnotherWindow(WindowsDriver driver)
         {
             driver.FindElement(ExtendedBy.NonCssName("_File")).Click();
             driver.FindElement(ExtendedBy.NonCssName("Open Window 1")).Click();

@@ -6,7 +6,7 @@ Use `dotnet build` to build.
 
 ## Testing
 
-Use `dotnet test` to run tests. At the moment the tests are end-to-end UI tests that use [Selenium.WebDriver](https://www.nuget.org/packages/Selenium.WebDriver) to operate a test application, running FlaUI.WebDriver.exe in the background, so they should be run on Windows.
+Use `dotnet test` to run tests. At the moment the tests are end-to-end UI tests that use [Appium.WebDriver](https://github.com/appium/dotnet-client) to operate a test application, running FlaUI.WebDriver.exe in the background, so they should be run on Windows.
 
 Add UI tests for every feature added and every bug fixed, and feel free to improve existing test coverage.
 

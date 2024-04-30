@@ -1,52 +1,48 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Appium;
 
 namespace FlaUI.WebDriver.UITests.TestUtil
 {
-    internal class FlaUIDriverOptions : DriverOptions
+    internal class FlaUIDriverOptions : AppiumOptions
     {
-        public override ICapabilities ToCapabilities()
-        {
-            return GenerateDesiredCapabilities(true);
-        }
+        public static FlaUIDriverOptions TestApp() => ForApp(TestApplication.FullPath);
 
-        public static FlaUIDriverOptions TestApp() => App(TestApplication.FullPath);
+        public static FlaUIDriverOptions RootApp() => ForApp("Root");
 
-        public static DriverOptions RootApp() => App("Root");
-
-        public static FlaUIDriverOptions App(string path)
+        public static FlaUIDriverOptions ForApp(string path)
         {
             var options = new FlaUIDriverOptions()
             {
+                App = path,
+                AutomationName = "FlaUI",
                 PlatformName = "Windows"
             };
-            options.AddAdditionalOption("appium:automationName", "FlaUI");
-            options.AddAdditionalOption("appium:app", path);
             return options;
         }
 
-        public static DriverOptions AppTopLevelWindow(string windowHandle)
+        public static FlaUIDriverOptions ForAppTopLevelWindow(string windowHandle)
         {
             var options = new FlaUIDriverOptions()
             {
+                AutomationName = "FlaUI",
                 PlatformName = "Windows"
             };
-            options.AddAdditionalOption("appium:automationName", "FlaUI");
-            options.AddAdditionalOption("appium:appTopLevelWindow", windowHandle);
+            options.AddAdditionalAppiumOption("appium:appTopLevelWindow", windowHandle);
             return options;
         }
 
-        public static DriverOptions AppTopLevelWindowTitleMatch(string match)
+        public static FlaUIDriverOptions ForAppTopLevelWindowTitleMatch(string match)
         {
             var options = new FlaUIDriverOptions()
             {
+                AutomationName = "FlaUI",
                 PlatformName = "Windows"
             };
-            options.AddAdditionalOption("appium:automationName", "FlaUI");
-            options.AddAdditionalOption("appium:appTopLevelWindowTitleMatch", match);
+            options.AddAdditionalAppiumOption("appium:appTopLevelWindowTitleMatch", match);
             return options;
         }
 
-        public static DriverOptions Empty()
+        public static FlaUIDriverOptions Empty()
         {
             return new FlaUIDriverOptions();
         }

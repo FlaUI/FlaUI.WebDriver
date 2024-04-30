@@ -1,7 +1,7 @@
-﻿using FlaUI.WebDriver.UITests.TestUtil;
+﻿using System.Collections.Generic;
+using FlaUI.WebDriver.UITests.TestUtil;
 using NUnit.Framework;
-using OpenQA.Selenium.Remote;
-using System.Collections.Generic;
+using OpenQA.Selenium.Appium.Windows;
 
 namespace FlaUI.WebDriver.UITests
 {
@@ -12,7 +12,7 @@ namespace FlaUI.WebDriver.UITests
         public void ExecuteScript_PowerShellCommand_ReturnsResult()
         {
             var driverOptions = FlaUIDriverOptions.RootApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var executeScriptResult = driver.ExecuteScript("powerShell", new Dictionary<string,string> { ["command"] = "1+1" });
 

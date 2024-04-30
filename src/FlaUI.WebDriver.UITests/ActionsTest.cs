@@ -1,21 +1,21 @@
 ﻿using FlaUI.WebDriver.UITests.TestUtil;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Appium.Windows;
 using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Remote;
 
 namespace FlaUI.WebDriver.UITests
 {
     [TestFixture]
     public class ActionsTests
     {
-        private RemoteWebDriver _driver;
+        private WindowsDriver _driver;
 
         [SetUp]
         public void Setup()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            _driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            _driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
         }
 
         [TearDown]

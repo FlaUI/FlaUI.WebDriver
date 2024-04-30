@@ -1,8 +1,8 @@
-﻿using FlaUI.WebDriver.UITests.TestUtil;
+﻿using System.Linq;
+using FlaUI.WebDriver.UITests.TestUtil;
 using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
-using System.Linq;
+using OpenQA.Selenium.Appium.Windows;
 
 namespace FlaUI.WebDriver.UITests
 {
@@ -13,7 +13,7 @@ namespace FlaUI.WebDriver.UITests
         public void GetWindowRect_Default_IsSupported()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             var position = driver.Manage().Window.Position;
             var size = driver.Manage().Window.Size;
@@ -28,7 +28,7 @@ namespace FlaUI.WebDriver.UITests
         public void SetWindowRect_Position_IsSupported()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             driver.Manage().Window.Position = new System.Drawing.Point(100, 100);
 
@@ -41,7 +41,7 @@ namespace FlaUI.WebDriver.UITests
         public void SetWindowRect_Size_IsSupported()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             driver.Manage().Window.Size = new System.Drawing.Size(650, 650);
 
@@ -54,7 +54,7 @@ namespace FlaUI.WebDriver.UITests
         public void GetWindowHandle_AppOpensNewWindow_DoesNotSwitchToNewWindow()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var initialWindowHandle = driver.CurrentWindowHandle;
             OpenAnotherWindow(driver);
 
@@ -67,7 +67,7 @@ namespace FlaUI.WebDriver.UITests
         public void GetWindowHandle_WindowClosed_ReturnsNoSuchWindow()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             OpenAndSwitchToNewWindow(driver);
             driver.Close();
 
@@ -80,7 +80,7 @@ namespace FlaUI.WebDriver.UITests
         public void GetWindowHandles_Default_ReturnsUniqueHandlePerWindow()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var initialWindowHandle = driver.CurrentWindowHandle;
             OpenAnotherWindow(driver);
 
@@ -94,7 +94,7 @@ namespace FlaUI.WebDriver.UITests
         public void Close_Default_DoesNotChangeWindowHandle()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var initialWindowHandle = driver.CurrentWindowHandle;
             OpenAnotherWindow(driver);
 
@@ -108,7 +108,7 @@ namespace FlaUI.WebDriver.UITests
         public void Close_LastWindow_EndsSession()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             driver.Close();
 
@@ -120,7 +120,7 @@ namespace FlaUI.WebDriver.UITests
         public void SwitchWindow_Default_SwitchesToWindow()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var initialWindowHandle = driver.CurrentWindowHandle;
             OpenAnotherWindow(driver);
             var newWindowHandle = driver.WindowHandles.Except(new[] { initialWindowHandle }).Single();
@@ -134,7 +134,7 @@ namespace FlaUI.WebDriver.UITests
         public void SwitchWindow_Default_MovesWindowToForeground()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var initialWindowHandle = driver.CurrentWindowHandle;
             OpenAnotherWindow(driver);
 
@@ -146,7 +146,7 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(element.Text, Is.EqualTo("Invoked!"));
         }
 
-        private static void OpenAndSwitchToNewWindow(RemoteWebDriver driver)
+        private static void OpenAndSwitchToNewWindow(WindowsDriver driver)
         {
             var initialWindowHandle = driver.CurrentWindowHandle;
             OpenAnotherWindow(driver);
@@ -154,7 +154,7 @@ namespace FlaUI.WebDriver.UITests
             driver.SwitchTo().Window(newWindowHandle);
         }
 
-        private static void OpenAnotherWindow(RemoteWebDriver driver)
+        private static void OpenAnotherWindow(WindowsDriver driver)
         {
             driver.FindElement(ExtendedBy.NonCssName("_File")).Click();
             driver.FindElement(ExtendedBy.NonCssName("Open Window 1")).Click();
