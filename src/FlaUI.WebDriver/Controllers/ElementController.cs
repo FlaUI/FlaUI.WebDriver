@@ -167,16 +167,25 @@ namespace FlaUI.WebDriver.Controllers
             var session = GetSession(sessionId);
             var element = GetElement(session, elementId);
             var library = element.FrameworkAutomationElement.PropertyIdLibrary;
+            var periodIndex = attributeId.IndexOf('.');
             object? value = null;
 
-            // Not so crazy about using reflection here, but it seems it's the only way to get the property ID from a string?
-            if (library.GetType().GetProperty(attributeId) is { } propertyInfo &&
-                propertyInfo.GetValue(library) is PropertyId propertyId)
+            if (periodIndex >= 0)
             {
-                element.FrameworkAutomationElement.TryGetPropertyValue(propertyId, out value);
+                var patternName = attributeId.Substring(0, periodIndex);
+                var propertyName = attributeId.Substring(periodIndex + 1);
+
+                if (element.TryGetPattern(patternName, out var pattern))
+                {
+                    pattern.TryGetProperty(propertyName, out value);
+                }
+            }
+            else
+            {
+                element.TryGetProperty(attributeId, out value);
             }
 
-            return await Task.FromResult(WebDriverResult.Success(value));
+            return await Task.FromResult(WebDriverResult.Success(value?.ToString()));
         }
 
         [HttpGet("{elementId}/rect")]
