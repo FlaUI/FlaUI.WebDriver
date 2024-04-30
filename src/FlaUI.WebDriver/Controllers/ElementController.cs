@@ -1,6 +1,10 @@
-﻿using FlaUI.Core.AutomationElements;
+﻿using FlaUI.Core;
+using FlaUI.Core.AutomationElements;
+using FlaUI.Core.Identifiers;
 using FlaUI.WebDriver.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing;
+using System.Globalization;
 using System.Text;
 
 namespace FlaUI.WebDriver.Controllers
@@ -158,6 +162,24 @@ namespace FlaUI.WebDriver.Controllers
             element.AsTextBox().Text = elementSendKeysRequest.Text;
 
             return WebDriverResult.Success();
+        }
+
+        [HttpGet("{elementId}/attribute/{attributeId}")]
+        public async Task<ActionResult> GetAttribute([FromRoute] string sessionId, [FromRoute] string elementId, [FromRoute] string attributeId)
+        {
+            var session = GetSession(sessionId);
+            var element = GetElement(session, elementId);
+            var library = element.FrameworkAutomationElement.PropertyIdLibrary;
+            object? value = null;
+
+            // Not so crazy about using reflection here, but it seems it's the only way to get the property ID from a string?
+            if (library.GetType().GetProperty(attributeId) is { } propertyInfo &&
+                propertyInfo.GetValue(library) is PropertyId propertyId)
+            {
+                element.FrameworkAutomationElement.TryGetPropertyValue(propertyId, out value);
+            }
+
+            return await Task.FromResult(WebDriverResult.Success(value));
         }
 
         [HttpGet("{elementId}/rect")]
