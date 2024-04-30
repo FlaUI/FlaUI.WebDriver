@@ -1,11 +1,8 @@
-﻿using FlaUI.Core;
+﻿using System.Text;
 using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Identifiers;
 using FlaUI.WebDriver.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Drawing;
-using System.Globalization;
-using System.Text;
 
 namespace FlaUI.WebDriver.Controllers
 {
