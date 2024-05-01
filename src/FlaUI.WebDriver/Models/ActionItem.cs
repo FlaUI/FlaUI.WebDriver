@@ -1,11 +1,14 @@
-﻿namespace FlaUI.WebDriver.Models
+﻿using System.Text.Json.Serialization;
+
+namespace FlaUI.WebDriver.Models
 {
     public class ActionItem
     {
         public string Type { get; set; } = null!;
         public int? Button { get; set; }
         public int? Duration { get; set; }
-        public string? Origin { get; set; }
+        [JsonConverter(typeof(StringOrDictionaryConverter))]
+        public object? Origin { get; set; }
         public int? X { get; set; }
         public int? Y { get; set; }
         public int? DeltaX { get; set; }
