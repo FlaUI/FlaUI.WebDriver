@@ -224,5 +224,25 @@ namespace FlaUI.WebDriver.UITests
 
             Assert.That(value, Is.EqualTo(expectedValue));
         }
+
+        [Test]
+        public void GetAttribute_Recognises_Pattern_Property()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("SimpleCheckBox"));
+
+            var value = element.GetDomAttribute("Toggle.ToggleState");
+
+            Assert.That(value, Is.EqualTo("Off"));
+
+            element.Click();
+
+            value = element.GetDomAttribute("Toggle.ToggleState");
+
+            Assert.That(value, Is.EqualTo("On"));
+
+            element.Click();
+        }
     }
 }
