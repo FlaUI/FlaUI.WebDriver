@@ -219,7 +219,7 @@ namespace FlaUI.WebDriver.UITests
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
 
-            var value = element.GetAttribute(attributeName);
+            var value = element.GetDomAttribute(attributeName);
 
             Assert.That(value, Is.EqualTo(expectedValue));
         }
