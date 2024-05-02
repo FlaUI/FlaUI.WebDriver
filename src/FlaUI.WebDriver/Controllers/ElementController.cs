@@ -178,6 +178,16 @@ namespace FlaUI.WebDriver.Controllers
             {
                 return ElementNotInteractable(elementId);
             }
+
+            element.Focus();
+            
+            // Warning: Deviation from the spec. https://www.w3.org/TR/webdriver2/#element-send-keys says:
+            //
+            // > Set the text insertion caret using set selection range using current text length for both the start and end parameters.
+            //
+            // In English: "the caret should be placed at the end of the text before sending keys". That doesn't seem to be possible
+            // with UIA, meaning that the text gets inserted at the beginning, which is also WinAppDriver's behavior.
+            
             element.AsTextBox().Text = elementSendKeysRequest.Text;
 
             return WebDriverResult.Success();
