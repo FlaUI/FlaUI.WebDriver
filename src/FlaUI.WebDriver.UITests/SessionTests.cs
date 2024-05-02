@@ -129,6 +129,10 @@ namespace FlaUI.WebDriver.UITests
             var title = driver.Title;
 
             Assert.That(title, Is.EqualTo("FlaUI WPF Test App"));
+
+            driver.Quit();
+
+            Assert.That(testAppProcess.Process.HasExited, Is.False);
         }
 
         [Test]
@@ -166,6 +170,10 @@ namespace FlaUI.WebDriver.UITests
             var title = driver.Title;
 
             Assert.That(title, Is.EqualTo("FlaUI WPF Test App"));
+
+            driver.Quit();
+
+            Assert.That(testAppProcess.Process.HasExited, Is.False);
         }
 
         [Test, Ignore("Sometimes multiple processes are left open")]
