@@ -1,6 +1,7 @@
 ﻿using FlaUI.Core.AutomationElements;
 using FlaUI.WebDriver.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Text;
 
 namespace FlaUI.WebDriver.Controllers
@@ -106,8 +107,8 @@ namespace FlaUI.WebDriver.Controllers
             }
             else if (element.Patterns.Selection.IsSupported)
             {
-                var selected = element.Patterns.Selection.Pattern.Selection.Value.FirstOrDefault();
-                return selected != null ? GetElementText(selected) : string.Empty;
+                var selected = element.Patterns.Selection.Pattern.Selection.Value;
+                return string.Join(", ", selected.Select(GetElementText));
             }
             else
             {

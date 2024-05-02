@@ -52,7 +52,7 @@
                         <TextBlock Text="Item 3" AutomationProperties.AutomationId="EditableComboItem3" />
                         <TextBlock Text="Item 4" AutomationProperties.AutomationId="EditableComboItem4" />
                     </ComboBox>
-                    <ListBox SelectedIndex="0" AutomationProperties.AutomationId="ListBox" x:Name="listBox">
+                    <ListBox SelectedIndex="0" SelectionMode="Extended" AutomationProperties.AutomationId="ListBox" x:Name="listBox">
                         <ListBoxItem>ListBox Item #1</ListBoxItem>
                         <ListBoxItem>ListBox Item #2</ListBoxItem>
                     </ListBox>

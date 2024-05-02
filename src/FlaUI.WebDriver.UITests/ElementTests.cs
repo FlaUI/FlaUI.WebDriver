@@ -1,6 +1,7 @@
 ﻿using FlaUI.WebDriver.UITests.TestUtil;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using System;
 
@@ -27,10 +28,31 @@ namespace FlaUI.WebDriver.UITests
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId(elementAccessibilityId));
-
             var text = element.Text;
 
             Assert.That(text, Is.EqualTo(expectedValue));
+        }
+
+        [Test]
+        public void GetText_Returns_Text_For_Multiple_Selection()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("ListBox"));
+
+            new Actions(driver)
+                .MoveToElement(element)
+                .Click()
+                .KeyDown(Keys.Control)
+                .KeyDown("a")
+                .KeyUp("a")
+                .KeyUp(Keys.Control)
+                .Perform();
+
+            var text = element.Text;
+
+            // Seems that the order in which the selected items are returned is not guaranteed.
+            Assert.That(text, Is.EqualTo("ListBox Item #1, ListBox Item #2").Or.EqualTo("ListBox Item #2, ListBox Item #1"));
         }
 
         [Test]
