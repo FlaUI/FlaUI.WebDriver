@@ -85,26 +85,34 @@ namespace FlaUI.WebDriver.Controllers
         {
             var session = GetActiveSession(sessionId);
             var element = GetElement(session, elementId);
+            var text = GetElementText(element);
 
-            string text;
+            return await Task.FromResult(WebDriverResult.Success(text));
+        }
+
+        private static string GetElementText(AutomationElement element)
+        {
             if (element.Patterns.Text.IsSupported)
             {
-                text = element.Patterns.Text.Pattern.DocumentRange.GetText(int.MaxValue);
+                return element.Patterns.Text.Pattern.DocumentRange.GetText(int.MaxValue);
             }
             else if (element.Patterns.Value.IsSupported)
             {
-                text = element.Patterns.Value.Pattern.Value.ToString();
+                return element.Patterns.Value.Pattern.Value.ToString();
             }
             else if (element.Patterns.RangeValue.IsSupported)
             {
-                text = element.Patterns.RangeValue.Pattern.Value.ToString();
+                return element.Patterns.RangeValue.Pattern.Value.ToString();
+            }
+            else if (element.Patterns.Selection.IsSupported)
+            {
+                var selected = element.Patterns.Selection.Pattern.Selection.Value.FirstOrDefault();
+                return selected != null ? GetElementText(selected) : string.Empty;
             }
             else
             {
-                text = GetRenderedText(element);
+                return GetRenderedText(element);
             }
-
-            return await Task.FromResult(WebDriverResult.Success(text));
         }
 
         private static string GetRenderedText(AutomationElement element)
