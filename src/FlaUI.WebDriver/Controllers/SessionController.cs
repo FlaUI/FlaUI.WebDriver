@@ -30,6 +30,7 @@ namespace FlaUI.WebDriver.Controllers
                 .Select(capabillities => matchedCapabilities!);
 
             Core.Application? app;
+            var isAppOwnedBySession = false;
             var capabilities = matchingCapabilities.FirstOrDefault();
             if (capabilities == null)
             {
@@ -69,6 +70,8 @@ namespace FlaUI.WebDriver.Controllers
                         throw WebDriverResponseException.InvalidArgument($"Starting app '{appPath}' with arguments '{appArguments}' threw an exception: {e.Message}");
                     }
                 }
+
+                isAppOwnedBySession = true;
             }
             else if (TryGetStringCapability(capabilities, "appium:appTopLevelWindow", out var appTopLevelWindowString))
             {
@@ -84,7 +87,7 @@ namespace FlaUI.WebDriver.Controllers
             {
                 throw WebDriverResponseException.InvalidArgument("One of appium:app, appium:appTopLevelWindow or appium:appTopLevelWindowTitleMatch must be passed as a capability");
             }
-            var session = new Session(app);
+            var session = new Session(app, isAppOwnedBySession);
             if(TryGetNumberCapability(capabilities, "appium:newCommandTimeout", out var newCommandTimeout))
             {
                 session.NewCommandTimeout = TimeSpan.FromSeconds(newCommandTimeout);

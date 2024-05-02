@@ -6,13 +6,14 @@ namespace FlaUI.WebDriver
 {
     public class Session : IDisposable
     {
-        public Session(Application? app)
+        public Session(Application? app, bool isAppOwnedBySession)
         {
             App = app;
             SessionId = Guid.NewGuid().ToString();
             Automation = new UIA3Automation();
             InputState = new InputState();
             TimeoutsConfiguration = new TimeoutsConfiguration();
+            IsAppOwnedBySession = isAppOwnedBySession;
 
             if (app != null)
             {
@@ -30,6 +31,7 @@ namespace FlaUI.WebDriver
         public TimeSpan ImplicitWaitTimeout => TimeSpan.FromMilliseconds(TimeoutsConfiguration.ImplicitWaitTimeoutMs);
         public TimeSpan PageLoadTimeout => TimeSpan.FromMilliseconds(TimeoutsConfiguration.PageLoadTimeoutMs);
         public TimeSpan? ScriptTimeout => TimeoutsConfiguration.ScriptTimeoutMs.HasValue ? TimeSpan.FromMilliseconds(TimeoutsConfiguration.ScriptTimeoutMs.Value) : null;
+        public bool IsAppOwnedBySession { get; }
 
         public TimeoutsConfiguration TimeoutsConfiguration { get; set; }
 
@@ -124,7 +126,7 @@ namespace FlaUI.WebDriver
 
         public void Dispose()
         {
-            if (App != null && !App.HasExited)
+            if (IsAppOwnedBySession && App != null && !App.HasExited)
             {
                 App.Close();
             }
