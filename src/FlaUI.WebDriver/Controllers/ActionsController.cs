@@ -1,4 +1,5 @@
-﻿using FlaUI.Core.Input;
+﻿using System.Drawing;
+using FlaUI.Core.Input;
 using FlaUI.Core.WindowsAPI;
 using FlaUI.WebDriver.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -277,11 +278,8 @@ namespace FlaUI.WebDriver.Controllers
             switch (action.SubType)
             {
                 case "pointerMove":
-                    if (action.X == null || action.Y == null)
-                    {
-                        throw WebDriverResponseException.InvalidArgument("For pointer move, X and Y are required");
-                    }
-                    Mouse.MoveTo(action.X.Value, action.Y.Value);
+                    var point = GetCoordinates(session, action);
+                    Mouse.MoveTo(point);
                     await Task.Yield();
                     return;
                 case "pointerDown":
@@ -300,6 +298,50 @@ namespace FlaUI.WebDriver.Controllers
                     return;
                 default:
                     throw WebDriverResponseException.UnsupportedOperation($"Pointer action subtype {action.Type} not supported");
+            }
+        }
+
+        private static Point GetCoordinates(Session session, Action action)
+        {
+            var origin = action.Origin ?? "viewport";
+
+            switch (origin)
+            {
+                case "viewport":
+                    if (action.X == null || action.Y == null)
+                    {
+                        throw WebDriverResponseException.InvalidArgument("For pointer move, X and Y are required");
+                    }
+
+                    return new Point(action.X.Value, action.Y.Value);
+                case "pointer":
+                    if (action.X == null || action.Y == null)
+                    {
+                        throw WebDriverResponseException.InvalidArgument("For pointer move, X and Y are required");
+                    }
+
+                    var current = Mouse.Position;
+                    return new Point(current.X + action.X.Value, current.Y + action.Y.Value);
+                case Dictionary<string, string> originMap:
+                    if (originMap.TryGetValue("element-6066-11e4-a52e-4f735466cecf", out var elementId))
+                    {
+                        if (session.FindKnownElementById(elementId) is { } element)
+                        {
+                            var bounds = element.BoundingRectangle;
+                            var x = bounds.Left + (bounds.Width / 2) + (action.X ?? 0);
+                            var y = bounds.Top + (bounds.Height / 2) + (action.Y ?? 0);
+                            return new(x, y);
+                        }
+
+                        throw WebDriverResponseException.InvalidArgument(
+                            $"An unknown element ID '{elementId}' provided for action item '{action.Type}'.");
+                    }
+
+                    throw WebDriverResponseException.InvalidArgument(
+                        $"An unknown element '{origin}' provided for action item '{action.Type}'.");
+                default:
+                    throw WebDriverResponseException.InvalidArgument(
+                        $"Unknown origin type '{origin}' provided for action item '{action.Type}'.");
             }
         }
 

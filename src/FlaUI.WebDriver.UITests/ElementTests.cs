@@ -1,6 +1,7 @@
 ﻿using FlaUI.WebDriver.UITests.TestUtil;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using System;
 
@@ -9,40 +10,69 @@ namespace FlaUI.WebDriver.UITests
     [TestFixture]
     public class ElementTests
     {
-        [Test]
-        public void GetText_Label_ReturnsRenderedText()
+        [TestCase("TextBox", "Test TextBox")]
+        [TestCase("PasswordBox", "●●●●●●●●●●")]
+        [TestCase("EditableCombo", "Item 1")]
+        [TestCase("NonEditableCombo", "Item 1")]
+        [TestCase("ListBox", "ListBox Item #1")]
+        [TestCase("SimpleCheckBox", "Test Checkbox")]
+        [TestCase("ThreeStateCheckBox", "3-Way Test Checkbox")]
+        [TestCase("RadioButton1", "RadioButton1")]
+        [TestCase("RadioButton2", "RadioButton2")]
+        [TestCase("Slider", "5")]
+        [TestCase("InvokableButton", "Invoke me!")]
+        [TestCase("PopupToggleButton1", "Popup Toggle 1")]
+        [TestCase("Label", "Menu Item Checked")]
+        public void GetText_Returns_Correct_Text(string elementAccessibilityId, string expectedValue)
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
-            var element = driver.FindElement(ExtendedBy.AccessibilityId("Label"));
-
+            var element = driver.FindElement(ExtendedBy.AccessibilityId(elementAccessibilityId));
             var text = element.Text;
 
-            Assert.That(text, Is.EqualTo("Menu Item Checked"));
+            Assert.That(text, Is.EqualTo(expectedValue));
         }
 
         [Test]
-        public void GetText_TextBox_ReturnsTextBoxText()
+        public void GetText_Returns_Text_For_Multiple_Selection()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
-            var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("ListBox"));
+
+            new Actions(driver)
+                .MoveToElement(element)
+                .Click()
+                .KeyDown(Keys.Control)
+                .KeyDown("a")
+                .KeyUp("a")
+                .KeyUp(Keys.Control)
+                .Perform();
 
             var text = element.Text;
-            
-            Assert.That(text, Is.EqualTo("Test TextBox"));
+
+            // Seems that the order in which the selected items are returned is not guaranteed.
+            Assert.That(text, Is.EqualTo("ListBox Item #1, ListBox Item #2").Or.EqualTo("ListBox Item #2, ListBox Item #1"));
         }
 
         [Test]
-        public void GetText_Button_ReturnsButtonText()
+        public void GetText_Returns_Empty_String_For_No_Selection()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
-            var element = driver.FindElement(ExtendedBy.AccessibilityId("InvokableButton"));
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("ListBox"));
+            var item = driver.FindElement(ExtendedBy.Name("ListBox Item #1"));
+
+            new Actions(driver)
+                .MoveToElement(item)
+                .KeyDown(Keys.Control)
+                .Click()
+                .KeyUp(Keys.Control)
+                .Perform();
 
             var text = element.Text;
 
-            Assert.That(text, Is.EqualTo("Invoke me!"));
+            Assert.That(text, Is.Empty);
         }
 
         [Test]

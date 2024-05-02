@@ -48,5 +48,25 @@ namespace FlaUI.WebDriver.UITests
             string activeElmentText = _driver.SwitchTo().ActiveElement().Text;
             Assert.That(activeElmentText, Is.EqualTo("Test TextBo"));
         }
+
+        [Test]
+        public void PerformActions_MoveToElement_Click()
+        {
+            var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+
+            new Actions(_driver).MoveToElement(element).Click().Perform();
+            string activeElementText = _driver.SwitchTo().ActiveElement().Text;
+            Assert.That(activeElementText, Is.EqualTo("Test TextBox"));
+        }
+
+        [Test]
+        public void PerformActions_MoveToElement_MoveByOffset_Click()
+        {
+            var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+
+            new Actions(_driver).MoveToElement(element).MoveByOffset(5, 0).Click().Perform();
+            string activeElementText = _driver.SwitchTo().ActiveElement().Text;
+            Assert.That(activeElementText, Is.EqualTo("Test TextBox"));
+        }
     }
 }

@@ -54,7 +54,7 @@ namespace FlaUI.WebDriver
         public string SubType { get; set; }
         public int? Button { get; set; }
         public int? Duration { get; set; }
-        public string? Origin { get; set; }
+        public object? Origin { get; set; }
         public int? X { get; set; }
         public int? Y { get; set; }
         public int? DeltaX { get; set; }
