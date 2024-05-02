@@ -93,6 +93,13 @@ namespace FlaUI.WebDriver.Controllers
 
         private static string GetElementText(AutomationElement element)
         {
+            // https://www.w3.org/TR/webdriver2/#get-element-text says about this:
+            // 
+            // > Let rendered text be the result of performing implementation-specific steps whose result is exactly
+            // > the same as the result of a Function.[[Call]](null, element) with bot.dom.getVisibleText as the this value.
+            //
+            // Because it's implementation-defined, this method tries to follow WinAppDriver's implementation as closely as
+            // possible.
             if (element.Patterns.Text.IsSupported)
             {
                 return element.Patterns.Text.Pattern.DocumentRange.GetText(int.MaxValue);
