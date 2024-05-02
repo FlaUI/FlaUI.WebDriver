@@ -1,6 +1,7 @@
 ﻿using FlaUI.Core.AutomationElements;
 using FlaUI.WebDriver.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Text;
 
 namespace FlaUI.WebDriver.Controllers
@@ -85,18 +86,41 @@ namespace FlaUI.WebDriver.Controllers
         {
             var session = GetActiveSession(sessionId);
             var element = GetElement(session, elementId);
+            var text = GetElementText(element);
 
-            string text;
+            return await Task.FromResult(WebDriverResult.Success(text));
+        }
+
+        private static string GetElementText(AutomationElement element)
+        {
+            // https://www.w3.org/TR/webdriver2/#get-element-text says about this:
+            // 
+            // > Let rendered text be the result of performing implementation-specific steps whose result is exactly
+            // > the same as the result of a Function.[[Call]](null, element) with bot.dom.getVisibleText as the this value.
+            //
+            // Because it's implementation-defined, this method tries to follow WinAppDriver's implementation as closely as
+            // possible.
             if (element.Patterns.Text.IsSupported)
             {
-                text = element.Patterns.Text.Pattern.DocumentRange.GetText(int.MaxValue);
+                return element.Patterns.Text.Pattern.DocumentRange.GetText(int.MaxValue);
+            }
+            else if (element.Patterns.Value.IsSupported)
+            {
+                return element.Patterns.Value.Pattern.Value.ToString();
+            }
+            else if (element.Patterns.RangeValue.IsSupported)
+            {
+                return element.Patterns.RangeValue.Pattern.Value.ToString();
+            }
+            else if (element.Patterns.Selection.IsSupported)
+            {
+                var selected = element.Patterns.Selection.Pattern.Selection.Value;
+                return string.Join(", ", selected.Select(GetElementText));
             }
             else
             {
-                text = GetRenderedText(element);
+                return GetRenderedText(element);
             }
-
-            return await Task.FromResult(WebDriverResult.Success(text));
         }
 
         private static string GetRenderedText(AutomationElement element)
