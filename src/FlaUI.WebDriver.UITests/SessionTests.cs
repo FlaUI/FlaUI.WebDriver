@@ -315,6 +315,35 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(() => driver.Title, Throws.Nothing);
         }
 
+        [Test, Explicit(("Sometimes multiple processes are left open"))]
+        public void NewCommandTimeout_Expired_DoesNot_CloseApp_AppTopLevelWindowTitleMatch()
+        {
+            using var testAppProcess = new TestAppProcess();
+            var driverOptions = FlaUIDriverOptions.AppTopLevelWindowTitleMatch("FlaUI WPF Test App");
+            driverOptions.AddAdditionalOption("appium:newCommandTimeout", 1);
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1) + WebDriverFixture.SessionCleanupInterval * 2);
+
+            Assert.That(testAppProcess.Process.HasExited, Is.False);
+            Assert.That(() => driver.Title, Throws.TypeOf<WebDriverException>().With.Message.Matches("No active session with ID '.*'"));
+        }
+
+        [Test]
+        public void NewCommandTimeout_Expired_DoesNot_CloseApp_AppTopLevelWindow()
+        {
+            using var testAppProcess = new TestAppProcess();
+            var windowHandle = string.Format("0x{0:x}", testAppProcess.Process.MainWindowHandle);
+            var driverOptions = FlaUIDriverOptions.AppTopLevelWindow(windowHandle);
+            driverOptions.AddAdditionalOption("appium:newCommandTimeout", 1);
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1) + WebDriverFixture.SessionCleanupInterval * 2);
+
+            Assert.That(testAppProcess.Process.HasExited, Is.False);
+            Assert.That(() => driver.Title, Throws.TypeOf<WebDriverException>().With.Message.Matches("No active session with ID '.*'"));
+        }
+
         [TestCase("123")]
         [TestCase(false)]
         [TestCase("not a number")]
