@@ -9,40 +9,28 @@ namespace FlaUI.WebDriver.UITests
     [TestFixture]
     public class ElementTests
     {
-        [Test]
-        public void GetText_Label_ReturnsRenderedText()
+        [TestCase("TextBox", "Test TextBox")]
+        [TestCase("PasswordBox", "●●●●●●●●●●")]
+        [TestCase("EditableCombo", "Item 1")]
+        [TestCase("NonEditableCombo", "Item 1")]
+        [TestCase("ListBox", "ListBox Item #1")]
+        [TestCase("SimpleCheckBox", "Test Checkbox")]
+        [TestCase("ThreeStateCheckBox", "3-Way Test Checkbox")]
+        [TestCase("RadioButton1", "RadioButton1")]
+        [TestCase("RadioButton2", "RadioButton2")]
+        [TestCase("Slider", "5")]
+        [TestCase("InvokableButton", "Invoke me!")]
+        [TestCase("PopupToggleButton1", "Popup Toggle 1")]
+        [TestCase("Label", "Menu Item Checked")]
+        public void GetText_Returns_Correct_Text(string elementAccessibilityId, string expectedValue)
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
-            var element = driver.FindElement(ExtendedBy.AccessibilityId("Label"));
+            var element = driver.FindElement(ExtendedBy.AccessibilityId(elementAccessibilityId));
 
             var text = element.Text;
 
-            Assert.That(text, Is.EqualTo("Menu Item Checked"));
-        }
-
-        [Test]
-        public void GetText_TextBox_ReturnsTextBoxText()
-        {
-            var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
-            var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
-
-            var text = element.Text;
-            
-            Assert.That(text, Is.EqualTo("Test TextBox"));
-        }
-
-        [Test]
-        public void GetText_Button_ReturnsButtonText()
-        {
-            var driverOptions = FlaUIDriverOptions.TestApp();
-            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
-            var element = driver.FindElement(ExtendedBy.AccessibilityId("InvokableButton"));
-
-            var text = element.Text;
-
-            Assert.That(text, Is.EqualTo("Invoke me!"));
+            Assert.That(text, Is.EqualTo(expectedValue));
         }
 
         [Test]

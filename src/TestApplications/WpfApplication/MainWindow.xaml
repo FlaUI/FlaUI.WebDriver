@@ -40,19 +40,19 @@
                     <Label Content="Test Label" Foreground="Blue" />
                     <TextBox AutomationProperties.AutomationId="TextBox" Text="Test TextBox" Foreground="Green" x:Name="textBox"/>
                     <PasswordBox AutomationProperties.AutomationId="PasswordBox" Password="MyPassword" x:Name="passwordBox" />
-                    <ComboBox Width="120" IsEditable="True" AutomationProperties.AutomationId="EditableCombo" x:Name="editableCombo">
+                    <ComboBox Width="120" IsEditable="True" SelectedIndex="0" AutomationProperties.AutomationId="EditableCombo" x:Name="editableCombo">
                         <TextBlock Text="Item 1" AutomationProperties.AutomationId="EditableComboItem1" />
                         <TextBlock Text="Item 2" AutomationProperties.AutomationId="EditableComboItem2" />
                         <TextBlock Text="Item 3" AutomationProperties.AutomationId="EditableComboItem3" />
                     </ComboBox>
-                    <ComboBox Width="120" AutomationProperties.AutomationId="NonEditableCombo" IsEditable="False"
+                    <ComboBox Width="120" SelectedIndex="0" AutomationProperties.AutomationId="NonEditableCombo" IsEditable="False"
                             SelectionChanged="Selector_OnSelectionChanged" x:Name="nonEditableCombo">
                         <TextBlock Text="Item 1" AutomationProperties.AutomationId="EditableComboItem1" />
                         <TextBlock Text="Item 2" AutomationProperties.AutomationId="EditableComboItem2" />
                         <TextBlock Text="Item 3" AutomationProperties.AutomationId="EditableComboItem3" />
                         <TextBlock Text="Item 4" AutomationProperties.AutomationId="EditableComboItem4" />
                     </ComboBox>
-                    <ListBox AutomationProperties.AutomationId="ListBox" x:Name="listBox">
+                    <ListBox SelectedIndex="0" AutomationProperties.AutomationId="ListBox" x:Name="listBox">
                         <ListBoxItem>ListBox Item #1</ListBoxItem>
                         <ListBoxItem>ListBox Item #2</ListBoxItem>
                     </ListBox>
