@@ -56,6 +56,27 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
+        public void GetText_Returns_Empty_String_For_No_Selection()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("ListBox"));
+            var item = driver.FindElement(ExtendedBy.Name("ListBox Item #1"));
+
+            new Actions(driver)
+                .MoveToElement(item)
+                .KeyDown(Keys.Control)
+                .Click()
+                .KeyUp(Keys.Control)
+                .Perform();
+
+            var text = element.Text;
+
+            // Seems that the order in which the selected items are returned is not guaranteed.
+            Assert.That(text, Is.Empty);
+        }
+
+        [Test]
         public void Selected_NotCheckedCheckbox_ReturnsFalse()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
