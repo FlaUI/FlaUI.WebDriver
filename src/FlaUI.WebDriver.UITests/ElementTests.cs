@@ -72,7 +72,6 @@ namespace FlaUI.WebDriver.UITests
 
             var text = element.Text;
 
-            // Seems that the order in which the selected items are returned is not guaranteed.
             Assert.That(text, Is.Empty);
         }
 
