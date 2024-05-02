@@ -244,7 +244,7 @@ namespace FlaUI.WebDriver.UITests
         [TestCase(["ClassName", "TextBox"])]
         [TestCase(["FrameworkId", "WPF"])]
         [TestCase(["NonExistent", null])]
-        public void GetAttribute_TextBox_ReturnsValue(string attributeName, string? expectedValue)
+        public void GetAttribute_TextBox_ReturnsValue(string attributeName, string expectedValue)
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
