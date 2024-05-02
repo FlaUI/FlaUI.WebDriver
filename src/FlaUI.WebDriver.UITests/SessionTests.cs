@@ -316,7 +316,7 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test, Explicit(("Sometimes multiple processes are left open"))]
-        public void NewCommandTimeout_Expired_DoesNot_CloseApp_AppTopLevelWindowTitleMatch()
+        public void NewCommandTimeout_SessionWithAppTopLevelWindowTitleMatch_ClosesSessionButDoesNotCloseApp()
         {
             using var testAppProcess = new TestAppProcess();
             var driverOptions = FlaUIDriverOptions.AppTopLevelWindowTitleMatch("FlaUI WPF Test App");
@@ -330,7 +330,7 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void NewCommandTimeout_Expired_DoesNot_CloseApp_AppTopLevelWindow()
+        public void NewCommandTimeout_SessionWithAppTopLevelWindow_ClosesSessionButDoesNotCloseApp()
         {
             using var testAppProcess = new TestAppProcess();
             var windowHandle = string.Format("0x{0:x}", testAppProcess.Process.MainWindowHandle);
