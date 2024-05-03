@@ -3,7 +3,6 @@ using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
-using System;
 
 namespace FlaUI.WebDriver.UITests
 {
@@ -134,7 +133,19 @@ namespace FlaUI.WebDriver.UITests
 
             element.SendKeys("Hello World!");
 
-            Assert.That(element.Text, Is.EqualTo("Hello World!"));
+            Assert.That(element.Text, Is.EqualTo("Hello World!Test TextBox"));
+        }
+
+        [Test]
+        public void SendKeys_DownArrow_IsSupported()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("NonEditableCombo"));
+
+            element.SendKeys(Keys.Down);
+
+            Assert.That(element.Text, Is.EqualTo("Item 2"));
         }
 
         [Test]
