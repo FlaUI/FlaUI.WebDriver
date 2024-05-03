@@ -1,8 +1,7 @@
-﻿using FlaUI.Core.AutomationElements;
+﻿using System.Text;
+using FlaUI.Core.AutomationElements;
 using FlaUI.WebDriver.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Text;
 
 namespace FlaUI.WebDriver.Controllers
 {
@@ -182,6 +181,33 @@ namespace FlaUI.WebDriver.Controllers
             element.AsTextBox().Text = elementSendKeysRequest.Text;
 
             return WebDriverResult.Success();
+        }
+
+        [HttpGet("{elementId}/attribute/{attributeId}")]
+        public async Task<ActionResult> GetAttribute([FromRoute] string sessionId, [FromRoute] string elementId, [FromRoute] string attributeId)
+        {
+            var session = GetSession(sessionId);
+            var element = GetElement(session, elementId);
+            var library = element.FrameworkAutomationElement.PropertyIdLibrary;
+            var periodIndex = attributeId.IndexOf('.');
+            object? value = null;
+
+            if (periodIndex >= 0)
+            {
+                var patternName = attributeId.Substring(0, periodIndex);
+                var propertyName = attributeId.Substring(periodIndex + 1);
+
+                if (element.TryGetPattern(patternName, out var pattern))
+                {
+                    pattern.TryGetProperty(propertyName, out value);
+                }
+            }
+            else
+            {
+                element.TryGetProperty(attributeId, out value);
+            }
+
+            return await Task.FromResult(WebDriverResult.Success(value?.ToString()));
         }
 
         [HttpGet("{elementId}/rect")]
