@@ -55,13 +55,17 @@ namespace FlaUI.WebDriver.Services
                     await ClearModifierKeyState(session, undoActions);
                     undoActions.Clear();
                 }
-                else if (Keys.IsModifier(cluster))
+                else if (Keys.IsModifier(Keys.GetNormalizedKeyValue(cluster)))
                 {
                     await DispatchTypeableString(session, inputId, source, currentTypeableText.ToString());
                     currentTypeableText.Clear();
 
                     var keyDownAction = new Action(
-                        new ActionSequence { Type = "key" },
+                        new ActionSequence 
+                        { 
+                            Id = inputId,
+                            Type = "key" 
+                        },
                         new ActionItem
                         {
                             Type = "keyDown",
