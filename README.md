@@ -159,86 +159,89 @@ const result = driver.executeScript("powerShell", [{ command: `1+1` }]);
 
 ## Supported WebDriver Commands
 
-| Method | URI Template                                                   | Command                        | Implemented        |
-| ------ | -------------------------------------------------------------- | ------------------------------ | ------------------ |
-| POST   | /session                                                       | New Session                    | :white_check_mark: |
-| DELETE | /session/{session id}                                          | Delete Session                 | :white_check_mark: |
-| GET    | /status                                                        | Status                         | :white_check_mark: |
-| GET    | /session/{session id}/timeouts                                 | Get Timeouts                   | :white_check_mark: |
-| POST   | /session/{session id}/timeouts                                 | Set Timeouts                   | :white_check_mark: |
-| POST   | /session/{session id}/url                                      | Navigate To                    | N/A                |
-| GET    | /session/{session id}/url                                      | Get Current URL                | N/A                |
-| POST   | /session/{session id}/back                                     | Back                           | N/A                |
-| POST   | /session/{session id}/forward                                  | Forward                        | N/A                |
-| POST   | /session/{session id}/refresh                                  | Refresh                        | N/A                |
-| GET    | /session/{session id}/title                                    | Get Title                      | :white_check_mark: |
-| GET    | /session/{session id}/window                                   | Get Window Handle              | :white_check_mark: |
-| DELETE | /session/{session id}/window                                   | Close Window                   | :white_check_mark: |
-| POST   | /session/{session id}/window                                   | Switch To Window               | :white_check_mark: |
-| GET    | /session/{session id}/window/handles                           | Get Window Handles             | :white_check_mark: |
-| POST   | /session/{session id}/window/new                               | New Window                     |                    |
-| POST   | /session/{session id}/frame                                    | Switch To Frame                | N/A                |
-| POST   | /session/{session id}/frame/parent                             | Switch To Parent Frame         | N/A                |
-| GET    | /session/{session id}/window/rect                              | Get Window Rect                | :white_check_mark: |
-| POST   | /session/{session id}/window/rect                              | Set Window Rect                | :white_check_mark: |
-| POST   | /session/{session id}/window/maximize                          | Maximize Window                |                    |
-| POST   | /session/{session id}/window/minimize                          | Minimize Window                |                    |
-| POST   | /session/{session id}/window/fullscreen                        | Fullscreen Window              |                    |
-| GET    | /session/{session id}/element/active                           | Get Active Element             | :white_check_mark: |
-| GET    | /session/{session id}/element/{element id}/shadow              | Get Element Shadow Root        | N/A                |
-| POST   | /session/{session id}/element                                  | Find Element                   | :white_check_mark: |
-| POST   | /session/{session id}/elements                                 | Find Elements                  | :white_check_mark: |
-| POST   | /session/{session id}/element/{element id}/element             | Find Element From Element      | :white_check_mark: |
-| POST   | /session/{session id}/element/{element id}/elements            | Find Elements From Element     | :white_check_mark: |
-| POST   | /session/{session id}/shadow/{shadow id}/element               | Find Element From Shadow Root  | N/A                |
-| POST   | /session/{session id}/shadow/{shadow id}/elements              | Find Elements From Shadow Root | N/A                |
-| GET    | /session/{session id}/element/{element id}/selected            | Is Element Selected            | :white_check_mark: |
-| GET    | /session/{session id}/element/{element id}/attribute/{name}    | Get Element Attribute          | :white_check_mark: |
-| GET    | /session/{session id}/element/{element id}/property/{name}     | Get Element Property           |                    |
-| GET    | /session/{session id}/element/{element id}/css/{property name} | Get Element CSS Value          | N/A                |
-| GET    | /session/{session id}/element/{element id}/text                | Get Element Text               | :white_check_mark: |
-| GET    | /session/{session id}/element/{element id}/name                | Get Element Tag Name           | :white_check_mark: |
-| GET    | /session/{session id}/element/{element id}/rect                | Get Element Rect               | :white_check_mark: |
-| GET    | /session/{session id}/element/{element id}/enabled             | Is Element Enabled             | :white_check_mark: |
-| GET    | /session/{session id}/element/{element id}/computedrole        | Get Computed Role              |                    |
-| GET    | /session/{session id}/element/{element id}/computedlabel       | Get Computed Label             |                    |
-| POST   | /session/{session id}/element/{element id}/click               | Element Click                  | :white_check_mark: |
-| POST   | /session/{session id}/element/{element id}/clear               | Element Clear                  | :white_check_mark: |
-| POST   | /session/{session id}/element/{element id}/value               | Element Send Keys              | :white_check_mark: |
-| GET    | /session/{session id}/source                                   | Get Page Source                | N/A                |
-| POST   | /session/{session id}/execute/sync                             | Execute Script                 | :white_check_mark: |
-| POST   | /session/{session id}/execute/async                            | Execute Async Script           |                    |
-| GET    | /session/{session id}/cookie                                   | Get All Cookies                | N/A                |
-| GET    | /session/{session id}/cookie/{name}                            | Get Named Cookie               | N/A                |
-| POST   | /session/{session id}/cookie                                   | Add Cookie                     | N/A                |
-| DELETE | /session/{session id}/cookie/{name}                            | Delete Cookie                  | N/A                |
-| DELETE | /session/{session id}/cookie                                   | Delete All Cookies             | N/A                |
-| POST   | /session/{session id}/actions                                  | Perform Actions                | :white_check_mark: |
-| DELETE | /session/{session id}/actions                                  | Release Actions                | :white_check_mark: |
-| POST   | /session/{session id}/alert/dismiss                            | Dismiss Alert                  |                    |
-| POST   | /session/{session id}/alert/accept                             | Accept Alert                   |                    |
-| GET    | /session/{session id}/alert/text                               | Get Alert Text                 |                    |
-| POST   | /session/{session id}/alert/text                               | Send Alert Text                |                    |
-| GET    | /session/{session id}/screenshot                               | Take Screenshot                | :white_check_mark: |
-| GET    | /session/{session id}/element/{element id}/screenshot          | Take Element Screenshot        | :white_check_mark: |
-| POST   | /session/{session id}/print                                    | Print Page                     |                    |
+| Method | URI Template                                                   | Command                        | Implemented                        |
+| ------ | -------------------------------------------------------------- | ------------------------------ | ---------------------------------- |
+| POST   | /session                                                       | New Session                    | :white_check_mark:                 |
+| DELETE | /session/{session id}                                          | Delete Session                 | :white_check_mark:                 |
+| GET    | /status                                                        | Status                         | :white_check_mark:                 |
+| GET    | /session/{session id}/timeouts                                 | Get Timeouts                   | :white_check_mark:                 |
+| POST   | /session/{session id}/timeouts                                 | Set Timeouts                   | :white_check_mark:                 |
+| POST   | /session/{session id}/url                                      | Navigate To                    | N/A                                |
+| GET    | /session/{session id}/url                                      | Get Current URL                | N/A                                |
+| POST   | /session/{session id}/back                                     | Back                           | N/A                                |
+| POST   | /session/{session id}/forward                                  | Forward                        | N/A                                |
+| POST   | /session/{session id}/refresh                                  | Refresh                        | N/A                                |
+| GET    | /session/{session id}/title                                    | Get Title                      | :white_check_mark:                 |
+| GET    | /session/{session id}/window                                   | Get Window Handle              | :white_check_mark:                 |
+| DELETE | /session/{session id}/window                                   | Close Window                   | :white_check_mark:                 |
+| POST   | /session/{session id}/window                                   | Switch To Window               | :white_check_mark:                 |
+| GET    | /session/{session id}/window/handles                           | Get Window Handles             | :white_check_mark:                 |
+| POST   | /session/{session id}/window/new                               | New Window                     |                                    |
+| POST   | /session/{session id}/frame                                    | Switch To Frame                | N/A                                |
+| POST   | /session/{session id}/frame/parent                             | Switch To Parent Frame         | N/A                                |
+| GET    | /session/{session id}/window/rect                              | Get Window Rect                | :white_check_mark:                 |
+| POST   | /session/{session id}/window/rect                              | Set Window Rect                | :white_check_mark:                 |
+| POST   | /session/{session id}/window/maximize                          | Maximize Window                |                                    |
+| POST   | /session/{session id}/window/minimize                          | Minimize Window                |                                    |
+| POST   | /session/{session id}/window/fullscreen                        | Fullscreen Window              |                                    |
+| GET    | /session/{session id}/element/active                           | Get Active Element             | :white_check_mark:                 |
+| GET    | /session/{session id}/element/{element id}/shadow              | Get Element Shadow Root        | N/A                                |
+| POST   | /session/{session id}/element                                  | Find Element                   | :white_check_mark:                 |
+| POST   | /session/{session id}/elements                                 | Find Elements                  | :white_check_mark:                 |
+| POST   | /session/{session id}/element/{element id}/element             | Find Element From Element      | :white_check_mark:                 |
+| POST   | /session/{session id}/element/{element id}/elements            | Find Elements From Element     | :white_check_mark:                 |
+| POST   | /session/{session id}/shadow/{shadow id}/element               | Find Element From Shadow Root  | N/A                                |
+| POST   | /session/{session id}/shadow/{shadow id}/elements              | Find Elements From Shadow Root | N/A                                |
+| GET    | /session/{session id}/element/{element id}/selected            | Is Element Selected            | :white_check_mark:                 |
+| GET    | /session/{session id}/element/{element id}/attribute/{name}    | Get Element Attribute          | :white_check_mark: [^getattribute] |
+| GET    | /session/{session id}/element/{element id}/property/{name}     | Get Element Property           |                                    |
+| GET    | /session/{session id}/element/{element id}/css/{property name} | Get Element CSS Value          | N/A                                |
+| GET    | /session/{session id}/element/{element id}/text                | Get Element Text               | :white_check_mark:                 |
+| GET    | /session/{session id}/element/{element id}/name                | Get Element Tag Name           | :white_check_mark:                 |
+| GET    | /session/{session id}/element/{element id}/rect                | Get Element Rect               | :white_check_mark:                 |
+| GET    | /session/{session id}/element/{element id}/enabled             | Is Element Enabled             | :white_check_mark:                 |
+| GET    | /session/{session id}/element/{element id}/computedrole        | Get Computed Role              |                                    |
+| GET    | /session/{session id}/element/{element id}/computedlabel       | Get Computed Label             |                                    |
+| POST   | /session/{session id}/element/{element id}/click               | Element Click                  | :white_check_mark:                 |
+| POST   | /session/{session id}/element/{element id}/clear               | Element Clear                  | :white_check_mark:                 |
+| POST   | /session/{session id}/element/{element id}/value               | Element Send Keys              | :white_check_mark:                 |
+| GET    | /session/{session id}/source                                   | Get Page Source                | N/A                                |
+| POST   | /session/{session id}/execute/sync                             | Execute Script                 | :white_check_mark:                 |
+| POST   | /session/{session id}/execute/async                            | Execute Async Script           |                                    |
+| GET    | /session/{session id}/cookie                                   | Get All Cookies                | N/A                                |
+| GET    | /session/{session id}/cookie/{name}                            | Get Named Cookie               | N/A                                |
+| POST   | /session/{session id}/cookie                                   | Add Cookie                     | N/A                                |
+| DELETE | /session/{session id}/cookie/{name}                            | Delete Cookie                  | N/A                                |
+| DELETE | /session/{session id}/cookie                                   | Delete All Cookies             | N/A                                |
+| POST   | /session/{session id}/actions                                  | Perform Actions                | :white_check_mark:                 |
+| DELETE | /session/{session id}/actions                                  | Release Actions                | :white_check_mark:                 |
+| POST   | /session/{session id}/alert/dismiss                            | Dismiss Alert                  |                                    |
+| POST   | /session/{session id}/alert/accept                             | Accept Alert                   |                                    |
+| GET    | /session/{session id}/alert/text                               | Get Alert Text                 |                                    |
+| POST   | /session/{session id}/alert/text                               | Send Alert Text                |                                    |
+| GET    | /session/{session id}/screenshot                               | Take Screenshot                | :white_check_mark:                 |
+| GET    | /session/{session id}/element/{element id}/screenshot          | Take Element Screenshot        | :white_check_mark:                 |
+| POST   | /session/{session id}/print                                    | Print Page                     |                                    |
+
+[^getattribute]: In Selenium WebDriver, use `GetDomAttribute` because `GetAttribute` converts to javascript.
 
 ### WebDriver Interpretation
 
 There is an interpretation to use the WebDriver specification to drive native automation. Appium does not seem to describe that interpretation and leaves it up to the implementer as well. Therefore we describe it here:
 
-| WebDriver term                     | Interpretation                                                                                    |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------- |
-| browser                            | The Windows OS on which the FlaUI.WebDriver instance is running                                   |
-| top-level browsing contexts        | Any window of the app under test (modal windows too)                                              |
-| current top-level browsing context | The current selected window of the app under test                                                 |
-| browsing contexts                  | Any window of the app under test (equal to "top-level browsing contexts")                         |
-| current browsing context           | The current selected window of the app under test (equal to "current top-level browsing context") |
-| window                             | Any window of the app under test (modal windows too)                                              |
-| frame                              | Not implemented - frames are only relevant for web browsers                                       |
-| shadow root                        | Not implemented - shadow DOM is only relevant for web browsers                                    |
-| cookie                             | Not implemented - cookies are only relevant for web browsers                                      |
-| tag name                           | Control type in Windows                                                                           |
+| WebDriver term                     | Interpretation                                                                                                                         |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| browser                            | The Windows OS on which the FlaUI.WebDriver instance is running                                                                        |
+| top-level browsing contexts        | Any window of the app under test (modal windows too)                                                                                   |
+| current top-level browsing context | The current selected window of the app under test                                                                                      |
+| browsing contexts                  | Any window of the app under test (equal to "top-level browsing contexts")                                                              |
+| current browsing context           | The current selected window of the app under test (equal to "current top-level browsing context")                                      |
+| window                             | Any window of the app under test (modal windows too)                                                                                   |
+| frame                              | Not implemented - frames are only relevant for web browsers                                                                            |
+| shadow root                        | Not implemented - shadow DOM is only relevant for web browsers                                                                         |
+| cookie                             | Not implemented - cookies are only relevant for web browsers                                                                           |
+| tag name                           | Control type in Windows                                                                                                                |
+| attribute                          | [UI automation element property](https://learn.microsoft.com/en-us/windows/win32/winauto/uiauto-automation-element-propids) in Windows |
 
 ## Next Steps
 
