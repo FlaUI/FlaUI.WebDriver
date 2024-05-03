@@ -21,7 +21,7 @@ namespace FlaUI.WebDriver.Controllers
         public async Task<ActionResult> PerformActions([FromRoute] string sessionId, [FromBody] ActionsRequest actionsRequest)
         {
             var session = GetSession(sessionId);
-            var actionsByTick = ExtractActionSequence(actionsRequest);
+            var actionsByTick = ExtractActionSequence(session, actionsRequest);
             foreach (var tickActions in actionsByTick)
             {
                 var tickDuration = tickActions.Max(tickAction => tickAction.Duration) ?? 0;
@@ -54,13 +54,16 @@ namespace FlaUI.WebDriver.Controllers
         /// See https://www.w3.org/TR/webdriver2/#dfn-extract-an-action-sequence.
         /// Returns all sequence actions synchronized by index.
         /// </summary>
-        /// <param name="actionsRequest"></param>
+        /// <param name="session">The session</param>
+        /// <param name="actionsRequest">The request</param>
         /// <returns></returns>
-        private static List<List<Action>> ExtractActionSequence(ActionsRequest actionsRequest)
+        private static List<List<Action>> ExtractActionSequence(Session session, ActionsRequest actionsRequest)
         {
             var actionsByTick = new List<List<Action>>();
             foreach (var actionSequence in actionsRequest.Actions)
             {
+                var source = session.InputState.GetOrCreateInputSource(actionSequence.Type, actionSequence.Id);
+
                 for (var tickIndex = 0; tickIndex < actionSequence.Actions.Count; tickIndex++)
                 {
                     var actionItem = actionSequence.Actions[tickIndex];
