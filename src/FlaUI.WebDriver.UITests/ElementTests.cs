@@ -1,4 +1,5 @@
-﻿using FlaUI.WebDriver.UITests.TestUtil;
+﻿using System.Threading;
+using FlaUI.WebDriver.UITests.TestUtil;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
@@ -146,6 +147,29 @@ namespace FlaUI.WebDriver.UITests
             element.SendKeys(Keys.Down);
 
             Assert.That(element.Text, Is.EqualTo("Item 2"));
+        }
+
+        [Test]
+        public void SendKeys_AltDownArrowEscape_IsSupported()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("NonEditableCombo"));
+            var expandCollapseState = element.GetDomAttribute("ExpandCollapse.ExpandCollapseState");
+
+            Assert.That(expandCollapseState, Is.EqualTo("Collapsed"));
+
+            element.SendKeys(Keys.Alt + Keys.Down);
+
+            Thread.Sleep(2000);
+
+            Assert.That(expandCollapseState, Is.EqualTo("Expanded"));
+
+            element.SendKeys(Keys.Escape);
+
+            Thread.Sleep(2000);
+
+            Assert.That(expandCollapseState, Is.EqualTo("Collapsed"));
         }
 
         [Test]
