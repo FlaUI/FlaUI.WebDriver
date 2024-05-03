@@ -256,7 +256,7 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void GetAttribute_Recognises_Pattern_Property()
+        public void GetAttribute_PatternProperty_ReturnsValue()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
