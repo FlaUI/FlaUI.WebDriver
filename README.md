@@ -243,6 +243,22 @@ There is an interpretation to use the WebDriver specification to drive native au
 | tag name                           | Control type in Windows                                                                                                                |
 | attribute                          | [UI automation element property](https://learn.microsoft.com/en-us/windows/win32/winauto/uiauto-automation-element-propids) in Windows |
 
+### Element Attributes
+
+Attributes are mapped to UI automation element properties. Attributes without a period (`.`) are mapped to [Automation Element Properties](https://learn.microsoft.com/en-us/windows/win32/winauto/uiauto-automation-element-propids). For example to read the `UIA_ClassNamePropertyId` using Selenium WebDriver:
+
+```C#
+var element = driver.FindElement(By.Id("TextBox"));
+var value = element.GetDomAttribute("ClassName");
+```
+
+Attributes with a period are treated as [Control Pattern Properties](https://learn.microsoft.com/en-us/windows/win32/winauto/uiauto-control-pattern-propids) with the form `Pattern.Property`. For example to read the `UIA_ToggleToggleStatePropertyId` using Selenium WebDriver:
+
+```C#
+var element = driver.FindElement(By.Id("ToggleButton"));
+var value = element.GetDomAttribute("Toggle.ToggleState");
+```
+
 ## Next Steps
 
 Possible next steps for this project:
