@@ -212,6 +212,11 @@ namespace FlaUI.WebDriver.Services
                         source.Pressed.Add(action.Value);
 
                         Keyboard.Press(virtualKey);
+
+                        // HACK: Adding a small delay after each key press because otherwise the key press
+                        // seems to sometimes appear after the key action completes.
+                        await Task.Delay(10);
+
                         await Task.Yield();
                         return;
                     }
@@ -241,6 +246,11 @@ namespace FlaUI.WebDriver.Services
                         source.Pressed.Remove(action.Value);
 
                         Keyboard.Release(virtualKey);
+
+                        // HACK: Adding a small delay after each key press because otherwise the key press
+                        // seems to sometimes appear after the key action completes.
+                        await Task.Delay(10);
+
                         await Task.Yield();
                         return;
                     }
