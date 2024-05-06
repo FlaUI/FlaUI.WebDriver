@@ -62,7 +62,11 @@ namespace FlaUI.WebDriver.Controllers
             var actionsByTick = new List<List<Action>>();
             foreach (var actionSequence in actionsRequest.Actions)
             {
-                var source = session.InputState.GetOrCreateInputSource(actionSequence.Type, actionSequence.Id);
+                // TODO: Implement other input source types.
+                if (actionSequence.Type == "key")
+                {
+                    session.InputState.GetOrCreateInputSource(actionSequence.Type, actionSequence.Id);
+                }
 
                 for (var tickIndex = 0; tickIndex < actionSequence.Actions.Count; tickIndex++)
                 {
