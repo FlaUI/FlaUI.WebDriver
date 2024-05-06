@@ -1,4 +1,6 @@
-﻿namespace FlaUI.WebDriver
+﻿using System.Diagnostics;
+
+namespace FlaUI.WebDriver
 {
     public class InputState
     {
@@ -99,6 +101,11 @@
         /// <remarks>
         /// Implements "remove an input source" from https://www.w3.org/TR/webdriver2/#input-state
         /// </remarks>
-        public void RemoveInputSource(string inputId) => _inputStateMap.Remove(inputId);
+        public void RemoveInputSource(string inputId)
+        {
+            Debug.Assert(!InputCancelList.Any(x => x.Id == inputId));
+
+            _inputStateMap.Remove(inputId);
+        }
     }
 }
