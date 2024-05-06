@@ -24,9 +24,10 @@ namespace FlaUI.WebDriver
         {
             return type switch
             {
+                "none" => throw new NotImplementedException("Null input source is not implemented yet"),
                 "key" => new KeyInputSource(),
-                "pen" => throw new NotImplementedException("Pen input source is not implemented yet"),
-                "touch" => throw new NotImplementedException("Touch input source is not implemented yet"),
+                "pointer" => throw new NotImplementedException("Pointer input source is not implemented yet"),
+                "wheel" => throw new NotImplementedException("Wheel input source is not implemented yet"),
                 _ => throw new InvalidOperationException($"Unknown input source type: {type}")
             };
         }
