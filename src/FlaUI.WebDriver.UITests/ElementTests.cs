@@ -162,7 +162,7 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(element.Text, Is.EqualTo("Item 2"));
         }
 
-        [Test]
+        [Test, Ignore("Alt key combinations currently fail due to https://github.com/FlaUI/FlaUI/issues/320")]
         public void SendKeys_AltDownArrowEscape_IsSupported()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
@@ -174,11 +174,7 @@ namespace FlaUI.WebDriver.UITests
 
             element.SendKeys(Keys.Alt + Keys.Down);
 
-            Thread.Sleep(2000);
-
             Assert.That(expandCollapseState, Is.EqualTo("Expanded"));
-
-            element.SendKeys(Keys.Escape);
 
             Thread.Sleep(2000);
 
