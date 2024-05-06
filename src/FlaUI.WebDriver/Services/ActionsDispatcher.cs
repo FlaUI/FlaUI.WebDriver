@@ -213,10 +213,13 @@ namespace FlaUI.WebDriver.Services
 
                         Keyboard.Press(virtualKey);
 
+                        var cancelAction = action.Clone();
+                        cancelAction.SubType = "keyUp";
+                        session.InputState.InputCancelList.Add(cancelAction);
+
                         // HACK: Adding a small delay after each key press because otherwise the key press
                         // seems to sometimes appear after the key action completes.
                         await Task.Delay(10);
-
                         await Task.Yield();
                         return;
                     }
