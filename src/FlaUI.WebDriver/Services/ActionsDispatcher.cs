@@ -1,14 +1,12 @@
 ﻿using System.Drawing;
 using System.Globalization;
 using System.Text;
-using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Input;
-using FlaUI.Core.WindowsAPI;
 using FlaUI.WebDriver.Models;
 
 namespace FlaUI.WebDriver.Services
 {
-    public class ActionsDispatcher
+    public static class ActionsDispatcher
     {
         public static async Task DispatchAction(Session session, Action action)
         {
@@ -96,6 +94,28 @@ namespace FlaUI.WebDriver.Services
             }
 
             await ClearModifierKeyState(session, undoActions);
+        }
+
+        /// <summary>
+        /// Dispatches the release actions for the given input ID.
+        /// </summary>
+        /// <remarks>
+        /// The only part of the spec that mentions this is https://www.w3.org/TR/webdriver2/#release-actions, but the spec
+        /// mentions that the input cancel list must be empty before removing an input source in
+        /// https://www.w3.org/TR/webdriver2/#input-state so I can only assume that there was an oversight in the spec.
+        /// </remarks>
+        public static async Task DispatchReleaseActions(Session session, string inputId)
+        {
+            for (var i = session.InputState.InputCancelList.Count - 1; i >= 0; i--)
+            {
+                var cancelAction = session.InputState.InputCancelList[i];
+
+                if (cancelAction.Id == inputId)
+                {
+                    await DispatchAction(session, cancelAction);
+                    session.InputState.InputCancelList.RemoveAt(i);
+                }
+            }
         }
 
         /// <summary>

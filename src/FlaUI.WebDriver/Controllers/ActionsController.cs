@@ -33,6 +33,18 @@ namespace FlaUI.WebDriver.Controllers
                 await Task.WhenAll(dispatchTickActionTasks);
             }
 
+            // The spec says that input sources must be created for actions, but then doesn't specify how or when they should be
+            // removed. Guessing that it should be here and like this?
+            // https://github.com/w3c/webdriver/issues/1810#issuecomment-2095912170
+            foreach (var tickAction in actionsByTick)
+            {
+                foreach (var action in tickAction)
+                {
+                    await ActionsDispatcher.DispatchReleaseActions(session, action.Id);
+                    session.InputState.RemoveInputSource(action.Id);
+                }
+            }
+
             return WebDriverResult.Success();
         }
 
@@ -65,7 +77,12 @@ namespace FlaUI.WebDriver.Controllers
                 // TODO: Implement other input source types.
                 if (actionSequence.Type == "key")
                 {
-                    session.InputState.GetOrCreateInputSource(actionSequence.Type, actionSequence.Id);
+                    var source = session.InputState.GetOrCreateInputSource(actionSequence.Type, actionSequence.Id);
+
+                    // The spec says that input sources must be created for actions and they are later expected to be
+                    // found in the input source map, but doesn't specify what should add them. Guessing that it should
+                    // be done here. https://github.com/w3c/webdriver/issues/1810
+                    session.InputState.AddInputSource(actionSequence.Id, source);
                 }
 
                 for (var tickIndex = 0; tickIndex < actionSequence.Actions.Count; tickIndex++)
