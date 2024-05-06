@@ -138,6 +138,19 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
+        public void SendKeys_ShiftedCharacter_ShiftIs_Released()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+
+            element.SendKeys("!");
+            element.SendKeys("1");
+
+            Assert.That(element.Text, Is.EqualTo("!1Test TextBox"));
+        }
+
+        [Test]
         public void SendKeys_DownArrow_IsSupported()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
