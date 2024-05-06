@@ -138,7 +138,7 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void SendKeys_ShiftedCharacter_ShiftIs_Released()
+        public void SendKeys_ShiftedCharacter_ShiftIsReleased()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
