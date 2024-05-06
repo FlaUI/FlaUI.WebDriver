@@ -176,7 +176,7 @@ namespace FlaUI.WebDriver.UITests
 
             Assert.That(expandCollapseState, Is.EqualTo("Expanded"));
 
-            Thread.Sleep(2000);
+            element.SendKeys(Keys.Escape);
 
             Assert.That(expandCollapseState, Is.EqualTo("Collapsed"));
         }
