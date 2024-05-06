@@ -201,6 +201,19 @@ namespace FlaUI.WebDriver.Controllers
             }
             finally
             {
+                // This isn't in the spec, but we're going to get an assertion failure if we don't clean up.
+                // https://github.com/w3c/webdriver/issues/1809
+                for (var i = session.InputState.InputCancelList.Count - 1; i >= 0; i--)
+                {
+                    var cancelAction = session.InputState.InputCancelList[i];
+
+                    if (cancelAction.Id == inputId)
+                    {
+                        await ActionsDispatcher.DispatchAction(session, cancelAction);
+                        session.InputState.InputCancelList.RemoveAt(i);
+                    }
+                }
+
                 inputState.RemoveInputSource(inputId);
             }
 
