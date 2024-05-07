@@ -11,6 +11,7 @@ namespace FlaUI.WebDriver
         public void Reset()
         {
             InputCancelList.Clear();
+            _inputStateMap.Clear();
         }
 
         /// <summary>
