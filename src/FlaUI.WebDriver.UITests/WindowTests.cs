@@ -15,13 +15,14 @@ namespace FlaUI.WebDriver.UITests
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
+            var scaling = double.Parse(driver.FindElement(ExtendedBy.AccessibilityId("DpiScaling")).Text.ToString());
             var position = driver.Manage().Window.Position;
             var size = driver.Manage().Window.Size;
 
             Assert.That(position.X, Is.GreaterThanOrEqualTo(0));
             Assert.That(position.Y, Is.GreaterThanOrEqualTo(0));
-            Assert.That(size.Width, Is.InRange(629, 630));
-            Assert.That(size.Height, Is.InRange(515, 516));
+            Assert.That(size.Width, Is.InRange(629 * scaling, 630 * scaling));
+            Assert.That(size.Height, Is.InRange(515 * scaling, 516 * scaling));
         }
 
         [Test]
