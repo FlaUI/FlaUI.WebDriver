@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace WpfApplication
 {
@@ -25,6 +26,12 @@ namespace WpfApplication
                     MessageBox.Show("Do you really want to do it?");
                 }
             }
+        }
+
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            DpiScaling.Text = VisualTreeHelper.GetDpi(this).DpiScaleX.ToString();
+            base.OnRenderSizeChanged(sizeInfo);
         }
 
         private void OnShowLabel(object sender, RoutedEventArgs e)

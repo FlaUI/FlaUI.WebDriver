@@ -32,7 +32,9 @@
             </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom">
-            <StatusBarItem />
+            <StatusBarItem>
+                <TextBlock x:Name="DpiScaling"/>
+            </StatusBarItem>
         </StatusBar>
         <TabControl>
             <TabItem Header="Simple Controls">
