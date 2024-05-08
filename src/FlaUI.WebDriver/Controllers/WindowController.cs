@@ -135,11 +135,6 @@ namespace FlaUI.WebDriver.Controllers
             {
                 return Enumerable.Empty<string>();
             }
-            var mainWindow = session.App.GetMainWindow(session.Automation, TimeSpan.Zero);
-            if (mainWindow == null)
-            {
-                return Enumerable.Empty<string>();
-            }
 
             var knownWindows = session.App.GetAllTopLevelWindows(session.Automation)
                 .Select(session.GetOrAddKnownWindow);
