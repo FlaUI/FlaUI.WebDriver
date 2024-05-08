@@ -88,11 +88,6 @@ namespace FlaUI.WebDriver.Controllers
                 elements = await Wait.Until(() => startNode().FindAllDescendants(condition), elements => elements.Length > 0, session.ImplicitWaitTimeout);
             }
 
-            if (elements.Length == 0)
-            {
-                return NoSuchElement(findElementRequest);
-            }
-
             var knownElements = elements.Select(session.GetOrAddKnownElement);
             return await Task.FromResult(WebDriverResult.Success(
 
