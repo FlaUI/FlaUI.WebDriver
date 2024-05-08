@@ -12,11 +12,13 @@ namespace FlaUI.WebDriver.Controllers
     {
         private readonly ILogger<ElementController> _logger;
         private readonly ISessionRepository _sessionRepository;
+        private readonly IActionsDispatcher _actionsDispatcher;
 
-        public ElementController(ILogger<ElementController> logger, ISessionRepository sessionRepository)
+        public ElementController(ILogger<ElementController> logger, ISessionRepository sessionRepository, IActionsDispatcher actionsDispatcher)
         {
             _logger = logger;
             _sessionRepository = sessionRepository;
+            _actionsDispatcher = actionsDispatcher;
         }
 
         [HttpGet("active")]
@@ -171,6 +173,8 @@ namespace FlaUI.WebDriver.Controllers
         [HttpPost("{elementId}/value")]
         public async Task<ActionResult> ElementSendKeys([FromRoute] string sessionId, [FromRoute] string elementId, [FromBody] ElementSendKeysRequest elementSendKeysRequest)
         {
+            _logger.LogDebug("Element send keys for session {SessionId} and element {ElementId}", sessionId, elementId);
+
             var session = GetActiveSession(sessionId);
             var element = GetElement(session, elementId);
 
@@ -197,7 +201,7 @@ namespace FlaUI.WebDriver.Controllers
 
             try
             {
-                await ActionsDispatcher.DispatchActionsForString(session, inputId, source, elementSendKeysRequest.Text);
+                await _actionsDispatcher.DispatchActionsForString(session, inputId, source, elementSendKeysRequest.Text);
             }
             finally
             {

@@ -6,9 +6,16 @@ using FlaUI.WebDriver.Models;
 
 namespace FlaUI.WebDriver.Services
 {
-    public static class ActionsDispatcher
+    public class ActionsDispatcher : IActionsDispatcher
     {
-        public static async Task DispatchAction(Session session, Action action)
+        private readonly ILogger<ActionsDispatcher> _logger;
+
+        public ActionsDispatcher(ILogger<ActionsDispatcher> logger)
+        {
+            _logger = logger;
+        }
+
+        public async Task DispatchAction(Session session, Action action)
         {
             switch (action.Type)
             {
@@ -32,7 +39,7 @@ namespace FlaUI.WebDriver.Services
         /// <summary>
         /// Implements "dispatch actions for a string" from https://www.w3.org/TR/webdriver2/#element-send-keys
         /// </summary>
-        public static async Task DispatchActionsForString(
+        public async Task DispatchActionsForString(
             Session session,
             string inputId,
             KeyInputSource source,
@@ -107,7 +114,7 @@ namespace FlaUI.WebDriver.Services
         /// mentions that the input cancel list must be empty before removing an input source in
         /// https://www.w3.org/TR/webdriver2/#input-state so I can only assume that there was an oversight in the spec.
         /// </remarks>
-        public static async Task DispatchReleaseActions(Session session, string inputId)
+        public async Task DispatchReleaseActions(Session session, string inputId)
         {
             for (var i = session.InputState.InputCancelList.Count - 1; i >= 0; i--)
             {
@@ -128,12 +135,12 @@ namespace FlaUI.WebDriver.Services
         /// <remarks>
         /// https://github.com/w3c/webdriver/issues/1809 
         /// </remarks>
-        private static Task ClearModifierKeyState(Session session, string inputId) => DispatchReleaseActions(session, inputId);
+        private Task ClearModifierKeyState(Session session, string inputId) => DispatchReleaseActions(session, inputId);
 
         /// <summary>
         /// Implements "dispatch the events for a typeable string" from https://www.w3.org/TR/webdriver2/#element-send-keys
         /// </summary>
-        private static async Task DispatchTypeableString(
+        private async Task DispatchTypeableString(
             Session session,
             string inputId,
             KeyInputSource source,
@@ -194,7 +201,7 @@ namespace FlaUI.WebDriver.Services
         /// <summary>
         /// Dispatches a keyDown, keyUp or pause action from https://www.w3.org/TR/webdriver2/#keyboard-actions
         /// </summary>
-        private static async Task DispatchKeyAction(Session session, Action action)
+        private async Task DispatchKeyAction(Session session, Action action)
         {
             if (action.Value == null)
             {
@@ -211,6 +218,7 @@ namespace FlaUI.WebDriver.Services
                         var key = Keys.GetNormalizedKeyValue(action.Value);
                         var code = Keys.GetCode(action.Value);
                         var virtualKey = Keys.GetVirtualKey(code);
+                        _logger.LogDebug("Dispatching key down action, key '{Value}' with ID '{Id}'", code, action.Id);
 
                         if (key == "Alt")
                         {
@@ -248,6 +256,7 @@ namespace FlaUI.WebDriver.Services
                         var key = Keys.GetNormalizedKeyValue(action.Value);
                         var code = Keys.GetCode(action.Value);
                         var virtualKey = Keys.GetVirtualKey(code);
+                        _logger.LogDebug("Dispatching key up action, key '{Value}' with ID '{Id}'", code, action.Id);
 
                         if (key == "Alt")
                         {
@@ -285,11 +294,13 @@ namespace FlaUI.WebDriver.Services
             }
         }
 
-        private static async Task DispatchWheelAction(Session session, Action action)
+        private async Task DispatchWheelAction(Session session, Action action)
         {
+
             switch (action.SubType)
             {
                 case "scroll":
+                    _logger.LogDebug("Dispatching wheel scroll action, coordinates ({X},{Y}), delta ({DeltaX},{DeltaY}) with ID '{Id}'", action.X, action.Y, action.DeltaX, action.DeltaY, action.Id);
                     if (action.X == null || action.Y == null)
                     {
                         throw WebDriverResponseException.InvalidArgument("For wheel scroll, X and Y are required");
@@ -316,16 +327,19 @@ namespace FlaUI.WebDriver.Services
             }
         }
 
-        private static async Task DispatchPointerAction(Session session, Action action)
+        private async Task DispatchPointerAction(Session session, Action action)
         {
+
             switch (action.SubType)
             {
                 case "pointerMove":
+                    _logger.LogDebug("Dispatching pointer move action, coordinates ({X},{Y}) with origin {Origin}, with ID '{Id}'", action.X, action.Y, action.Origin, action.Id);
                     var point = GetCoordinates(session, action);
                     Mouse.MoveTo(point);
                     await Task.Yield();
                     return;
                 case "pointerDown":
+                    _logger.LogDebug("Dispatching pointer down action, button {Button}, with ID '{Id}'", action.Button, action.Id);
                     Mouse.Down(GetMouseButton(action.Button));
                     var cancelAction = action.Clone();
                     cancelAction.SubType = "pointerUp";
@@ -333,6 +347,7 @@ namespace FlaUI.WebDriver.Services
                     await Task.Yield();
                     return;
                 case "pointerUp":
+                    _logger.LogDebug("Dispatching pointer up action, button {Button}, with ID '{Id}'", action.Button, action.Id);
                     Mouse.Up(GetMouseButton(action.Button));
                     await Task.Yield();
                     return;
