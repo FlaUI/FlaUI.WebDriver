@@ -168,7 +168,7 @@ namespace FlaUI.WebDriver.UITests
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("EditableCombo"));
 
-            var scaling = double.Parse(driver.FindElement(ExtendedBy.AccessibilityId("DpiScaling")).Text.ToString());
+            var scaling = TestApplication.GetScaling(driver);
             var location = element.Location;
             var size = element.Size;
 

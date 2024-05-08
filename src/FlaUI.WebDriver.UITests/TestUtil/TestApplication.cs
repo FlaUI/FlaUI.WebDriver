@@ -1,5 +1,6 @@
 using System.IO;
 using System.Linq;
+using OpenQA.Selenium.Remote;
 
 namespace FlaUI.WebDriver.UITests.TestUtil
 {
@@ -8,6 +9,11 @@ namespace FlaUI.WebDriver.UITests.TestUtil
 
         private static readonly string s_currentDirectory = Directory.GetCurrentDirectory();
         private static readonly string s_solutionDirectory = FindSolutionDirectory(s_currentDirectory);
+
+        public static double GetScaling(RemoteWebDriver driver)
+        {
+            return double.Parse(driver.FindElement(ExtendedBy.AccessibilityId("DpiScaling")).Text.ToString());
+        }
 
         private static string FindSolutionDirectory(string currentDirectory)
         {
