@@ -33,18 +33,6 @@ namespace FlaUI.WebDriver.Controllers
                 await Task.WhenAll(dispatchTickActionTasks);
             }
 
-            // The spec says that input sources must be created for actions, but then doesn't specify how or when they should be
-            // removed. Guessing that it should be here and like this?
-            // https://github.com/w3c/webdriver/issues/1810#issuecomment-2095912170
-            foreach (var tickAction in actionsByTick)
-            {
-                foreach (var action in tickAction)
-                {
-                    await ActionsDispatcher.DispatchReleaseActions(session, action.Id);
-                    session.InputState.RemoveInputSource(action.Id);
-                }
-            }
-
             return WebDriverResult.Success();
         }
 
