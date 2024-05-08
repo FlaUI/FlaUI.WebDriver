@@ -212,14 +212,15 @@ namespace FlaUI.WebDriver.UITests
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("EditableCombo"));
 
+            var scaling = TestApplication.GetScaling(driver);
             var location = element.Location;
             var size = element.Size;
 
             var windowLocation = driver.Manage().Window.Position;
-            Assert.That(location.X, Is.InRange(windowLocation.X + 253, windowLocation.X + 257));
-            Assert.That(location.Y, Is.InRange(windowLocation.Y + 132, windowLocation.Y + 136));
-            Assert.That(size.Width, Is.EqualTo(120));
-            Assert.That(size.Height, Is.EqualTo(22));
+            Assert.That(location.X, Is.InRange(windowLocation.X + (253 * scaling), windowLocation.X + (257 * scaling)));
+            Assert.That(location.Y, Is.InRange(windowLocation.Y + (132 * scaling), windowLocation.Y + (136 * scaling)));
+            Assert.That(size.Width, Is.EqualTo(120 * scaling));
+            Assert.That(size.Height, Is.EqualTo(22 * scaling));
         }
 
         [TestCase("TextBox")]
