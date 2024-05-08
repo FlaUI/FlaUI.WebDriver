@@ -10,22 +10,26 @@ namespace FlaUI.WebDriver.Controllers
     {
         private readonly ILogger<ActionsController> _logger;
         private readonly ISessionRepository _sessionRepository;
+        private readonly IActionsDispatcher _actionsDispatcher;
 
-        public ActionsController(ILogger<ActionsController> logger, ISessionRepository sessionRepository)
+        public ActionsController(ILogger<ActionsController> logger, ISessionRepository sessionRepository, IActionsDispatcher actionsDispatcher)
         {
             _logger = logger;
             _sessionRepository = sessionRepository;
+            _actionsDispatcher = actionsDispatcher;
         }
 
         [HttpPost]
         public async Task<ActionResult> PerformActions([FromRoute] string sessionId, [FromBody] ActionsRequest actionsRequest)
         {
+            _logger.LogDebug("Performing actions for session {SessionId}", sessionId);
+
             var session = GetSession(sessionId);
             var actionsByTick = ExtractActionSequence(session, actionsRequest);
             foreach (var tickActions in actionsByTick)
             {
                 var tickDuration = tickActions.Max(tickAction => tickAction.Duration) ?? 0;
-                var dispatchTickActionTasks = tickActions.Select(tickAction => ActionsDispatcher.DispatchAction(session, tickAction));
+                var dispatchTickActionTasks = tickActions.Select(tickAction => _actionsDispatcher.DispatchAction(session, tickAction));
                 if (tickDuration > 0)
                 {
                     dispatchTickActionTasks = dispatchTickActionTasks.Concat(new[] { Task.Delay(tickDuration) });
@@ -39,11 +43,13 @@ namespace FlaUI.WebDriver.Controllers
         [HttpDelete]
         public async Task<ActionResult> ReleaseActions([FromRoute] string sessionId)
         {
+            _logger.LogDebug("Releasing actions for session {SessionId}", sessionId);
+
             var session = GetSession(sessionId);
 
             foreach (var cancelAction in session.InputState.InputCancelList)
             {
-                await ActionsDispatcher.DispatchAction(session, cancelAction);
+                await _actionsDispatcher.DispatchAction(session, cancelAction);
             }
             session.InputState.Reset();
 
