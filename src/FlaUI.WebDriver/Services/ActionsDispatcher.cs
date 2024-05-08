@@ -39,7 +39,6 @@ namespace FlaUI.WebDriver.Services
             string text)
         {
             var clusters = StringInfo.GetTextElementEnumerator(text);
-            var undoActions = new Dictionary<string, Action>();
             var currentTypeableText = new StringBuilder();
 
             while (clusters.MoveNext())
@@ -50,8 +49,7 @@ namespace FlaUI.WebDriver.Services
                 {
                     await DispatchTypeableString(session, inputId, source, currentTypeableText.ToString());
                     currentTypeableText.Clear();
-                    await ClearModifierKeyState(session, undoActions);
-                    undoActions.Clear();
+                    await ClearModifierKeyState(session, inputId);
                 }
                 else if (Keys.IsModifier(Keys.GetNormalizedKeyValue(cluster)))
                 {
@@ -74,7 +72,12 @@ namespace FlaUI.WebDriver.Services
 
                     var undo = keyDownAction.Clone();
                     undo.SubType = "keyUp";
-                    undoActions.Add(cluster, undo);
+
+                    // NOTE: According to the spec, the undo action should be added to an "undo actions" list,
+                    // but that may be an oversight in the spec: we already have such a thing in the input cancel
+                    // list which won't get cleared correctly if we're using a separate "undo actions" list. See
+                    // https://github.com/w3c/webdriver/issues/1809.
+                    session.InputState.InputCancelList.Add(undo);
                 }
                 else if (Keys.IsTypeable(cluster))
                 {
@@ -93,7 +96,7 @@ namespace FlaUI.WebDriver.Services
                 await DispatchTypeableString(session, inputId, source, currentTypeableText.ToString());
             }
 
-            await ClearModifierKeyState(session, undoActions);
+            await ClearModifierKeyState(session, inputId);
         }
 
         /// <summary>
@@ -119,16 +122,13 @@ namespace FlaUI.WebDriver.Services
         }
 
         /// <summary>
-        /// Implements "clear the modifier key state" from https://www.w3.org/TR/webdriver2/#element-send-keys
+        /// Implements a variation on "clear the modifier key state" from 
+        /// https://www.w3.org/TR/webdriver2/#element-send-keys.
         /// </summary>
-        /// <returns></returns>
-        private static async Task ClearModifierKeyState(Session session, Dictionary<string, Action> undoActions)
-        {
-            foreach (var (_, action) in undoActions)
-            {
-                await DispatchAction(session, action);
-            }
-        }
+        /// <remarks>
+        /// https://github.com/w3c/webdriver/issues/1809 
+        /// </remarks>
+        private static Task ClearModifierKeyState(Session session, string inputId) => DispatchReleaseActions(session, inputId);
 
         /// <summary>
         /// Implements "dispatch the events for a typeable string" from https://www.w3.org/TR/webdriver2/#element-send-keys

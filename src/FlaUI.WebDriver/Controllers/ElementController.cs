@@ -201,9 +201,6 @@ namespace FlaUI.WebDriver.Controllers
             }
             finally
             {
-                // This isn't in the spec, but we're going to get an assertion failure if we don't clean up.
-                // https://github.com/w3c/webdriver/issues/1809
-                await ActionsDispatcher.DispatchReleaseActions(session, inputId);
                 inputState.RemoveInputSource(inputId);
             }
 
