@@ -119,7 +119,7 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void FindElement_NotExisting_TimesOut()
+        public void FindElement_NotExisting_ThrowsNoSuchElementException()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
@@ -142,7 +142,7 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void FindElementFromElement_OutsideElement_TimesOut()
+        public void FindElementFromElement_OutsideElement_ThrowsNoSuchElementException()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
@@ -166,15 +166,15 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void FindElementsFromElement_OutsideElement_TimesOut()
+        public void FindElementsFromElement_OutsideElement_ReturnsEmptyList()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var fromElement = driver.FindElement(ExtendedBy.AccessibilityId("ListBox"));
 
-            var findElements = () => fromElement.FindElements(ExtendedBy.AccessibilityId("TextBox"));
+            var foundElements = fromElement.FindElements(ExtendedBy.AccessibilityId("TextBox"));
 
-            Assert.That(findElements, Throws.TypeOf<NoSuchElementException>());
+            Assert.That(foundElements, Is.Empty);
         }
 
         [Test]
@@ -189,18 +189,18 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void FindElements_NotExisting_TimesOut()
+        public void FindElements_NotExisting_ReturnsEmptyList()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
-            var findElements = () => driver.FindElements(ExtendedBy.AccessibilityId("NotExisting"));
+            var foundElements = driver.FindElements(ExtendedBy.AccessibilityId("NotExisting"));
 
-            Assert.That(findElements, Throws.TypeOf<NoSuchElementException>());
+            Assert.That(foundElements, Is.Empty);
         }
 
         [Test]
-        public void FindElement_InOtherWindow_TimesOut()
+        public void FindElement_InOtherWindow_ThrowsNoSuchElementException()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
@@ -214,15 +214,15 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void FindElements_InOtherWindow_TimesOut()
+        public void FindElements_InOtherWindow_ReturnsEmptyList()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             OpenAndSwitchToAnotherWindow(driver);
 
-            var findElements = () => driver.FindElements(ExtendedBy.AccessibilityId("TextBox"));
+            var foundElements = driver.FindElements(ExtendedBy.AccessibilityId("TextBox"));
 
-            Assert.That(findElements, Throws.TypeOf<NoSuchElementException>());
+            Assert.That(foundElements, Is.Empty);
             var elementsInNewWindow = driver.FindElements(ExtendedBy.AccessibilityId("Window1TextBox"));
             Assert.That(elementsInNewWindow, Has.Count.EqualTo(1));
         }
