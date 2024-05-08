@@ -63,20 +63,20 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(windowHandleAfterOpenCloseOtherWindow, Is.EqualTo(initialWindowHandle));
         }
 
-        [Test, Ignore("https://github.com/FlaUI/FlaUI/issues/596")]
+        [Test]
         public void GetWindowHandle_WindowClosed_ReturnsNoSuchWindow()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
-            OpenAndSwitchToNewWindow(driver);
+            var newWindowHandle = OpenAndSwitchToNewWindow(driver);
             driver.Close();
 
             var getWindowHandle = () => driver.CurrentWindowHandle;
 
-            Assert.That(getWindowHandle, Throws.TypeOf<NoSuchWindowException>().With.Message.EqualTo("Test"));
+            Assert.That(getWindowHandle, Throws.TypeOf<NoSuchWindowException>().With.Message.EqualTo($"No window found with handle '{newWindowHandle}'"));
         }
 
-        [Test, Ignore("https://github.com/FlaUI/FlaUI/issues/596")]
+        [Test]
         public void GetWindowHandles_Default_ReturnsUniqueHandlePerWindow()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
@@ -146,12 +146,13 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(element.Text, Is.EqualTo("Invoked!"));
         }
 
-        private static void OpenAndSwitchToNewWindow(RemoteWebDriver driver)
+        private static string OpenAndSwitchToNewWindow(RemoteWebDriver driver)
         {
             var initialWindowHandle = driver.CurrentWindowHandle;
             OpenAnotherWindow(driver);
             var newWindowHandle = driver.WindowHandles.Except(new[] { initialWindowHandle }).Single();
             driver.SwitchTo().Window(newWindowHandle);
+            return newWindowHandle;
         }
 
         private static void OpenAnotherWindow(RemoteWebDriver driver)

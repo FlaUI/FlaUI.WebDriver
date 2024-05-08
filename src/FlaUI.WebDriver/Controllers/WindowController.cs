@@ -135,15 +135,8 @@ namespace FlaUI.WebDriver.Controllers
             {
                 return Enumerable.Empty<string>();
             }
-            var mainWindow = session.App.GetMainWindow(session.Automation, TimeSpan.Zero);
-            if (mainWindow == null)
-            {
-                return Enumerable.Empty<string>();
-            }
 
-            // GetAllTopLevelWindows sometimes times out, so we return only the main window and modal windows
-            // https://github.com/FlaUI/FlaUI/issues/596
-            var knownWindows = mainWindow.ModalWindows.Prepend(mainWindow)
+            var knownWindows = session.App.GetAllTopLevelWindows(session.Automation)
                 .Select(session.GetOrAddKnownWindow);
             return knownWindows.Select(knownWindows => knownWindows.WindowHandle);
         }

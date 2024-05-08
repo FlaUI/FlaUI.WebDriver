@@ -131,15 +131,12 @@ The driver supports switching windows. The behavior of windows is as following (
 
 - By default, the window is the window that the application was started with.
 - The window does not change if the app/user opens another window, also not if that window happens to be on the foreground.
-- ~~All open window handles from the same app process (same process ID in Windows) can be retrieved.~~ Currently only the main window and modal windows are returned when getting window handles. See issue below.
+- All open window handles from the same app process (same process ID in Windows) can be retrieved.
 - Other processes spawned by the app that open windows are not visible as window handles.
   Those can be automated by starting a new driver session with e.g. the `appium:appTopLevelWindow` capability.
 - Closing a window does not automatically switch the window handle.
   That means that after closing a window, most commands will return an error "no such window" until the window is switched.
 - Switching to a window will set that window in the foreground.
-
-> [!IMPORTANT]
-> Currently only the main window and modal windows are returned when getting window handles. See <https://github.com/FlaUI/FlaUI/issues/596>
 
 ## Running scripts
 
