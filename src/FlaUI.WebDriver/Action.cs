@@ -6,6 +6,7 @@ namespace FlaUI.WebDriver
     {
         public Action(ActionSequence actionSequence, ActionItem actionItem)
         {
+            Id = actionSequence.Id;
             Type = actionSequence.Type;
             SubType = actionItem.Type;
             Button = actionItem.Button;
@@ -29,6 +30,7 @@ namespace FlaUI.WebDriver
 
         public Action(Action action)
         {
+            Id = action.Id;
             Type = action.Type;
             SubType = action.SubType;
             Button = action.Button;
@@ -50,6 +52,7 @@ namespace FlaUI.WebDriver
             Value = action.Value;
         }
 
+        public string Id { get; set; }
         public string Type { get; set; }
         public string SubType { get; set; }
         public int? Button { get; set; }

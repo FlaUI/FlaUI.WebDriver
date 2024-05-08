@@ -243,6 +243,14 @@ There is an interpretation to use the WebDriver specification to drive native au
 | tag name                           | Control type in Windows                                                                                                                |
 | attribute                          | [UI automation element property](https://learn.microsoft.com/en-us/windows/win32/winauto/uiauto-automation-element-propids) in Windows |
 
+### Deviations from W3C WebDriver Spec
+
+https://www.w3.org/TR/webdriver2/#element-send-keys says:
+
+> Set the text insertion caret using set selection range using current text length for both the start and end parameters.
+
+This is impossible using UIA, as there is no API to set the caret position: text instead gets inserted at the beginning of a text box. This is also WinAppDriver's behavior.
+
 ### Element Attributes
 
 Attributes are mapped to UI automation element properties. Attributes without a period (`.`) are mapped to [Automation Element Properties](https://learn.microsoft.com/en-us/windows/win32/winauto/uiauto-automation-element-propids). For example to read the `UIA_ClassNamePropertyId` using Selenium WebDriver:
