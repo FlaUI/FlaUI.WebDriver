@@ -124,6 +124,26 @@ namespace FlaUI.WebDriver
             }
         }
 
+        public void EvictUnavailableElements()
+        {
+            // Evict unavailable elements to prevent slowing down
+            var unavailableElements = KnownElementsByElementReference.Where(item => !item.Value.Element.IsAvailable).Select(item => item.Key).ToArray();
+            foreach (var unavailableElementKey in unavailableElements)
+            {
+                KnownElementsByElementReference.Remove(unavailableElementKey);
+            }
+        }
+
+        public void EvictUnavailableWindows()
+        {
+            // Evict unavailable windows to prevent slowing down
+            var unavailableWindows = KnownWindowsByWindowHandle.Where(item => !item.Value.Window.IsAvailable).Select(item => item.Key).ToArray();
+            foreach (var unavailableWindowKey in unavailableWindows)
+            {
+                KnownWindowsByWindowHandle.Remove(unavailableWindowKey);
+            }
+        }
+
         public void Dispose()
         {
             if (IsAppOwnedBySession && App != null && !App.HasExited)
