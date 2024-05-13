@@ -1,6 +1,7 @@
 ﻿using FlaUI.Core;
 using FlaUI.Core.AutomationElements;
 using FlaUI.UIA3;
+using System.Runtime.InteropServices;
 
 namespace FlaUI.WebDriver
 {
@@ -77,10 +78,11 @@ namespace FlaUI.WebDriver
 
         public KnownElement GetOrAddKnownElement(AutomationElement element)
         {
-            var result = KnownElementsByElementReference.Values.FirstOrDefault(knownElement => knownElement.Element.Equals(element));
+            var elementRuntimeId = GetRuntimeId(element);
+            var result = KnownElementsByElementReference.Values.FirstOrDefault(knownElement => knownElement.ElementRuntimeId == elementRuntimeId && SafeElementEquals(knownElement.Element, element));
             if (result == null)
             {
-                result = new KnownElement(element);
+                result = new KnownElement(element, elementRuntimeId);
                 KnownElementsByElementReference.Add(result.ElementReference, result);
             }
             return result;
@@ -97,10 +99,11 @@ namespace FlaUI.WebDriver
 
         public KnownWindow GetOrAddKnownWindow(Window window)
         {
-            var result = KnownWindowsByWindowHandle.Values.FirstOrDefault(knownElement => knownElement.Window.Equals(window));
+            var windowRuntimeId = GetRuntimeId(window);
+            var result = KnownWindowsByWindowHandle.Values.FirstOrDefault(knownWindow => knownWindow.WindowRuntimeId == windowRuntimeId && SafeElementEquals(knownWindow.Window, window));
             if (result == null)
             {
-                result = new KnownWindow(window);
+                result = new KnownWindow(window, windowRuntimeId);
                 KnownWindowsByWindowHandle.Add(result.WindowHandle, result);
             }
             return result;
@@ -153,5 +156,29 @@ namespace FlaUI.WebDriver
             Automation.Dispose();
             App?.Dispose();
         }
+
+        private string? GetRuntimeId(AutomationElement element)
+        {
+            if (!element.Properties.RuntimeId.IsSupported)
+            {
+                return null;
+            }
+
+            return string.Join(",", element.Properties.RuntimeId.Value.Select(item => Convert.ToBase64String(BitConverter.GetBytes(item))));
+        }
+
+        private bool SafeElementEquals(AutomationElement element1, AutomationElement element2)
+        {
+            try
+            {
+                return element1.Equals(element2);
+            }
+            catch (COMException)
+            {
+                // May occur if the element is suddenly no longer available
+                return false;
+            }
+        }
+
     }
 }
