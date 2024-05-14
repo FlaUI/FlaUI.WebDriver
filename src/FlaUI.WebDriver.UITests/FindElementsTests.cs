@@ -227,6 +227,23 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(elementsInNewWindow, Has.Count.EqualTo(1));
         }
 
+        [Test]
+        public void FindElements_AfterPreviousKnownElementUnavailable_DoesNotThrow()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var initialWindowHandle = driver.CurrentWindowHandle;
+            OpenAndSwitchToAnotherWindow(driver);
+            var elementInNewWindow = driver.FindElement(ExtendedBy.AccessibilityId("Window1TextBox"));
+            // close to make the elementInNewWindow unavailable
+            driver.Close();
+            driver.SwitchTo().Window(initialWindowHandle);
+
+            var foundElements = driver.FindElements(ExtendedBy.AccessibilityId("TextBox"));
+
+            Assert.That(foundElements, Has.Count.EqualTo(1));
+        }
+
         private static void OpenAndSwitchToAnotherWindow(RemoteWebDriver driver)
         {
             var initialWindowHandles = new[] { driver.CurrentWindowHandle };

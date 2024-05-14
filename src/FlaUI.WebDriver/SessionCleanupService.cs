@@ -34,21 +34,37 @@ namespace FlaUI.WebDriver
                 scope.ServiceProvider
                     .GetRequiredService<ISessionRepository>();
 
-                var timedOutSessions = sessionRepository.FindTimedOut();
-                if(timedOutSessions.Count > 0)
-                {
-                    _logger.LogInformation("Session cleanup service cleaning up {Count} sessions that did not receive commands in their specified new command timeout interval", timedOutSessions.Count);
+                RemoveTimedOutSessions(sessionRepository);
 
-                    foreach (Session session in timedOutSessions)
-                    {
-                        sessionRepository.Delete(session);
-                        session.Dispose();
-                    }
-                }
-                else
+                EvictUnavailableElements(sessionRepository);
+            }
+        }
+
+        private void EvictUnavailableElements(ISessionRepository sessionRepository)
+        {
+            foreach(var session in sessionRepository.FindAll())
+            {
+                session.EvictUnavailableElements();
+                session.EvictUnavailableWindows();
+            }
+        }
+
+        private void RemoveTimedOutSessions(ISessionRepository sessionRepository)
+        {
+            var timedOutSessions = sessionRepository.FindTimedOut();
+            if (timedOutSessions.Count > 0)
+            {
+                _logger.LogInformation("Session cleanup service cleaning up {Count} sessions that did not receive commands in their specified new command timeout interval", timedOutSessions.Count);
+
+                foreach (Session session in timedOutSessions)
                 {
-                    _logger.LogInformation("Session cleanup service did not find sessions to cleanup");
+                    sessionRepository.Delete(session);
+                    session.Dispose();
                 }
+            }
+            else
+            {
+                _logger.LogInformation("Session cleanup service did not find sessions to cleanup");
             }
         }
 

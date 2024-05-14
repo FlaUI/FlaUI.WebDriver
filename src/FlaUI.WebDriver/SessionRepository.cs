@@ -23,5 +23,10 @@
         {
             return Sessions.Where(session => session.IsTimedOut).ToList();
         }
+
+        public List<Session> FindAll()
+        {
+            return new List<Session>(Sessions);
+        }
     }
 }
