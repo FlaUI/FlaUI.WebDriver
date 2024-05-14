@@ -74,7 +74,8 @@ namespace FlaUI.WebDriver
         /// </summary>
         /// <remarks>
         /// Implements "get or create an input source" from https://www.w3.org/TR/webdriver2/#input-state
-        /// Note: The spec does not specify that a created input source should be added to the input state map.
+        /// Note: The spec does not specify that a created input source should be added to the input state map
+        /// but this implementation does.
         /// </remarks>
         public InputSource GetOrCreateInputSource(string type, string id)
         {
@@ -86,7 +87,16 @@ namespace FlaUI.WebDriver
                     $"Input source with id '{id}' already exists and has a different type: {source.Type}");
             }
 
-            return CreateInputSource(type);
+            // Note: The spec does not specify that a created input source should be added to the input state map,
+            // however it needs to be added somewhere. The caller can't do it because it doesn't know if the source
+            // was created or already existed. See https://github.com/w3c/webdriver/issues/1810
+            if (source == null)
+            {
+                source = CreateInputSource(type);
+                AddInputSource(id, source);
+            }
+
+            return source;
         }
 
         /// <summary>
