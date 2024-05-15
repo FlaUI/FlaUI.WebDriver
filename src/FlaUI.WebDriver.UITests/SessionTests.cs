@@ -17,30 +17,30 @@ namespace FlaUI.WebDriver.UITests
 
             var newSession = () => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, emptyOptions);
 
-            Assert.That(newSession, Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("Required capabilities did not match. Capability `platformName` with value `windows` is required, capability 'appium:automationName' with value `FlaUI` is required, and one of appium:app, appium:appTopLevelWindow or appium:appTopLevelWindowTitleMatch must be passed as a capability (SessionNotCreated)"));
+            Assert.That(newSession, Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("Missing capability 'platformName' with value 'windows' (SessionNotCreated)"));
         }
 
         [Test]
         public void NewSession_AutomationNameMissing_ReturnsError()
         {
             var emptyOptions = FlaUIDriverOptions.Empty();
-            emptyOptions.AddAdditionalOption("appium:platformName", "windows");
+            emptyOptions.PlatformName = "Windows";
 
             var newSession = () => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, emptyOptions);
 
-            Assert.That(newSession, Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("Required capabilities did not match. Capability `platformName` with value `windows` is required, capability 'appium:automationName' with value `FlaUI` is required, and one of appium:app, appium:appTopLevelWindow or appium:appTopLevelWindowTitleMatch must be passed as a capability (SessionNotCreated)"));
+            Assert.That(newSession, Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("Missing capability 'appium:automationName' with value 'flaui' (SessionNotCreated)"));
         }
 
         [Test]
         public void NewSession_AllAppCapabilitiesMissing_ReturnsError()
         {
             var emptyOptions = FlaUIDriverOptions.Empty();
-            emptyOptions.AddAdditionalOption("appium:platformName", "windows");
+            emptyOptions.PlatformName = "Windows";
             emptyOptions.AddAdditionalOption("appium:automationName", "windows");
 
             var newSession = () => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, emptyOptions);
 
-            Assert.That(newSession, Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("Required capabilities did not match. Capability `platformName` with value `windows` is required, capability 'appium:automationName' with value `FlaUI` is required, and one of appium:app, appium:appTopLevelWindow or appium:appTopLevelWindowTitleMatch must be passed as a capability (SessionNotCreated)"));
+            Assert.That(newSession, Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("Missing capability 'appium:automationName' with value 'flaui' (SessionNotCreated)"));
         }
 
         [Test]
@@ -115,7 +115,7 @@ namespace FlaUI.WebDriver.UITests
             driverOptions.AddAdditionalOption("unknown:unknown", "value");
 
             Assert.That(() => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions),
-                Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("Required capabilities did not match. Capability `platformName` with value `windows` is required, capability 'appium:automationName' with value `FlaUI` is required, and one of appium:app, appium:appTopLevelWindow or appium:appTopLevelWindowTitleMatch must be passed as a capability (SessionNotCreated)"));
+                Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("The following capabilities could not be matched: 'unknown:unknown' (SessionNotCreated)"));
         }
 
         [Test]
@@ -158,7 +158,7 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(newSession, Throws.TypeOf<WebDriverArgumentException>().With.Message.EqualTo("Capability appium:appTopLevelWindow '0x0' should not be zero"));
         }
 
-        [Ignore("Sometimes multiple processes are left open")]
+        [Explicit("Sometimes multiple processes are left open")]
         [TestCase("FlaUI WPF Test App")]
         [TestCase("FlaUI WPF .*")]
         public void NewSession_AppTopLevelWindowTitleMatch_IsSupported(string match)
@@ -176,7 +176,7 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(testAppProcess.Process.HasExited, Is.False);
         }
 
-        [Test, Ignore("Sometimes multiple processes are left open")]
+        [Test, Explicit("Sometimes multiple processes are left open")]
         public void NewSession_AppTopLevelWindowTitleMatchMultipleMatching_ReturnsError()
         {
             using var testAppProcess = new TestAppProcess();
