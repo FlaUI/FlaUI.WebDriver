@@ -22,7 +22,7 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(position.X, Is.GreaterThanOrEqualTo(0));
             Assert.That(position.Y, Is.GreaterThanOrEqualTo(0));
             Assert.That(size.Width, Is.InRange(629 * scaling, 630 * scaling));
-            Assert.That(size.Height, Is.InRange(515 * scaling, 516 * scaling));
+            Assert.That(size.Height, Is.InRange(550 * scaling, 551 * scaling));
         }
 
         [Test]
