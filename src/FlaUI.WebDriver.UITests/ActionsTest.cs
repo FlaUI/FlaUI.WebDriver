@@ -50,7 +50,7 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void PerformActions_MoveToElement_Click()
+        public void PerformActions_MoveToElementAndClick_SelectsElement()
         {
             var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
 
@@ -60,7 +60,17 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void PerformActions_MoveToElement_MoveByOffset_Click()
+        public void PerformActions_MoveToElement_IsSupported()
+        {
+            var element = _driver.FindElement(ExtendedBy.AccessibilityId("LabelWithHover"));
+
+            new Actions(_driver).MoveToElement(element).Perform();
+
+            Assert.That(element.Text, Is.EqualTo("Hovered!"));
+        }
+
+        [Test]
+        public void PerformActions_MoveToElementMoveByOffsetAndClick_SelectsElement()
         {
             var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
 
