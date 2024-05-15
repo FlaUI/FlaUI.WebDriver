@@ -4,11 +4,11 @@ namespace FlaUI.WebDriver
 {
     public class KnownElement
     {
-        public KnownElement(AutomationElement element, string? elementRuntimeId)
+        public KnownElement(AutomationElement element, string? elementRuntimeId, string elementReference)
         {
             Element = element;
             ElementRuntimeId = elementRuntimeId;
-            ElementReference = Guid.NewGuid().ToString();
+            ElementReference = elementReference;
         }
 
         public string ElementReference { get; }

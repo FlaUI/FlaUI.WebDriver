@@ -1,6 +1,7 @@
 ﻿using FlaUI.Core;
 using FlaUI.Core.AutomationElements;
 using FlaUI.UIA3;
+using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 
 namespace FlaUI.WebDriver
@@ -27,8 +28,8 @@ namespace FlaUI.WebDriver
         public UIA3Automation Automation { get; }
         public Application? App { get; }
         public InputState InputState { get; }
-        private Dictionary<string, KnownElement> KnownElementsByElementReference { get; } = new Dictionary<string, KnownElement>();
-        private Dictionary<string, KnownWindow> KnownWindowsByWindowHandle { get; } = new Dictionary<string, KnownWindow>();
+        private ConcurrentDictionary<string, KnownElement> KnownElementsByElementReference { get; } = new ConcurrentDictionary<string, KnownElement>();
+        private ConcurrentDictionary<string, KnownWindow> KnownWindowsByWindowHandle { get; } = new ConcurrentDictionary<string, KnownWindow>();
         public TimeSpan ImplicitWaitTimeout => TimeSpan.FromMilliseconds(TimeoutsConfiguration.ImplicitWaitTimeoutMs);
         public TimeSpan PageLoadTimeout => TimeSpan.FromMilliseconds(TimeoutsConfiguration.PageLoadTimeoutMs);
         public TimeSpan? ScriptTimeout => TimeoutsConfiguration.ScriptTimeoutMs.HasValue ? TimeSpan.FromMilliseconds(TimeoutsConfiguration.ScriptTimeoutMs.Value) : null;
@@ -82,8 +83,11 @@ namespace FlaUI.WebDriver
             var result = KnownElementsByElementReference.Values.FirstOrDefault(knownElement => knownElement.ElementRuntimeId == elementRuntimeId && SafeElementEquals(knownElement.Element, element));
             if (result == null)
             {
-                result = new KnownElement(element, elementRuntimeId);
-                KnownElementsByElementReference.Add(result.ElementReference, result);
+                do
+                {
+                    result = new KnownElement(element, elementRuntimeId, Guid.NewGuid().ToString());
+                }
+                while (!KnownElementsByElementReference.TryAdd(result.ElementReference, result));
             }
             return result;
         }
@@ -103,8 +107,11 @@ namespace FlaUI.WebDriver
             var result = KnownWindowsByWindowHandle.Values.FirstOrDefault(knownWindow => knownWindow.WindowRuntimeId == windowRuntimeId && SafeElementEquals(knownWindow.Window, window));
             if (result == null)
             {
-                result = new KnownWindow(window, windowRuntimeId);
-                KnownWindowsByWindowHandle.Add(result.WindowHandle, result);
+                do
+                {
+                    result = new KnownWindow(window, windowRuntimeId, Guid.NewGuid().ToString());
+                }
+                while (!KnownWindowsByWindowHandle.TryAdd(result.WindowHandle, result));
             }
             return result;
         }
@@ -123,27 +130,29 @@ namespace FlaUI.WebDriver
             var item = KnownWindowsByWindowHandle.Values.FirstOrDefault(knownElement => knownElement.Window.Equals(window));
             if (item != null)
             {
-                KnownWindowsByWindowHandle.Remove(item.WindowHandle);
+                KnownWindowsByWindowHandle.TryRemove(item.WindowHandle, out _);
             }
         }
 
         public void EvictUnavailableElements()
         {
             // Evict unavailable elements to prevent slowing down
-            var unavailableElements = KnownElementsByElementReference.Where(item => !item.Value.Element.IsAvailable).Select(item => item.Key).ToArray();
+            // (use ToArray to prevent concurrency issues while enumerating)
+            var unavailableElements = KnownElementsByElementReference.ToArray().Where(item => !item.Value.Element.IsAvailable).Select(item => item.Key);
             foreach (var unavailableElementKey in unavailableElements)
             {
-                KnownElementsByElementReference.Remove(unavailableElementKey);
+                KnownElementsByElementReference.TryRemove(unavailableElementKey, out _);
             }
         }
 
         public void EvictUnavailableWindows()
         {
             // Evict unavailable windows to prevent slowing down
-            var unavailableWindows = KnownWindowsByWindowHandle.Where(item => !item.Value.Window.IsAvailable).Select(item => item.Key).ToArray();
+            // (use ToArray to prevent concurrency issues while enumerating)
+            var unavailableWindows = KnownWindowsByWindowHandle.ToArray().Where(item => !item.Value.Window.IsAvailable).Select(item => item.Key).ToArray();
             foreach (var unavailableWindowKey in unavailableWindows)
             {
-                KnownWindowsByWindowHandle.Remove(unavailableWindowKey);
+                KnownWindowsByWindowHandle.TryRemove(unavailableWindowKey, out _);
             }
         }
 
