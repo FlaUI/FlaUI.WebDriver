@@ -3,7 +3,6 @@ using OpenQA.Selenium.Remote;
 using FlaUI.WebDriver.UITests.TestUtil;
 using OpenQA.Selenium;
 using System;
-using System.Collections.Generic;
 
 namespace FlaUI.WebDriver.UITests
 {
@@ -95,12 +94,9 @@ namespace FlaUI.WebDriver.UITests
         public void NewSession_Timeouts_IsSupported()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
-            driverOptions.AddAdditionalOption("timeouts", new Dictionary<string, int>()
-            {
-                ["script"] = 10000,
-                ["pageLoad"] = 50000,
-                ["implicit"] = 3000
-            });
+            driverOptions.ScriptTimeout = TimeSpan.FromSeconds(10);
+            driverOptions.PageLoadTimeout = TimeSpan.FromSeconds(50);
+            driverOptions.ImplicitWaitTimeout = TimeSpan.FromSeconds(3);
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             Assert.That(driver.Manage().Timeouts().AsynchronousJavaScript, Is.EqualTo(TimeSpan.FromSeconds(10)));
