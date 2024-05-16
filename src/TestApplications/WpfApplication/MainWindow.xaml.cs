@@ -71,5 +71,15 @@ namespace WpfApplication
             var window = new Window1();
             window.Show();
         }
+
+        private void LabelWithHover_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            lblHover.Content = "Hovered!";
+        }
+
+        private void LabelWithHover_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            lblHover.Content = "Please hover over me";
+        }
     }
 }

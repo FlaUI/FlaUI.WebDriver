@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfApplication"
         mc:Ignorable="d"
         Title="FlaUI WPF Test App"
-        Height="515.931" Width="629.303"
+        Height="550" Width="629.303"
         ResizeMode="CanResize">
     <Window.Resources>
         <ResourceDictionary>
@@ -98,6 +98,7 @@
                            PlacementTarget="{Binding ElementName=PopupToggleButton2}"
                            StaysOpen="False" />
                     <Label Content="Menu Item Checked" AutomationProperties.AutomationId="Label" Foreground="Red" x:Name="lblMenuChk"/>
+                    <Label Content="Please hover over me" AutomationProperties.AutomationId="LabelWithHover" MouseEnter="LabelWithHover_MouseEnter" MouseLeave="LabelWithHover_MouseLeave" x:Name="lblHover"/>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Complex Controls">
