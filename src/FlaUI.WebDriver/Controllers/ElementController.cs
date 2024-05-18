@@ -37,7 +37,15 @@ namespace FlaUI.WebDriver.Controllers
         {
             var session = GetActiveSession(sessionId);
             var element = GetElement(session, elementId);
-            return await Task.FromResult(WebDriverResult.Success(!element.IsOffscreen));
+
+            if (element.Properties.IsOffscreen.IsSupported)
+            {
+                return await Task.FromResult(WebDriverResult.Success(!element.IsOffscreen));
+            }
+            else
+            {
+                return await Task.FromResult(WebDriverResult.Success(true));
+            }
         }
 
         [HttpGet("{elementId}/enabled")]
@@ -63,10 +71,15 @@ namespace FlaUI.WebDriver.Controllers
             var element = GetElement(session, elementId);
 
             ScrollElementContainerIntoView(element);
-            if (!await Wait.Until(() => !element.IsOffscreen, session.ImplicitWaitTimeout))
+
+            if (element.Properties.IsOffscreen.IsSupported)
             {
-                return ElementNotInteractable(elementId);
+                if (!await Wait.Until(() => !element.IsOffscreen, session.ImplicitWaitTimeout))
+                {
+                    return ElementNotInteractable(elementId);
+                }
             }
+
             element.Click();
 
             return WebDriverResult.Success();
@@ -179,9 +192,13 @@ namespace FlaUI.WebDriver.Controllers
             var element = GetElement(session, elementId);
 
             ScrollElementContainerIntoView(element);
-            if (!await Wait.Until(() => !element.IsOffscreen, session.ImplicitWaitTimeout))
+
+            if (element.Properties.IsOffscreen.IsSupported)
             {
-                return ElementNotInteractable(elementId);
+                if (!await Wait.Until(() => !element.IsOffscreen, session.ImplicitWaitTimeout))
+                {
+                    return ElementNotInteractable(elementId);
+                }
             }
 
             element.Focus();
