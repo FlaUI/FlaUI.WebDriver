@@ -9,6 +9,17 @@ namespace FlaUI.WebDriver.UITests
     public class FindElementsTests
     {
         [Test]
+        public void FindElement_FromRoot_ReturnsElement()
+        {
+            var driverOptions = FlaUIDriverOptions.RootApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            var element = driver.FindElement(By.Name("Taskbar"));
+
+            Assert.That(element, Is.Not.Null);
+        }
+
+        [Test]
         public void FindElement_ByXPath_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
