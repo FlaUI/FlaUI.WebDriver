@@ -2,7 +2,6 @@
 using FlaUI.Core.WindowsAPI;
 using FlaUI.WebDriver.Models;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 
 namespace FlaUI.WebDriver.Services
 {
