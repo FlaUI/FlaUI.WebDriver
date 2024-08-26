@@ -24,7 +24,7 @@ namespace FlaUI.WebDriver.Controllers
         public async Task<ActionResult> FindElement([FromRoute] string sessionId, [FromBody] FindElementRequest findElementRequest)
         {
             var session = GetActiveSession(sessionId);
-            return await FindElementFrom(() => session.CurrentWindow, findElementRequest, session);
+            return await FindElementFrom(() => session.App == null ? session.Automation.GetDesktop() : session.CurrentWindow, findElementRequest, session);
         }
 
         [HttpPost("element/{elementId}/element")]
@@ -39,7 +39,7 @@ namespace FlaUI.WebDriver.Controllers
         public async Task<ActionResult> FindElements([FromRoute] string sessionId, [FromBody] FindElementRequest findElementRequest)
         {
             var session = GetActiveSession(sessionId);
-            return await FindElementsFrom(() => session.CurrentWindow, findElementRequest, session);
+            return await FindElementsFrom(() => session.App == null ? session.Automation.GetDesktop() : session.CurrentWindow, findElementRequest, session);
         }
 
         [HttpPost("element/{elementId}/elements")]
@@ -203,7 +203,7 @@ namespace FlaUI.WebDriver.Controllers
         private Session GetActiveSession(string sessionId)
         {
             var session = GetSession(sessionId);
-            if (session.App == null || session.App.HasExited)
+            if (session.App != null && session.App.HasExited)
             {
                 throw WebDriverResponseException.NoWindowsOpenForSession();
             }
