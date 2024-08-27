@@ -9,7 +9,7 @@ namespace FlaUI.WebDriver.UITests
     public class FindElementsTests
     {
         [Test]
-        public void FindElement_FromRoot_ReturnsElement()
+        public void FindElement_FromDesktop_ReturnsElement()
         {
             var driverOptions = FlaUIDriverOptions.RootApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);

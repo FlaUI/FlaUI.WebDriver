@@ -298,7 +298,7 @@ namespace FlaUI.WebDriver.Controllers
         private Session GetActiveSession(string sessionId)
         {
             var session = GetSession(sessionId);
-            if (session.App == null || session.App.HasExited)
+            if (session.App != null && session.App.HasExited)
             {
                 throw WebDriverResponseException.NoWindowsOpenForSession();
             }
