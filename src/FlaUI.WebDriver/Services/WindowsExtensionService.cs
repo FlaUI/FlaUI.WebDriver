@@ -2,7 +2,6 @@
 using FlaUI.Core.WindowsAPI;
 using FlaUI.WebDriver.Models;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 
 namespace FlaUI.WebDriver.Services
 {
@@ -25,10 +24,12 @@ namespace FlaUI.WebDriver.Services
                 {
                     throw WebDriverResponseException.ElementNotFound(action.ElementId);
                 }
+                _logger.LogDebug("Clicking element {ElementId} with mouse button {MouseButton}", action.ElementId, mouseButton);
                 Mouse.Click(element.BoundingRectangle.Location, mouseButton);
             }
             else if (action.X.HasValue && action.Y.HasValue)
             {
+                _logger.LogDebug("Clicking point ({X}, {Y}) with mouse button {MouseButton}", action.X.Value, action.Y.Value, mouseButton);
                 Mouse.Click(new Point { X = action.X.Value, Y = action.Y.Value }, mouseButton);
             }
             else
@@ -42,6 +43,7 @@ namespace FlaUI.WebDriver.Services
         {
             if (action.StartX.HasValue && action.StartY.HasValue)
             {
+                _logger.LogDebug("Moving mouse to ({X}, {Y})", action.StartX.Value, action.StartY.Value);
                 Mouse.MoveTo(action.StartX.Value, action.StartY.Value);
             }
             else if (action.StartElementId != null)
@@ -51,6 +53,7 @@ namespace FlaUI.WebDriver.Services
                 {
                     throw WebDriverResponseException.ElementNotFound(action.StartElementId);
                 }
+                _logger.LogDebug("Moving mouse to element {ElementId}", action.StartElementId);
                 Mouse.MoveTo(element.BoundingRectangle.Location);
             }
             else
@@ -60,11 +63,13 @@ namespace FlaUI.WebDriver.Services
 
             if (action.DurationMs.HasValue)
             {
+                _logger.LogDebug("Waiting for {DurationMs}ms", action.DurationMs.Value);
                 await Task.Delay(action.DurationMs.Value);
             }
 
             if (action.EndX.HasValue && action.EndY.HasValue)
             {
+                _logger.LogDebug("Moving mouse to ({X}, {Y})", action.EndX.Value, action.EndY.Value);
                 Mouse.MoveTo(action.EndX.Value, action.EndY.Value);
             }
             else if (action.EndElementId != null)
@@ -74,6 +79,7 @@ namespace FlaUI.WebDriver.Services
                 {
                     throw WebDriverResponseException.ElementNotFound(action.EndElementId);
                 }
+                _logger.LogDebug("Moving mouse to element {ElementId}", action.EndElementId);
                 Mouse.MoveTo(element.BoundingRectangle.Location);
             }
             else

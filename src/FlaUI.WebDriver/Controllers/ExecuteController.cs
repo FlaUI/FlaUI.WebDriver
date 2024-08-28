@@ -1,11 +1,7 @@
-﻿using FlaUI.Core.Input;
-using FlaUI.Core.WindowsAPI;
-using FlaUI.WebDriver.Models;
+﻿using FlaUI.WebDriver.Models;
 using FlaUI.WebDriver.Services;
-using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Drawing;
 using System.Text.Json;
 
 namespace FlaUI.WebDriver.Controllers
