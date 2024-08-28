@@ -301,6 +301,18 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
+        public void GetAttribute_DesktopElement_ReturnsAttribute()
+        {
+            var driverOptions = FlaUIDriverOptions.RootApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(By.Name("Taskbar"));
+
+            var result = element.GetDomAttribute("ClassName");
+
+            Assert.That(result, Is.EqualTo("Shell_TrayWnd"));
+        }
+
+        [Test]
         public void GetAttribute_PatternProperty_ReturnsValue()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();

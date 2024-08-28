@@ -21,9 +21,19 @@ namespace FlaUI.WebDriver.Controllers
         public async Task<ActionResult> TakeScreenshot([FromRoute] string sessionId)
         {
             var session = GetActiveSession(sessionId);
-            var currentWindow = session.CurrentWindow;
-            _logger.LogInformation("Taking screenshot of window with title {WindowTitle} (session {SessionId})", currentWindow.Title, session.SessionId);
-            using var bitmap = currentWindow.Capture();
+            AutomationElement screenshotElement;
+            if (session.App == null)
+            {
+                _logger.LogInformation("Taking screenshot of desktop (session {SessionId})", session.SessionId);
+                screenshotElement = session.Automation.GetDesktop();
+            }
+            else
+            {
+                var currentWindow = session.CurrentWindow;
+                _logger.LogInformation("Taking screenshot of window with title {WindowTitle} (session {SessionId})", currentWindow.Title, session.SessionId);
+                screenshotElement = currentWindow;
+            }
+            using var bitmap = screenshotElement.Capture();
             return await Task.FromResult(WebDriverResult.Success(GetBase64Data(bitmap)));
         }
 
@@ -57,7 +67,7 @@ namespace FlaUI.WebDriver.Controllers
         private Session GetActiveSession(string sessionId)
         {
             var session = GetSession(sessionId);
-            if (session.App == null || session.App.HasExited)
+            if (session.App != null && session.App.HasExited)
             {
                 throw WebDriverResponseException.NoWindowsOpenForSession();
             }
