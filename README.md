@@ -1,6 +1,9 @@
 # FlaUI.WebDriver
 
 [![build](https://github.com/FlaUI/FlaUI.WebDriver/actions/workflows/build.yml/badge.svg)](https://github.com/FlaUI/FlaUI.WebDriver/actions/workflows/build.yml)
+[![CodeQL](https://github.com/FlaUI/FlaUI.WebDriver/actions/workflows/codeql.yml/badge.svg)](https://github.com/FlaUI/FlaUI.WebDriver/actions/workflows/codeql.yml)
+![GitHub License](https://img.shields.io/badge/license-MIT-blue.svg)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
 
 FlaUI.WebDriver is a [W3C WebDriver2](https://www.w3.org/TR/webdriver2/) implementation using FlaUI's automation. It currently only supports UIA3.
 
