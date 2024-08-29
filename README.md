@@ -245,7 +245,7 @@ There is an interpretation to use the WebDriver specification to drive native au
 
 ### Deviations from W3C WebDriver Spec
 
-https://www.w3.org/TR/webdriver2/#element-send-keys says:
+<https://www.w3.org/TR/webdriver2/#element-send-keys> says:
 
 > Set the text insertion caret using set selection range using current text length for both the start and end parameters.
 
