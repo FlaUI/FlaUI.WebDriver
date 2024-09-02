@@ -10,6 +10,7 @@
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <GitVersionTargetFramework>net8.0</GitVersionTargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
