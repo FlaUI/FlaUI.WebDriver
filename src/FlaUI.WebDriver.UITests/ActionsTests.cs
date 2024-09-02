@@ -36,6 +36,28 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
+        public void SendKeys_Default_IsSupported()
+        {
+            var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+
+            element.Clear();
+            element.SendKeys("abc123");
+
+            Assert.That(element.Text, Is.EqualTo("abc123"));
+        }
+
+        [Test]
+        public void SendKeys_ShiftedCharacter_IsSupported()
+        {
+            var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+
+            element.Clear();
+            element.SendKeys("@TEST");
+
+            Assert.That(element.Text, Is.EqualTo("@TEST"));
+        }
+
+        [Test]
         public void ReleaseActions_Default_ReleasesKeys()
         {
             var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
