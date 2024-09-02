@@ -1,7 +1,7 @@
-﻿using System.Threading;
-using FlaUI.WebDriver.UITests.TestUtil;
+﻿using FlaUI.WebDriver.UITests.TestUtil;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Appium.Windows;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 
@@ -31,6 +31,31 @@ namespace FlaUI.WebDriver.UITests
             var text = element.Text;
 
             Assert.That(text, Is.EqualTo(expectedValue));
+        }
+
+        [Test]
+        public void Displayed_UsingAppiumWebDriverElementVisible_ReturnsTrue()
+        {
+            var driverOptions = FlaUIAppiumDriverOptions.TestApp();
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+
+            var result = element.Displayed;
+
+            Assert.That(result, Is.True);
+        }
+
+        [Test]
+        public void Displayed_UsingAppiumWebDriverElementHidden_ReturnsFalse()
+        {
+            var driverOptions = FlaUIAppiumDriverOptions.TestApp();
+            using var driver = new WindowsDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            driver.FindElement(ExtendedBy.AccessibilityId("MoreControlsTab")).Click();
+
+            var result = element.Displayed;
+
+            Assert.That(result, Is.False);
         }
 
         [Test]

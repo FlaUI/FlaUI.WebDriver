@@ -181,7 +181,7 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="More Controls">
+            <TabItem Header="More Controls" AutomationProperties.AutomationId="MoreControlsTab">
                 <StackPanel>
                     <Calendar AutomationProperties.AutomationId="calendar" SelectionMode="MultipleRange" />
                     <DatePicker AutomationProperties.AutomationId="datePicker"></DatePicker>

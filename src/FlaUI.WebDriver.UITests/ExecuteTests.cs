@@ -1,7 +1,5 @@
 ﻿using FlaUI.WebDriver.UITests.TestUtil;
 using NUnit.Framework;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using System.Collections.Generic;
 
