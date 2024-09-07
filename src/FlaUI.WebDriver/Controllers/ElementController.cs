@@ -271,9 +271,17 @@ namespace FlaUI.WebDriver.Controllers
             return await Task.FromResult(WebDriverResult.Success(elementRect));
         }
 
-        private static void ScrollElementContainerIntoView(AutomationElement element)
+        private void ScrollElementContainerIntoView(AutomationElement element)
         {
-            element.Patterns.ScrollItem.PatternOrDefault?.ScrollIntoView();
+            try
+            {
+                element.Patterns.ScrollItem.PatternOrDefault?.ScrollIntoView();
+            }
+            catch (InvalidOperationException e)
+            {
+                // Ignore if scroll fails because of "Operation is not valid due to the current state of the object"
+                _logger.LogDebug(e, "Ignoring exception: Could not scroll element {Element} into view", element);
+            }
         }
 
         private static ActionResult ElementNotInteractable(string elementId)
