@@ -45,8 +45,30 @@ This driver currenlty can be downloaded as an executable. Start the web driver s
 
 After it has started, it can be used via WebDriver clients such as for example:
 
+- [Appium.WebDriver](https://www.nuget.org/packages/Appium.WebDriver)
 - [Selenium.WebDriver](https://www.nuget.org/packages/Selenium.WebDriver)
 - [WebdriverIO](https://www.npmjs.com/package/webdriverio)
+
+Using the [Appium.WebDriver](https://www.nuget.org/packages/Selenium.WebDriver) C# client:
+
+```C#
+using OpenQA.Selenium.Appium.Windows;
+
+public class FlaUIDriverOptions : AppiumOptions
+{
+    public static FlaUIDriverOptions ForApp(string path)
+    {
+        return new FlaUIDriverOptions()
+        {
+            PlatformName = "windows",
+            AutomationName = "flaui",
+            App = path
+        };
+    }
+}
+
+var driver = new WindowsDriver(new Uri("http://localhost:4723"), FlaUIDriverOptions.ForApp("C:\\YourApp.exe"))
+```
 
 Using the [Selenium.WebDriver](https://www.nuget.org/packages/Selenium.WebDriver) C# client:
 
@@ -55,7 +77,7 @@ using OpenQA.Selenium;
 
 public class FlaUIDriverOptions : DriverOptions
 {
-    public static FlaUIDriverOptions App(string path)
+    public static FlaUIDriverOptions ForApp(string path)
     {
         var options = new FlaUIDriverOptions()
         {
@@ -72,7 +94,7 @@ public class FlaUIDriverOptions : DriverOptions
     }
 }
 
-var driver = new RemoteWebDriver(new Uri("http://localhost:4723"), FlaUIDriverOptions.App("C:\\YourApp.exe"))
+var driver = new RemoteWebDriver(new Uri("http://localhost:4723"), FlaUIDriverOptions.ForApp("C:\\YourApp.exe"))
 ```
 
 Using the [WebdriverIO](https://www.npmjs.com/package/webdriverio) JavaScript client:
@@ -145,7 +167,7 @@ The driver supports switching windows. The behavior of windows is as following (
 
 The driver supports PowerShell commands.
 
-Using the Selenium C# client:
+Using the Selenium or Appium WebDriver C# client:
 
 ```C#
 var result = driver.ExecuteScript("powerShell", new Dictionary<string,string> { ["command"] = "1+1" });
@@ -193,6 +215,7 @@ const result = driver.executeScript("powerShell", [{ command: `1+1` }]);
 | POST   | /session/{session id}/shadow/{shadow id}/element               | Find Element From Shadow Root  | N/A                                |
 | POST   | /session/{session id}/shadow/{shadow id}/elements              | Find Elements From Shadow Root | N/A                                |
 | GET    | /session/{session id}/element/{element id}/selected            | Is Element Selected            | :white_check_mark:                 |
+| GET    | /session/{session id}/element/{element id}/displayed           | Is Element Displayed           | :white_check_mark: [^isdisplayed]  |
 | GET    | /session/{session id}/element/{element id}/attribute/{name}    | Get Element Attribute          | :white_check_mark: [^getattribute] |
 | GET    | /session/{session id}/element/{element id}/property/{name}     | Get Element Property           |                                    |
 | GET    | /session/{session id}/element/{element id}/css/{property name} | Get Element CSS Value          | N/A                                |
@@ -224,6 +247,7 @@ const result = driver.executeScript("powerShell", [{ command: `1+1` }]);
 | POST   | /session/{session id}/print                                    | Print Page                     |                                    |
 
 [^getattribute]: In Selenium WebDriver, use `GetDomAttribute` because `GetAttribute` converts to javascript.
+[^isdisplayed]: In Selenium WebDriver, the `Displayed` property converts to javascript. Use [Appium WebDriver](https://github.com/appium/dotnet-client) to use this functionality. It uses the [IsOffscreen](https://learn.microsoft.com/en-us/dotnet/api/system.windows.automation.automationelement.automationelementinformation.isoffscreen) property that however does not seem to take it into account if the element is blocked by another window.
 
 ### WebDriver Interpretation
 
@@ -253,7 +277,7 @@ This is impossible using UIA, as there is no API to set the caret position: text
 
 ### Element Attributes
 
-Attributes are mapped to UI automation element properties. Attributes without a period (`.`) are mapped to [Automation Element Properties](https://learn.microsoft.com/en-us/windows/win32/winauto/uiauto-automation-element-propids). For example to read the `UIA_ClassNamePropertyId` using Selenium WebDriver:
+Attributes are mapped to UI automation element properties. Attributes without a period (`.`) are mapped to [Automation Element Properties](https://learn.microsoft.com/en-us/windows/win32/winauto/uiauto-automation-element-propids). For example to read the `UIA_ClassNamePropertyId` using Selenium or Appium WebDriver:
 
 ```C#
 var element = driver.FindElement(By.Id("TextBox"));
