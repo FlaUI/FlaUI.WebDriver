@@ -15,7 +15,7 @@ FlaUI.WebDriver is a [W3C WebDriver2](https://www.w3.org/TR/webdriver2/) impleme
 - [Microsoft's WinAppDriver](https://github.com/microsoft/WinAppDriver) used by [Appium Windows Driver](https://github.com/appium/appium-windows-driver) has many open issues, is [not actively maintained](https://github.com/microsoft/WinAppDriver/issues/1550) and [is not yet open source after many requests](https://github.com/microsoft/WinAppDriver/issues/1371).
   It implements [the obsolete JSON Wire Protocol](https://www.selenium.dev/documentation/legacy/json_wire_protocol/) by Selenium and not the new W3C WebDriver standard.
   When using it I stumbled upon various very basic issues, such as [that click doesn't always work](https://github.com/microsoft/WinAppDriver/issues/654).
-- [kfrajtak/WinAppDriver](https://github.com/kfrajtak/WinAppDriver) is an open source alternative, but it's technology stack is outdated (.NET Framework, UIAComWrapper, AutoItX.Dotnet).
+- [kfrajtak/WinAppDriver](https://github.com/kfrajtak/WinAppDriver) is an open source alternative, but its technology stack is outdated (.NET Framework, UIAComWrapper, AutoItX.Dotnet).
 - W3C WebDriver is a standard that gives many options of automation frameworks such as [WebdriverIO](https://github.com/webdriverio/webdriverio) and [Selenium](https://github.com/SeleniumHQ/selenium).
   It allows to write test automation in TypeScript, Java or other languages of preference (using FlaUI requires C# knowledge).
 - It is open source! Any missing command can be implemented quickly by raising a Pull Request.
@@ -37,7 +37,7 @@ The following capabilities are supported:
 
 ## Getting Started
 
-This driver currenlty can be downloaded as an executable. Start the web driver service with:
+This driver currently can be downloaded as an executable. Start the web driver service with:
 
 ```PowerShell
 ./FlaUI.WebDriver.exe --urls=http://localhost:4723/
@@ -49,7 +49,7 @@ After it has started, it can be used via WebDriver clients such as for example:
 - [Selenium.WebDriver](https://www.nuget.org/packages/Selenium.WebDriver)
 - [WebdriverIO](https://www.npmjs.com/package/webdriverio)
 
-Using the [Appium.WebDriver](https://www.nuget.org/packages/Selenium.WebDriver) C# client:
+Using the [Appium.WebDriver](https://www.nuget.org/packages/Appium.WebDriver) C# client:
 
 ```C#
 using OpenQA.Selenium.Appium.Windows;
