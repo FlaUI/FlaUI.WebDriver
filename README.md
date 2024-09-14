@@ -49,7 +49,7 @@ After it has started, it can be used via WebDriver clients such as for example:
 - [Selenium.WebDriver](https://www.nuget.org/packages/Selenium.WebDriver)
 - [WebdriverIO](https://www.npmjs.com/package/webdriverio)
 
-Using the [Appium.WebDriver](https://www.nuget.org/packages/Selenium.WebDriver) C# client:
+Using the [Appium.WebDriver](https://www.nuget.org/packages/Appium.WebDriver) C# client:
 
 ```C#
 using OpenQA.Selenium.Appium.Windows;
