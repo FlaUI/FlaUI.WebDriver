@@ -359,5 +359,15 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(() => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions), 
                 Throws.TypeOf<WebDriverArgumentException>().With.Message.EqualTo("Capability appium:newCommandTimeout must be a number"));
         }
+
+        [Test]
+        public void UnknownCommand_Default_ReturnsError()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            Assert.That(() => driver.Manage().Cookies.DeleteAllCookies(),
+                Throws.TypeOf<System.NotImplementedException>().With.Message.EqualTo("Unknown command"));
+        }
     }
 }

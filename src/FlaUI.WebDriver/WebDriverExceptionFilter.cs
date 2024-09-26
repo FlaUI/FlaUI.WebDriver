@@ -15,9 +15,10 @@ namespace FlaUI.WebDriver
             if (context.Exception is WebDriverResponseException exception)
             {
                 var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<WebDriverResponseExceptionFilter>>();
-                logger.LogError(exception, "Returning WebDriver error response with error code {ErrorCode}", exception.ErrorCode);
+                logger.LogError(exception, "Returning WebDriver error response with error code '{ErrorCode}'", exception.ErrorCode);
 
-                context.Result = new ObjectResult(new ResponseWithValue<ErrorResponse>(new ErrorResponse { ErrorCode = exception.ErrorCode, Message = exception.Message })) {
+                context.Result = new ObjectResult(new ResponseWithValue<ErrorResponse>(new ErrorResponse { ErrorCode = exception.ErrorCode, Message = exception.Message }))
+                {
                     StatusCode = exception.StatusCode
                 };
                 context.ExceptionHandled = true;
