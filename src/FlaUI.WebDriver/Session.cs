@@ -20,7 +20,12 @@ namespace FlaUI.WebDriver
             if (app != null)
             {
                 // We have to capture the initial window handle to be able to keep it stable
-                CurrentWindowWithHandle = GetOrAddKnownWindow(app.GetMainWindow(Automation, PageLoadTimeout));
+                var mainWindow = app.GetMainWindow(Automation, PageLoadTimeout);
+                if (mainWindow == null)
+                {
+                    throw WebDriverResponseException.Timeout($"Could not get the main window of the app within the page load timeout (${PageLoadTimeout.TotalMilliseconds}ms)");
+                }
+                CurrentWindowWithHandle = GetOrAddKnownWindow(mainWindow);
             }
         }
 
