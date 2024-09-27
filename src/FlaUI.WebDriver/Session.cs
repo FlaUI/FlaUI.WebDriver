@@ -8,14 +8,15 @@ namespace FlaUI.WebDriver
 {
     public class Session : IDisposable
     {
-        public Session(Application? app, bool isAppOwnedBySession)
+        public Session(Application? app, bool isAppOwnedBySession, TimeoutsConfiguration timeoutsConfiguration, TimeSpan newCommandTimeout)
         {
             App = app;
             SessionId = Guid.NewGuid().ToString();
             Automation = new UIA3Automation();
             InputState = new InputState();
-            TimeoutsConfiguration = new TimeoutsConfiguration();
+            TimeoutsConfiguration = timeoutsConfiguration;
             IsAppOwnedBySession = isAppOwnedBySession;
+            NewCommandTimeout = newCommandTimeout;
 
             if (app != null)
             {
