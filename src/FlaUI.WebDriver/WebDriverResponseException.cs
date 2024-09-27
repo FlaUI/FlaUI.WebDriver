@@ -24,5 +24,7 @@
         public static WebDriverResponseException WindowNotFoundByHandle(string windowHandle) => new WebDriverResponseException($"No window found with handle '{windowHandle}'", "no such window", 404);
 
         public static WebDriverResponseException NoWindowsOpenForSession() => new WebDriverResponseException($"No windows are open for the current session", "no such window", 404);
+
+        public static WebDriverResponseException Timeout(string message) => new WebDriverResponseException($"Timeout: ${message}", "timeout", 500);
     }
 }

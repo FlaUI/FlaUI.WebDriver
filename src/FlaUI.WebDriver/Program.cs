@@ -24,6 +24,10 @@ builder.Services.AddHostedService<SessionCleanupService>();
 
 var app = builder.Build();
 
+app.UseMiddleware<NotFoundMiddleware>();
+
+app.UseExceptionHandler("/error");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
