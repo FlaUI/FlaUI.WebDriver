@@ -10,6 +10,9 @@ Use `dotnet test` to run tests. At the moment the tests are end-to-end UI tests 
 
 Add UI tests for every feature added and every bug fixed, and feel free to improve existing test coverage.
 
+Follow the [naming convention `UnitOfWork_StateUnderTest_ExpectedBehavior`](https://osherove.com/blog/2005/4/3/naming-standards-for-unit-tests.html) for test names. 
+Separate arrange/act/assert parts of the test by newlines.
+
 ## Submitting changes
 
 Please send a [GitHub Pull Request](https://github.com/FlaUI/FlaUI.WebDriver/pulls) with a clear list of what you've done (read more about [pull requests](http://help.github.com/pull-requests/)). Please follow our coding conventions (below) and make sure all of your commits are atomic (one feature per commit).
