@@ -25,6 +25,15 @@ namespace FlaUI.WebDriver.Controllers
             });
         }
 
+        private static ActionResult FileNotFound(string fileName)
+        {
+            return WebDriverResult.NotFound(new ErrorResponse()
+            {
+                ErrorCode = "File Not Found",
+                Message = $"File {fileName} does not exist."
+            });
+        }
+
         [HttpPost("push_file")]
         public async Task<ActionResult> PushFile([FromBody] PushFileRequest request)
         {
@@ -55,6 +64,9 @@ namespace FlaUI.WebDriver.Controllers
             {
                 return MissingParameter("path");
             }
+            if (!System.IO.File.Exists(request.Path)) { 
+                return FileNotFound(request.Path);
+            }
             var data = await System.IO.File.ReadAllBytesAsync(request.Path);
             return WebDriverResult.Success(Convert.ToBase64String(data));
         }
@@ -66,6 +78,10 @@ namespace FlaUI.WebDriver.Controllers
             {
                 return MissingParameter("path");
             }
+            if (!Directory.Exists(request.Path))
+            {
+                return FileNotFound(request.Path);
+            }
             byte[] bytes;
             using (var ms = new MemoryStream())
             {
@@ -76,7 +92,5 @@ namespace FlaUI.WebDriver.Controllers
 
             return WebDriverResult.Success(Convert.ToBase64String(bytes));
         }
-
-        
     }
 }
