@@ -176,7 +176,7 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void SendKeys_Qwerty()
+        public void SendKeys_UpperAndLowercaseLetters_EntersIdenticalText()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
@@ -191,7 +191,7 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void SendKeys_NumberRow()
+        public void SendKeys_NumbersAndShiftedNumbers_EntersIdenticalText()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
@@ -206,7 +206,7 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void SendKeys_Others()
+        public void SendKeys_OtherCharacters_EntersIdenticalText()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
