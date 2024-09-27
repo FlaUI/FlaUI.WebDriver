@@ -23,11 +23,12 @@ namespace FlaUI.WebDriver.UITests
         [TestCase("InvokableButton", "Invoke me!")]
         [TestCase("PopupToggleButton1", "Popup Toggle 1")]
         [TestCase("Label", "Menu Item Checked")]
-        public void GetText_Returns_Correct_Text(string elementAccessibilityId, string expectedValue)
+        public void GetText_DifferentElements_ReturnsCorrectText(string elementAccessibilityId, string expectedValue)
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId(elementAccessibilityId));
+
             var text = element.Text;
 
             Assert.That(text, Is.EqualTo(expectedValue));
@@ -59,12 +60,11 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void GetText_Returns_Text_For_Multiple_Selection()
+        public void GetText_ListMultipleSelection_ReturnsCombinedText()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("ListBox"));
-
             new Actions(driver)
                 .MoveToElement(element)
                 .Click()
@@ -81,13 +81,12 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void GetText_Returns_Empty_String_For_No_Selection()
+        public void GetText_ListNoSelection_ReturnsEmpty()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("ListBox"));
             var item = driver.FindElement(ExtendedBy.Name("ListBox Item #1"));
-
             new Actions(driver)
                 .MoveToElement(item)
                 .KeyDown(Keys.Control)
@@ -163,13 +162,13 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void SendKeys_ShiftedCharacter_ShiftIsReleased()
+        public void SendKeys_AfterShiftedCharacter_ShiftIsReleased()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
-
             element.SendKeys("!");
+
             element.SendKeys("1");
 
             Assert.That(element.Text, Is.EqualTo("!1Test TextBox"));
@@ -194,11 +193,8 @@ namespace FlaUI.WebDriver.UITests
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("NonEditableCombo"));
             var expandCollapseState = element.GetDomAttribute("ExpandCollapse.ExpandCollapseState");
-
             Assert.That(expandCollapseState, Is.EqualTo("Collapsed"));
-
             element.SendKeys(Keys.Alt + Keys.Down);
-
             Assert.That(expandCollapseState, Is.EqualTo("Expanded"));
 
             element.SendKeys(Keys.Escape);
@@ -236,8 +232,8 @@ namespace FlaUI.WebDriver.UITests
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
             var element = driver.FindElement(ExtendedBy.AccessibilityId("EditableCombo"));
-
             var scaling = TestApplication.GetScaling(driver);
+
             var location = element.Location;
             var size = element.Size;
 
@@ -353,8 +349,6 @@ namespace FlaUI.WebDriver.UITests
             value = element.GetDomAttribute("Toggle.ToggleState");
 
             Assert.That(value, Is.EqualTo("On"));
-
-            element.Click();
         }
     }
 }

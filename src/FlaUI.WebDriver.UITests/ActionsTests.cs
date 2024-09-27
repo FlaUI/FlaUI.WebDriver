@@ -31,6 +31,7 @@ namespace FlaUI.WebDriver.UITests
             element.Click();
 
             new Actions(_driver).KeyDown(Keys.Control).KeyDown(Keys.Backspace).KeyUp(Keys.Backspace).KeyUp(Keys.Control).Perform();
+
             string activeElementText = _driver.SwitchTo().ActiveElement().Text;
             Assert.That(activeElementText, Is.EqualTo("Test "));
         }
@@ -39,8 +40,8 @@ namespace FlaUI.WebDriver.UITests
         public void SendKeys_Default_IsSupported()
         {
             var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
-
             element.Clear();
+
             element.SendKeys("abc123");
 
             Assert.That(element.Text, Is.EqualTo("abc123"));
@@ -50,8 +51,8 @@ namespace FlaUI.WebDriver.UITests
         public void SendKeys_ShiftedCharacter_IsSupported()
         {
             var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
-
             element.Clear();
+
             element.SendKeys("@TEST");
 
             Assert.That(element.Text, Is.EqualTo("@TEST"));
@@ -77,6 +78,7 @@ namespace FlaUI.WebDriver.UITests
             var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
 
             new Actions(_driver).MoveToElement(element).Click().Perform();
+
             string activeElementText = _driver.SwitchTo().ActiveElement().Text;
             Assert.That(activeElementText, Is.EqualTo("Test TextBox"));
         }
@@ -97,6 +99,7 @@ namespace FlaUI.WebDriver.UITests
             var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
 
             new Actions(_driver).MoveToElement(element).MoveByOffset(5, 0).Click().Perform();
+
             string activeElementText = _driver.SwitchTo().ActiveElement().Text;
             Assert.That(activeElementText, Is.EqualTo("Test TextBox"));
         }

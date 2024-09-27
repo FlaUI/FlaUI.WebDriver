@@ -14,8 +14,8 @@ namespace FlaUI.WebDriver.UITests
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
-
             var scaling = TestApplication.GetScaling(driver);
+
             var position = driver.Manage().Window.Position;
             var size = driver.Manage().Window.Size;
 

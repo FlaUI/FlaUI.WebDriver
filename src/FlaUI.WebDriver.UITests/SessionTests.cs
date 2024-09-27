@@ -97,6 +97,7 @@ namespace FlaUI.WebDriver.UITests
             driverOptions.ScriptTimeout = TimeSpan.FromSeconds(10);
             driverOptions.PageLoadTimeout = TimeSpan.FromSeconds(50);
             driverOptions.ImplicitWaitTimeout = TimeSpan.FromSeconds(3);
+
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             Assert.That(driver.Manage().Timeouts().AsynchronousJavaScript, Is.EqualTo(TimeSpan.FromSeconds(10)));
@@ -125,6 +126,15 @@ namespace FlaUI.WebDriver.UITests
             var title = driver.Title;
 
             Assert.That(title, Is.EqualTo("FlaUI WPF Test App"));
+        }
+
+        [Test]
+        public void EndSession_AppTopLevelWindow_DoesNotKillApp()
+        {
+            using var testAppProcess = new TestAppProcess();
+            var windowHandle = string.Format("0x{0:x}", testAppProcess.Process.MainWindowHandle);
+            var driverOptions = FlaUIDriverOptions.AppTopLevelWindow(windowHandle);
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             driver.Quit();
 
@@ -166,6 +176,15 @@ namespace FlaUI.WebDriver.UITests
             var title = driver.Title;
 
             Assert.That(title, Is.EqualTo("FlaUI WPF Test App"));
+        }
+
+        [Explicit("Sometimes multiple processes are left open")]
+        [Test]
+        public void EndSession_AppTopLevelWindowTitleMatch_DoesNotKillApp()
+        {
+            using var testAppProcess = new TestAppProcess();
+            var driverOptions = FlaUIDriverOptions.AppTopLevelWindowTitleMatch("FlaUI WPF Test App");
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
             driver.Quit();
 
