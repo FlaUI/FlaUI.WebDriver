@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -9,6 +10,8 @@ namespace WpfApplication
     /// </summary>
     public partial class MainWindow
     {
+        private Window1 _subWindow;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -32,6 +35,12 @@ namespace WpfApplication
         {
             DpiScaling.Text = VisualTreeHelper.GetDpi(this).DpiScaleX.ToString();
             base.OnRenderSizeChanged(sizeInfo);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            _subWindow?.Close();
+            base.OnClosing(e);
         }
 
         private void OnShowLabel(object sender, RoutedEventArgs e)
@@ -68,8 +77,8 @@ namespace WpfApplication
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var window = new Window1();
-            window.Show();
+            _subWindow = new Window1();
+            _subWindow.Show();
         }
 
         private void LabelWithHover_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)

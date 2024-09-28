@@ -1,3 +1,4 @@
+using FlaUI.Core;
 using FlaUI.WebDriver.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -29,8 +30,6 @@ namespace FlaUI.WebDriver.Controllers
                 .Where(capabilities => TryMatchCapabilities(capabilities, out matchedCapabilities, out _))
                 .Select(capabillities => matchedCapabilities!);
 
-            Core.Application? app;
-            var isAppOwnedBySession = false;
             var capabilities = matchingCapabilities.FirstOrDefault();
             if (capabilities == null)
             {
@@ -43,62 +42,30 @@ namespace FlaUI.WebDriver.Controllers
                     Message = string.Join("; ", mismatchIndications)
                 });
             }
-            if (capabilities.TryGetStringCapability("appium:app", out var appPath))
-            {
-                if (appPath == "Root")
-                {
-                    app = null;
-                }
-                else 
-                {
-                    capabilities.TryGetStringCapability("appium:appArguments", out var appArguments);
-                    try
-                    {
-                        if (appPath.EndsWith("!App"))
-                        {
-                            app = Core.Application.LaunchStoreApp(appPath, appArguments);
-                        }
-                        else
-                        {
-                            var processStartInfo = new ProcessStartInfo(appPath, appArguments ?? "");
-                            if(capabilities.TryGetStringCapability("appium:appWorkingDir", out var appWorkingDir))
-                            {
-                                processStartInfo.WorkingDirectory = appWorkingDir;
-                            }
-                            app = Core.Application.Launch(processStartInfo);
-                        }
-                    }
-                    catch(Exception e)
-                    {
-                        throw WebDriverResponseException.InvalidArgument($"Starting app '{appPath}' with arguments '{appArguments}' threw an exception: {e.Message}");
-                    }
-                }
 
-                isAppOwnedBySession = true;
-            }
-            else if (capabilities.TryGetStringCapability("appium:appTopLevelWindow", out var appTopLevelWindowString))
+            var timeoutsConfiguration = new TimeoutsConfiguration();
+            if (capabilities.TryGetCapability<TimeoutsConfiguration>("timeouts", out var timeoutsConfigurationFromCapabilities))
             {
-                Process process = GetProcessByMainWindowHandle(appTopLevelWindowString);
-                app = Core.Application.Attach(process);
+                timeoutsConfiguration = timeoutsConfigurationFromCapabilities!;
             }
-            else if (capabilities.TryGetStringCapability("appium:appTopLevelWindowTitleMatch", out var appTopLevelWindowTitleMatch))
+            var newCommandTimeout = TimeSpan.FromSeconds(60);
+            if (capabilities.TryGetNumberCapability("appium:newCommandTimeout", out var newCommandTimeoutFromCapabilities))
             {
-                Process? process = GetProcessByMainWindowTitle(appTopLevelWindowTitleMatch);
-                app = Core.Application.Attach(process);
+                newCommandTimeout = TimeSpan.FromSeconds(newCommandTimeoutFromCapabilities);
             }
-            else
+
+            Application? app = GetApp(capabilities, out bool isAppOwnedBySession);
+            Session session;
+            try
             {
-                throw WebDriverResponseException.InvalidArgument("One of appium:app, appium:appTopLevelWindow or appium:appTopLevelWindowTitleMatch must be passed as a capability");
+                session = new Session(app, isAppOwnedBySession, timeoutsConfiguration, newCommandTimeout);
             }
-            var session = new Session(app, isAppOwnedBySession);
-            if(capabilities.TryGetNumberCapability("appium:newCommandTimeout", out var newCommandTimeout))
+            catch (Exception)
             {
-                session.NewCommandTimeout = TimeSpan.FromSeconds(newCommandTimeout);
+                app?.Dispose();
+                throw;
             }
-            if (capabilities.TryGetCapability<TimeoutsConfiguration>("timeouts", out var timeoutsConfiguration))
-            {
-                session.TimeoutsConfiguration = timeoutsConfiguration!;
-            }
+
             _sessionRepository.Add(session);
             _logger.LogInformation("Created session with ID {SessionId} and capabilities {Capabilities}", session.SessionId, capabilities);
             return await Task.FromResult(WebDriverResult.Success(new CreateSessionResponse()
@@ -106,6 +73,56 @@ namespace FlaUI.WebDriver.Controllers
                 SessionId = session.SessionId,
                 Capabilities = capabilities.Capabilities
             }));
+        }
+
+        private static Application? GetApp(MergedCapabilities capabilities, out bool isAppOwnedBySession)
+        {
+            if (capabilities.TryGetStringCapability("appium:app", out var appPath))
+            {
+                if (appPath == "Root")
+                {
+                    isAppOwnedBySession = false;
+                    return null;
+                }
+
+                capabilities.TryGetStringCapability("appium:appArguments", out var appArguments);
+                try
+                {
+                    if (appPath.EndsWith("!App"))
+                    {
+                        isAppOwnedBySession = true;
+                        return Application.LaunchStoreApp(appPath, appArguments);
+                    }
+
+                    var processStartInfo = new ProcessStartInfo(appPath, appArguments ?? "");
+                    if (capabilities.TryGetStringCapability("appium:appWorkingDir", out var appWorkingDir))
+                    {
+                        processStartInfo.WorkingDirectory = appWorkingDir;
+                    }
+                    isAppOwnedBySession = true;
+                    return Application.Launch(processStartInfo);
+                }
+                catch (Exception e)
+                {
+                    throw WebDriverResponseException.InvalidArgument($"Starting app '{appPath}' with arguments '{appArguments}' threw an exception: {e.Message}");
+                }
+            }
+
+            if (capabilities.TryGetStringCapability("appium:appTopLevelWindow", out var appTopLevelWindowString))
+            {
+                isAppOwnedBySession = false;
+                Process process = GetProcessByMainWindowHandle(appTopLevelWindowString);
+                return Application.Attach(process);
+            }
+
+            if (capabilities.TryGetStringCapability("appium:appTopLevelWindowTitleMatch", out var appTopLevelWindowTitleMatch))
+            {
+                isAppOwnedBySession = false;
+                Process? process = GetProcessByMainWindowTitle(appTopLevelWindowTitleMatch);
+                return Application.Attach(process);
+            }
+
+            throw WebDriverResponseException.InvalidArgument("One of appium:app, appium:appTopLevelWindow or appium:appTopLevelWindowTitleMatch must be passed as a capability");
         }
 
         private string? GetMismatchIndication(MergedCapabilities capabilities)
@@ -163,7 +180,7 @@ namespace FlaUI.WebDriver.Controllers
                 matchedCapabilities.Copy("appium:appTopLevelWindow", capabilities);
             }
             else if (capabilities.Contains("appium:appTopLevelWindowTitleMatch"))
-            {   
+            {
                 matchedCapabilities.Copy("appium:appTopLevelWindowTitleMatch", capabilities);
             }
             else
@@ -199,8 +216,8 @@ namespace FlaUI.WebDriver.Controllers
             try
             {
                 appMainWindowTitleRegex = new Regex(appTopLevelWindowTitleMatch);
-            } 
-            catch(ArgumentException e)
+            }
+            catch (ArgumentException e)
             {
                 throw WebDriverResponseException.InvalidArgument($"Capability appium:appTopLevelWindowTitleMatch '{appTopLevelWindowTitleMatch}' is not a valid regular expression: {e.Message}");
             }
@@ -209,7 +226,7 @@ namespace FlaUI.WebDriver.Controllers
             {
                 throw WebDriverResponseException.InvalidArgument($"Process with main window title matching '{appTopLevelWindowTitleMatch}' could not be found");
             }
-            else if (processes.Length > 1)
+            if (processes.Length > 1)
             {
                 throw WebDriverResponseException.InvalidArgument($"Found multiple ({processes.Length}) processes with main window title matching '{appTopLevelWindowTitleMatch}'");
             }

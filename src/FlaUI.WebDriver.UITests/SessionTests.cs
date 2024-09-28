@@ -164,7 +164,6 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(newSession, Throws.TypeOf<WebDriverArgumentException>().With.Message.EqualTo("Capability appium:appTopLevelWindow '0x0' should not be zero"));
         }
 
-        [Explicit("Sometimes multiple processes are left open")]
         [TestCase("FlaUI WPF Test App")]
         [TestCase("FlaUI WPF .*")]
         public void NewSession_AppTopLevelWindowTitleMatch_IsSupported(string match)
@@ -191,7 +190,7 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(testAppProcess.Process.HasExited, Is.False);
         }
 
-        [Test, Explicit("Sometimes multiple processes are left open")]
+        [Test]
         public void NewSession_AppTopLevelWindowTitleMatchMultipleMatching_ReturnsError()
         {
             using var testAppProcess = new TestAppProcess();
@@ -338,7 +337,7 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(() => driver.Title, Throws.Nothing);
         }
 
-        [Test, Explicit(("Sometimes multiple processes are left open"))]
+        [Test]
         public void NewCommandTimeout_SessionWithAppTopLevelWindowTitleMatch_ClosesSessionButDoesNotCloseApp()
         {
             using var testAppProcess = new TestAppProcess();
