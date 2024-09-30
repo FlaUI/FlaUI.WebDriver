@@ -175,6 +175,51 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
+        public void SendKeys_UpperAndLowercaseLetters_EntersIdenticalText()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            var qwerty  = "qwertyuiopasdfghjklzxcvbnm";
+            var qwertyS = "QWERTYUIOPASDFGHJKLZXCVBNM";
+            var all = qwerty + qwertyS;
+            element.Clear();
+            element.SendKeys(all);
+
+            Assert.That(element.Text, Is.EqualTo(all));
+        }
+
+        [Test]
+        public void SendKeys_NumbersAndShiftedNumbers_EntersIdenticalText()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            var numberRow  = "`1234567890-=";
+            var numberRowS = "~!@#$%^&*()_+";
+            var all = numberRow + numberRowS;
+            element.Clear();
+            element.SendKeys(all);
+
+            Assert.That(element.Text, Is.EqualTo(all));
+        }
+
+        [Test]
+        public void SendKeys_OtherCharacters_EntersIdenticalText()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            var others  = "[]\\;',./";
+            var othersS = "{}|:\"<>?";
+            var all = others + othersS;
+            element.Clear();
+            element.SendKeys(all);
+
+            Assert.That(element.Text, Is.EqualTo(all));
+        }
+
+        [Test]
         public void SendKeys_DownArrow_IsSupported()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
