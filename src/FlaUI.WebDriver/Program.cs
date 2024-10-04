@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<ISessionRepository, SessionRepository>();
 builder.Services.AddScoped<IActionsDispatcher, ActionsDispatcher>();
 builder.Services.AddScoped<IWindowsExtensionService, WindowsExtensionService>();
+builder.Services.AddScoped<IConditionParser, ConditionParser>();
 
 builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 builder.Services.AddControllers(options =>
