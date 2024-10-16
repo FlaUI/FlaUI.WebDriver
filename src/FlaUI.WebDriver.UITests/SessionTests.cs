@@ -106,13 +106,23 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void NewSession_NotSupportedCapability_Throws()
+        public void NewSession_NotSupportedAppiumCapability_Throws()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            driverOptions.AddAdditionalOption("appium:unknown", "value");
+
+            Assert.That(() => { using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions); },
+                Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("The following capabilities could not be matched: 'appium:unknown' (SessionNotCreated)"));
+        }
+
+        [Test]
+        public void NewSession_UnknownExtensionCapability_Ignores()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             driverOptions.AddAdditionalOption("unknown:unknown", "value");
 
-            Assert.That(() => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions),
-                Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("The following capabilities could not be matched: 'unknown:unknown' (SessionNotCreated)"));
+            Assert.That(() => { using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions); },
+                Throws.Nothing);
         }
 
         [Test]

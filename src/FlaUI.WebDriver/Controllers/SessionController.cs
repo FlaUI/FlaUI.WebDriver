@@ -200,10 +200,16 @@ namespace FlaUI.WebDriver.Controllers
             }
 
             var notMatchedCapabilities = capabilities.Capabilities.Keys.Except(matchedCapabilities.Capabilities.Keys);
+            var notMatchedStandardOrAppiumCapabilities = notMatchedCapabilities.Where(c => !c.Contains(":") || c.StartsWith("appium:"));
+            if (notMatchedStandardOrAppiumCapabilities.Any())
+            {
+                // Do not ignore non-extension capabilities or appium capabilities
+                mismatchIndication = $"The following capabilities could not be matched: '{string.Join("', '", notMatchedStandardOrAppiumCapabilities)}'";
+                return false;            
+            }
             if (notMatchedCapabilities.Any())
             {
-                mismatchIndication = $"The following capabilities could not be matched: '{string.Join("', '", notMatchedCapabilities)}'";
-                return false;
+                _logger.LogDebug("The following capabilities could not be matched and are ignored: '{NotMatchedCapabilities}'", string.Join("', '", notMatchedCapabilities));
             }
 
             mismatchIndication = null;
