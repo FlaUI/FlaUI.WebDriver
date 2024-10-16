@@ -202,8 +202,7 @@ namespace FlaUI.WebDriver.Controllers
             var notMatchedCapabilities = capabilities.Capabilities.Keys.Except(matchedCapabilities.Capabilities.Keys);
             if (notMatchedCapabilities.Any())
             {
-                mismatchIndication = $"The following capabilities could not be matched: '{string.Join("', '", notMatchedCapabilities)}'";
-                return false;
+                _logger.LogDebug("The following capabilities could not be matched and are ignored: '{NotMatchedCapabilities}'", string.Join("', '", notMatchedCapabilities));
             }
 
             mismatchIndication = null;

@@ -106,13 +106,13 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
-        public void NewSession_NotSupportedCapability_Throws()
+        public void NewSession_UnknownCapability_Ignores()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();
             driverOptions.AddAdditionalOption("unknown:unknown", "value");
 
-            Assert.That(() => new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions),
-                Throws.TypeOf<InvalidOperationException>().With.Message.EqualTo("The following capabilities could not be matched: 'unknown:unknown' (SessionNotCreated)"));
+            Assert.That(() => { using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions); },
+                Throws.Nothing);
         }
 
         [Test]
