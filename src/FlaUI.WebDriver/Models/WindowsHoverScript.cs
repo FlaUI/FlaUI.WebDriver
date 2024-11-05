@@ -9,5 +9,6 @@
         public int? EndY { get; set; }
         public string? EndElementId { get; set; }
         public int? DurationMs { get; set; }
+        public string[]? ModifierKeys { get; set; }
     }
 }

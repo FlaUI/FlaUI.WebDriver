@@ -1,14 +1,12 @@
 ﻿namespace FlaUI.WebDriver.Models
 {
-    public class WindowsClickScript
+    public class WindowsScrollScript
     {
         public string? ElementId { get; set; }
         public int? X { get; set; }
         public int? Y { get; set; }
-        public string? Button { get; set; }
+        public int? DeltaX { get; set; }
+        public int? DeltaY { get; set; }
         public string[]? ModifierKeys { get; set; }
-        public int? DurationMs { get; set; }
-        public int? Times { get; set; }
-        public int? InterClickDelayMs { get; set; }
     }
 }

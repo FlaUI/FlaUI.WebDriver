@@ -1,4 +1,5 @@
 ﻿using FlaUI.Core.Input;
+using FlaUI.Core.Tools;
 using FlaUI.Core.WindowsAPI;
 using FlaUI.WebDriver.Models;
 using System.Drawing;
@@ -16,76 +17,104 @@ namespace FlaUI.WebDriver.Services
 
         public async Task ExecuteClickScript(Session session, WindowsClickScript action)
         {
+            if (action.DurationMs.HasValue)
+            {
+                throw WebDriverResponseException.UnsupportedOperation("Duration is not yet supported");
+            }
+            if (action.Times.HasValue)
+            {
+                throw WebDriverResponseException.UnsupportedOperation("Times is not yet supported");
+            }
+            if (action.ModifierKeys != null)
+            {
+                throw WebDriverResponseException.UnsupportedOperation("Modifier keys are not yet supported");
+            }
+            var point = GetPoint(action.ElementId, action.X, action.Y, session);
             var mouseButton = action.Button != null ? Enum.Parse<MouseButton>(action.Button, true) : MouseButton.Left;
-            if (action.ElementId != null)
+            _logger.LogDebug("Clicking point ({X}, {Y}) with mouse button {MouseButton}", point.X, point.Y, mouseButton);
+            Mouse.Click(point, mouseButton);
+            await Task.Yield();
+        }
+
+        public async Task ExecuteScrollScript(Session session, WindowsScrollScript action)
+        {
+            if (action.ModifierKeys != null)
             {
-                var element = session.FindKnownElementById(action.ElementId);
-                if (element == null)
-                {
-                    throw WebDriverResponseException.ElementNotFound(action.ElementId);
-                }
-                _logger.LogDebug("Clicking element {ElementId} with mouse button {MouseButton}", action.ElementId, mouseButton);
-                Mouse.Click(element.BoundingRectangle.Location, mouseButton);
+                throw WebDriverResponseException.UnsupportedOperation("Modifier keys are not yet supported");
             }
-            else if (action.X.HasValue && action.Y.HasValue)
+            var point = GetPoint(action.ElementId, action.X, action.Y, session);
+            _logger.LogDebug("Scrolling at point ({X}, {Y})", point.X, point.Y);
+            Mouse.Position = point;
+            if (action.DeltaY.HasValue && action.DeltaY.Value != 0)
             {
-                _logger.LogDebug("Clicking point ({X}, {Y}) with mouse button {MouseButton}", action.X.Value, action.Y.Value, mouseButton);
-                Mouse.Click(new Point { X = action.X.Value, Y = action.Y.Value }, mouseButton);
+                Mouse.Scroll(action.DeltaY.Value);
             }
-            else
+            if (action.DeltaX.HasValue && action.DeltaX.Value != 0)
             {
-                throw WebDriverResponseException.InvalidArgument("Either \"elementId\" or \"x\" and \"y\" must be provided");
+                Mouse.HorizontalScroll(-action.DeltaX.Value);
             }
             await Task.Yield();
         }
 
+        private Point GetPoint(string? elementId, int? x, int? y, Session session)
+        {
+            if (elementId != null)
+            {
+                var element = session.FindKnownElementById(elementId);
+                if (element == null)
+                {
+                    throw WebDriverResponseException.ElementNotFound(elementId);
+                }
+
+                if (x.HasValue && y.HasValue)
+                {
+                    return new Point
+                    {
+                        X = element.BoundingRectangle.Left + x.Value,
+                        Y = element.BoundingRectangle.Top + y.Value
+                    };
+                }
+                
+                return element.BoundingRectangle.Center();
+            }
+
+            if (x.HasValue && y.HasValue)
+            {
+                return new Point { X = x.Value, Y = y.Value };
+            }
+            
+            throw WebDriverResponseException.InvalidArgument("Either element ID or x and y must be provided");
+        }
+
         public async Task ExecuteHoverScript(Session session, WindowsHoverScript action)
         {
-            if (action.StartX.HasValue && action.StartY.HasValue)
+            if (action.ModifierKeys != null)
             {
-                _logger.LogDebug("Moving mouse to ({X}, {Y})", action.StartX.Value, action.StartY.Value);
-                Mouse.MoveTo(action.StartX.Value, action.StartY.Value);
+                throw WebDriverResponseException.UnsupportedOperation("Modifier keys are not yet supported");
             }
-            else if (action.StartElementId != null)
+            var startingPoint = GetPoint(action.StartElementId, action.StartX, action.StartY, session);
+            var endPoint = GetPoint(action.EndElementId, action.EndX, action.EndY, session);
+
+            _logger.LogDebug("Moving mouse to starting point ({X}, {Y})", startingPoint.X, startingPoint.Y);
+            Mouse.Position = startingPoint;
+
+            if (endPoint == startingPoint)
             {
-                var element = session.FindKnownElementById(action.StartElementId);
-                if (element == null)
-                {
-                    throw WebDriverResponseException.ElementNotFound(action.StartElementId);
-                }
-                _logger.LogDebug("Moving mouse to element {ElementId}", action.StartElementId);
-                Mouse.MoveTo(element.BoundingRectangle.Location);
-            }
-            else
-            {
-                throw WebDriverResponseException.InvalidArgument("Either \"startElementId\" or \"startX\" and \"startY\" must be provided");
+                // Hover for specified time
+                await Task.Delay(action.DurationMs ?? 100);
+                return;
             }
 
+            _logger.LogDebug("Moving mouse to end point ({X}, {Y})", endPoint.X, endPoint.Y);
             if (action.DurationMs.HasValue)
             {
-                _logger.LogDebug("Waiting for {DurationMs}ms", action.DurationMs.Value);
-                await Task.Delay(action.DurationMs.Value);
-            }
-
-            if (action.EndX.HasValue && action.EndY.HasValue)
-            {
-                _logger.LogDebug("Moving mouse to ({X}, {Y})", action.EndX.Value, action.EndY.Value);
-                Mouse.MoveTo(action.EndX.Value, action.EndY.Value);
-            }
-            else if (action.EndElementId != null)
-            {
-                var element = session.FindKnownElementById(action.EndElementId);
-                if (element == null)
+                if (action.DurationMs.Value <= 0)
                 {
-                    throw WebDriverResponseException.ElementNotFound(action.EndElementId);
+                    throw WebDriverResponseException.UnsupportedOperation("Duration less than or equal to zero is not supported");
                 }
-                _logger.LogDebug("Moving mouse to element {ElementId}", action.EndElementId);
-                Mouse.MoveTo(element.BoundingRectangle.Location);
+                Mouse.MovePixelsPerMillisecond = endPoint.Distance(startingPoint) / action.DurationMs.Value;
             }
-            else
-            {
-                throw WebDriverResponseException.InvalidArgument("Either \"endElementId\" or \"endX\" and \"endY\" must be provided");
-            }
+            Mouse.MoveTo(endPoint);
         }
 
         public async Task ExecuteKeyScript(Session session, WindowsKeyScript action)
