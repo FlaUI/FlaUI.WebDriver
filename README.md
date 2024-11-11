@@ -179,6 +179,10 @@ Using the WebdriverIO JavaScript client:
 const result = driver.executeScript("powerShell", [{ command: `1+1` }]);
 ```
 
+## Windows extensions
+
+To enable easy switching from appium-windows-driver, there is a rudimentary implementation of `windows: click`, `windows: hover`, `windows: scroll` and `windows: keys`.
+
 ## Supported WebDriver Commands
 
 | Method | URI Template                                                   | Command                        | Implemented                        |
