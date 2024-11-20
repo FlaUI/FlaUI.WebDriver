@@ -366,6 +366,20 @@ namespace FlaUI.WebDriver.UITests
             Assert.That(value, Is.EqualTo(expectedValue));
         }
 
+        [TestCase(["ClassName", "TextBox"])]
+        [TestCase(["FrameworkId", "WPF"])]
+        [TestCase(["NonExistent", null])]
+        public void GetProperty_TextBox_ReturnsValue(string attributeName, string expectedValue)
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+
+            var value = element.GetDomProperty(attributeName);
+
+            Assert.That(value, Is.EqualTo(expectedValue));
+        }
+
         [Test]
         public void GetAttribute_DesktopElement_ReturnsAttribute()
         {
@@ -392,6 +406,24 @@ namespace FlaUI.WebDriver.UITests
             element.Click();
 
             value = element.GetDomAttribute("Toggle.ToggleState");
+
+            Assert.That(value, Is.EqualTo("On"));
+        }
+
+        [Test]
+        public void GetProperty_PatternProperty_ReturnsValue()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("SimpleCheckBox"));
+
+            var value = element.GetDomProperty("Toggle.ToggleState");
+
+            Assert.That(value, Is.EqualTo("Off"));
+
+            element.Click();
+
+            value = element.GetDomProperty("Toggle.ToggleState");
 
             Assert.That(value, Is.EqualTo("On"));
         }

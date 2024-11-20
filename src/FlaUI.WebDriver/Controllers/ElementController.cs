@@ -229,6 +229,7 @@ namespace FlaUI.WebDriver.Controllers
         }
 
         [HttpGet("{elementId}/attribute/{attributeId}")]
+        [HttpGet("{elementId}/property/{attributeId}")]
         public async Task<ActionResult> GetAttribute([FromRoute] string sessionId, [FromRoute] string elementId, [FromRoute] string attributeId)
         {
             var session = GetSession(sessionId);
