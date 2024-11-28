@@ -1,5 +1,7 @@
 ﻿using FlaUI.WebDriver.UITests.TestUtil;
 using NUnit.Framework;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using System.Collections.Generic;
 
@@ -30,6 +32,36 @@ namespace FlaUI.WebDriver.UITests
 
             string activeElementText = driver.SwitchTo().ActiveElement().Text;
             Assert.That(activeElementText, Is.EqualTo("Test TextBox"));
+        }
+
+        [Test]
+        public void ExecuteScript_WindowsGetClipboard_IsSupported()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            element.Click();
+            new Actions(driver).KeyDown(Keys.Control).SendKeys("a").KeyUp(Keys.Control).Perform();
+            new Actions(driver).KeyDown(Keys.Control).SendKeys("c").KeyUp(Keys.Control).Perform();
+
+            var result = driver.ExecuteScript("windows: getClipboard", new Dictionary<string, object> {});
+
+            Assert.That(result, Is.EqualTo("Test TextBox"));
+        }
+
+        [Test]
+        public void ExecuteScript_WindowsSetClipboard_IsSupported()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+
+            var result = driver.ExecuteScript("windows: setClipboard", new Dictionary<string, object> {
+                ["b64Content"] = "Pasted!"});
+
+            var element = driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            element.Click();
+            new Actions(driver).KeyDown(Keys.Control).SendKeys("v").KeyUp(Keys.Control).Perform();
+            Assert.That(element.Text, Is.EqualTo("Test TextBoxPasted!"));
         }
 
         [Test]

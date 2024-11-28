@@ -181,7 +181,7 @@ const result = driver.executeScript("powerShell", [{ command: `1+1` }]);
 
 ## Windows extensions
 
-To enable easy switching from appium-windows-driver, there is a rudimentary implementation of `windows: click`, `windows: hover`, `windows: scroll` and `windows: keys`.
+To enable easy switching from appium-windows-driver, there is a rudimentary implementation of `windows: click`, `windows: hover`, `windows: scroll`, `windows: keys`, `windows: getClipboard` and `windows: setClipboard`.
 
 ## Supported WebDriver Commands
 
@@ -221,7 +221,7 @@ To enable easy switching from appium-windows-driver, there is a rudimentary impl
 | GET    | /session/{session id}/element/{element id}/selected            | Is Element Selected            | :white_check_mark:                 |
 | GET    | /session/{session id}/element/{element id}/displayed           | Is Element Displayed           | :white_check_mark: [^isdisplayed]  |
 | GET    | /session/{session id}/element/{element id}/attribute/{name}    | Get Element Attribute          | :white_check_mark: [^getattribute] |
-| GET    | /session/{session id}/element/{element id}/property/{name}     | Get Element Property           |                                    |
+| GET    | /session/{session id}/element/{element id}/property/{name}     | Get Element Property           | :white_check_mark:                 |
 | GET    | /session/{session id}/element/{element id}/css/{property name} | Get Element CSS Value          | N/A                                |
 | GET    | /session/{session id}/element/{element id}/text                | Get Element Text               | :white_check_mark:                 |
 | GET    | /session/{session id}/element/{element id}/name                | Get Element Tag Name           | :white_check_mark:                 |

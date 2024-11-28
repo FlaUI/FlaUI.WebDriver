@@ -37,6 +37,10 @@ namespace FlaUI.WebDriver.Controllers
                     return await ExecuteWindowsHoverScript(session, executeScriptRequest);
                 case "windows: scroll":
                     return await ExecuteWindowsScrollScript(session, executeScriptRequest);
+                case "windows: setClipboard":
+                    return await ExecuteWindowsSetClipboardScript(session, executeScriptRequest);
+                case "windows: getClipboard":
+                    return await ExecuteWindowsGetClipboardScript(session, executeScriptRequest);
                 default:
                     throw WebDriverResponseException.UnsupportedOperation("Only 'powerShell', 'windows: keys', 'windows: click', 'windows: hover' scripts are supported");
             }
@@ -87,6 +91,36 @@ namespace FlaUI.WebDriver.Controllers
                 });
             }
             var result = await process.StandardOutput.ReadToEndAsync();
+            return WebDriverResult.Success(result);
+        }
+
+        private async Task<ActionResult> ExecuteWindowsSetClipboardScript(Session session, ExecuteScriptRequest executeScriptRequest)
+        {
+            if (executeScriptRequest.Args.Count != 1)
+            {
+                throw WebDriverResponseException.InvalidArgument($"Expected an array of exactly 1 arguments for the windows: setClipboard script, but got {executeScriptRequest.Args.Count} arguments");
+            }
+            var action = JsonSerializer.Deserialize<WindowsSetClipboardScript>(executeScriptRequest.Args[0], new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            if (action == null)
+            {
+                throw WebDriverResponseException.InvalidArgument("Action cannot be null");
+            }
+            await _windowsExtensionService.ExecuteSetClipboardScript(session, action);
+            return WebDriverResult.Success();
+        }
+
+        private async Task<ActionResult> ExecuteWindowsGetClipboardScript(Session session, ExecuteScriptRequest executeScriptRequest)
+        {
+            if (executeScriptRequest.Args.Count != 1)
+            {
+                throw WebDriverResponseException.InvalidArgument($"Expected an array of exactly 1 arguments for the windows: getClipboard script, but got {executeScriptRequest.Args.Count} arguments");
+            }
+            var action = JsonSerializer.Deserialize<WindowsGetClipboardScript>(executeScriptRequest.Args[0], new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            if (action == null)
+            {
+                throw WebDriverResponseException.InvalidArgument("Action cannot be null");
+            }
+            var result = await _windowsExtensionService.ExecuteGetClipboardScript(session, action);
             return WebDriverResult.Success(result);
         }
 

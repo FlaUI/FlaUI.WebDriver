@@ -15,6 +15,70 @@ namespace FlaUI.WebDriver.Services
             _logger = logger;
         }
 
+        public Task<string> ExecuteGetClipboardScript(Session session, WindowsGetClipboardScript action)
+        {
+            switch(action.ContentType)
+            {
+                default:
+                case "plaintext":
+                    return Task.FromResult(ExecuteOnClipboardThread(
+                        () => System.Windows.Forms.Clipboard.GetText(System.Windows.Forms.TextDataFormat.UnicodeText)
+                       ));
+                case "image":
+                    return Task.FromResult(ExecuteOnClipboardThread(() =>
+                    {
+                        using var image = System.Windows.Forms.Clipboard.GetImage();
+                        if (image == null)
+                        {
+                            return "";
+                        }
+                        using var stream = new MemoryStream();
+                        image.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                        return Convert.ToBase64String(stream.ToArray());
+                    }));
+            }
+        }
+
+        public Task ExecuteSetClipboardScript(Session session, WindowsSetClipboardScript action)
+        {
+            switch (action.ContentType)
+            {
+                default:
+                case "plaintext":
+                    ExecuteOnClipboardThread(() => System.Windows.Forms.Clipboard.SetText(action.B64Content));
+                    break;
+                case "image":
+                    ExecuteOnClipboardThread(() =>
+                    {
+                        using var stream = new MemoryStream(Convert.FromBase64String(action.B64Content));
+                        using var image = Image.FromStream(stream);
+                        System.Windows.Forms.Clipboard.SetImage(image);
+                    });
+                    break;
+            }
+            return Task.CompletedTask;
+        }
+
+        private void ExecuteOnClipboardThread(System.Action action)
+        {
+            // See https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.clipboard?view=windowsdesktop-8.0#remarks
+            var thread = new Thread(() => action());
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
+        }
+
+        private string ExecuteOnClipboardThread(Func<string> method)
+        {
+            // See https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.clipboard?view=windowsdesktop-8.0#remarks
+            string result = "";
+            var thread = new Thread(() => { result = method(); });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
+            return result;
+        }
+
         public async Task ExecuteClickScript(Session session, WindowsClickScript action)
         {
             if (action.DurationMs.HasValue)
