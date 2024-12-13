@@ -8,5 +8,7 @@ namespace FlaUI.WebDriver.Services
         Task ExecuteScrollScript(Session session, WindowsScrollScript action);
         Task ExecuteHoverScript(Session session, WindowsHoverScript action);
         Task ExecuteKeyScript(Session session, WindowsKeyScript action);
+        Task<string> ExecuteGetClipboardScript(Session session, WindowsGetClipboardScript action);
+        Task ExecuteSetClipboardScript(Session session, WindowsSetClipboardScript action);
     }
 }
