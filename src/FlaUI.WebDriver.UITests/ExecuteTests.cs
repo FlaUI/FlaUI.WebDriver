@@ -70,11 +70,11 @@ namespace FlaUI.WebDriver.UITests
             var driverOptions = FlaUIDriverOptions.TestApp();
             using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
 
-            var result = driver.ExecuteScript("windows: setClipboard", new Dictionary<string, object> {
+            driver.ExecuteScript("windows: setClipboard", new Dictionary<string, object> {
                 ["b64Content"] = "Pasted!"});
 
-            result = driver.ExecuteScript("windows: clearClipboard");
-            result = driver.ExecuteScript("windows: getClipboard", new Dictionary<string, object> {});
+            driver.ExecuteScript("windows: clearClipboard");
+            var result = driver.ExecuteScript("windows: getClipboard", new Dictionary<string, object> {});
             Assert.That(result, Is.EqualTo(""));
         }
 
