@@ -181,7 +181,7 @@ const result = driver.executeScript("powerShell", [{ command: `1+1` }]);
 
 ## Windows extensions
 
-To enable easy switching from appium-windows-driver, there is a rudimentary implementation of `windows: click`, `windows: hover`, `windows: scroll`, `windows: keys`, `windows: getClipboard` and `windows: setClipboard`.
+To enable easy switching from appium-windows-driver, there is a rudimentary implementation of `windows: click`, `windows: hover`, `windows: scroll`, `windows: keys`, `windows: getClipboard`, `windows: setClipboard` and `windows: clearClipboard`.
 
 ## Supported WebDriver Commands
 
