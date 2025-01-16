@@ -10,5 +10,6 @@ namespace FlaUI.WebDriver.Services
         Task ExecuteKeyScript(Session session, WindowsKeyScript action);
         Task<string> ExecuteGetClipboardScript(Session session, WindowsGetClipboardScript action);
         Task ExecuteSetClipboardScript(Session session, WindowsSetClipboardScript action);
+        Task ExecuteClearClipboardScript(Session session);
     }
 }

@@ -17,7 +17,7 @@ namespace FlaUI.WebDriver.Services
 
         public Task<string> ExecuteGetClipboardScript(Session session, WindowsGetClipboardScript action)
         {
-            switch(action.ContentType)
+            switch (action.ContentType)
             {
                 default:
                 case "plaintext":
@@ -56,6 +56,12 @@ namespace FlaUI.WebDriver.Services
                     });
                     break;
             }
+            return Task.CompletedTask;
+        }
+
+        public Task ExecuteClearClipboardScript(Session session)
+        {
+            ExecuteOnClipboardThread(() => System.Windows.Forms.Clipboard.Clear());
             return Task.CompletedTask;
         }
 
@@ -138,7 +144,7 @@ namespace FlaUI.WebDriver.Services
                         Y = element.BoundingRectangle.Top + y.Value
                     };
                 }
-                
+
                 return element.BoundingRectangle.Center();
             }
 
@@ -146,7 +152,7 @@ namespace FlaUI.WebDriver.Services
             {
                 return new Point { X = x.Value, Y = y.Value };
             }
-            
+
             throw WebDriverResponseException.InvalidArgument("Either element ID or x and y must be provided");
         }
 
