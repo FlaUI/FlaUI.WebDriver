@@ -65,6 +65,18 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
+        public void ExecuteScript_WindowsClearClipboard_IsSupported()
+        {
+            var driverOptions = FlaUIDriverOptions.TestApp();
+            using var driver = new RemoteWebDriver(WebDriverFixture.WebDriverUrl, driverOptions);
+            driver.ExecuteScript("windows: setClipboard", new Dictionary<string, object> {
+                ["b64Content"] = "Pasted!"});
+            driver.ExecuteScript("windows: clearClipboard");
+            var result = driver.ExecuteScript("windows: getClipboard", new Dictionary<string, object> {});
+            Assert.That(result, Is.EqualTo(""));
+        }
+
+        [Test]
         public void ExecuteScript_WindowsHoverXY_IsSupported()
         {
             var driverOptions = FlaUIDriverOptions.TestApp();

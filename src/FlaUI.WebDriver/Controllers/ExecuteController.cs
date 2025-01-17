@@ -41,8 +41,11 @@ namespace FlaUI.WebDriver.Controllers
                     return await ExecuteWindowsSetClipboardScript(session, executeScriptRequest);
                 case "windows: getClipboard":
                     return await ExecuteWindowsGetClipboardScript(session, executeScriptRequest);
+                case "windows: clearClipboard":
+                    return await ExecuteWindowsClearClipboardScript(session, executeScriptRequest);
                 default:
-                    throw WebDriverResponseException.UnsupportedOperation("Only 'powerShell', 'windows: keys', 'windows: click', 'windows: hover' scripts are supported");
+                    throw WebDriverResponseException.UnsupportedOperation("Only 'powerShell', 'windows: keys', 'windows: click', 'windows: hover', 'windows: scroll', " +
+                    "'windows: setClipboard', 'windows: getClipboard', 'windows: clearClipboard' scripts are supported");
             }
         }
 
@@ -122,6 +125,17 @@ namespace FlaUI.WebDriver.Controllers
             }
             var result = await _windowsExtensionService.ExecuteGetClipboardScript(session, action);
             return WebDriverResult.Success(result);
+        }
+
+        private async Task<ActionResult> ExecuteWindowsClearClipboardScript(Session session, ExecuteScriptRequest executeScriptRequest)
+        {
+            if (executeScriptRequest.Args.Count != 0)
+            {
+                throw WebDriverResponseException.InvalidArgument($"No arguments expected for the windows: getClipboard script, but got {executeScriptRequest.Args.Count} arguments");
+            }
+
+            await _windowsExtensionService.ExecuteClearClipboardScript(session);
+            return WebDriverResult.Success();
         }
 
         private async Task<ActionResult> ExecuteWindowsClickScript(Session session, ExecuteScriptRequest executeScriptRequest)
