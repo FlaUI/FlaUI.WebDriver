@@ -52,7 +52,6 @@ jobs:
 
     - name: Release
       uses: softprops/action-gh-release@v2
-      if: startsWith(github.ref, 'refs/tags/')
       with:
         files: ./src/FlaUI.WebDriver/bin/Release/win-x64/publish/*.*
         generate_release_notes: true
