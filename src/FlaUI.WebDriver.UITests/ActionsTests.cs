@@ -59,6 +59,34 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
+        public void SendKeys_UnicodeCharacters_AreSupported()
+        {
+            var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            element.Clear();
+
+            var _sendString = "aA£Bb aA€Bb 4aF¤1rR";
+            element.SendKeys(_sendString);
+
+            System.Threading.Thread.Sleep(1000);
+            var refreshedElement = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            Assert.That(refreshedElement.Text, Is.EqualTo(_sendString));
+        }
+
+        [Test]
+        public void SendKeys_SpecialCharacters_AreSupported()
+        {
+            var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            element.Clear();
+
+            System.Threading.Thread.Sleep(1000);
+            string withSpecialCharacters = "!\"#Aa% &/(12)=?`!#%Bb^&*()+ >;:_^!\"#%&/(cC )=?Vv`!#%^&*(56)+ ><;:_*";
+            element.SendKeys(withSpecialCharacters);
+
+            var refreshedElement = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            Assert.That(refreshedElement.Text, Is.EqualTo(withSpecialCharacters));
+        }
+
+        [Test]
         public void ReleaseActions_Default_ReleasesKeys()
         {
             var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));

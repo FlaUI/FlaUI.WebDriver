@@ -420,5 +420,29 @@ namespace FlaUI.WebDriver.Services
                     throw WebDriverResponseException.UnsupportedOperation($"Pointer button {button} not supported");
             }
         }
+
+        private async Task<bool> KeyboardTypeWithTimeout(string text, int timeoutMilliseconds = 50)
+        {
+            var typeTask = Task.Run(() => Keyboard.Type(text));
+            var delayTask = Task.Delay(timeoutMilliseconds);
+            var completedTask = await Task.WhenAny(typeTask, delayTask);
+            if (completedTask == typeTask)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public async Task DispatchActionsForStringUsingFlaUICore(Session session, string inputId, KeyInputSource source, string text)
+        {
+            if (!await KeyboardTypeWithTimeout(text)) {
+                _logger.LogDebug("Keyboard typing error for {text}", text);
+                throw WebDriverResponseException.UnknownError($"Keyboard typing error for {text}");
+            }
+            await Task.Delay(50);
+        }
     }
 }
