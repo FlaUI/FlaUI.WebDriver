@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Text;
 using FlaUI.Core.Input;
+using FlaUI.Core.WindowsAPI;
 using FlaUI.WebDriver.Models;
 
 namespace FlaUI.WebDriver.Services
@@ -444,5 +445,159 @@ namespace FlaUI.WebDriver.Services
             }
             await Task.Delay(50);
         }
+
+
+        private readonly Stack<VirtualKeyShort> _pressedModifiers = new();
+
+        // Mapping Selenium Keys Unicode to FlaUI VirtualKeyShort
+        private static readonly Dictionary<char, VirtualKeyShort> KeyMap = new()
+        {
+            ['\uE000'] = 0,                              // NULL
+            ['\uE001'] = VirtualKeyShort.CANCEL,         // CANCEL
+            ['\uE002'] = VirtualKeyShort.HELP,           // HELP
+            ['\uE003'] = VirtualKeyShort.BACK,           // BACKSPACE
+            ['\uE004'] = VirtualKeyShort.TAB,            // TAB
+            ['\uE005'] = VirtualKeyShort.CLEAR,          // CLEAR
+            ['\uE006'] = VirtualKeyShort.RETURN,         // RETURN (ENTER key)
+            ['\uE007'] = VirtualKeyShort.RETURN,         // ENTER (Selenium uses E007 primarily for Enter)
+            ['\uE008'] = VirtualKeyShort.SHIFT,          // SHIFT (Left Shift)
+            ['\uE009'] = VirtualKeyShort.CONTROL,        // CONTROL (Left Control)
+            ['\uE00A'] = VirtualKeyShort.ALT,           // ALT (Left Alt)
+            ['\uE00B'] = VirtualKeyShort.PAUSE,          // PAUSE
+            ['\uE00C'] = VirtualKeyShort.ESCAPE,         // ESCAPE
+            ['\uE00D'] = VirtualKeyShort.SPACE,          // SPACE
+            ['\uE00E'] = VirtualKeyShort.PRIOR,          // PAGE_UP
+            ['\uE00F'] = VirtualKeyShort.NEXT,           // PAGE_DOWN
+            ['\uE010'] = VirtualKeyShort.END,            // END
+            ['\uE011'] = VirtualKeyShort.HOME,           // HOME
+            ['\uE012'] = VirtualKeyShort.LEFT,           // LEFT ARROW
+            ['\uE013'] = VirtualKeyShort.UP,             // UP ARROW
+            ['\uE014'] = VirtualKeyShort.RIGHT,          // RIGHT ARROW
+            ['\uE015'] = VirtualKeyShort.DOWN,           // DOWN ARROW
+            ['\uE016'] = VirtualKeyShort.INSERT,         // INSERT
+            ['\uE017'] = VirtualKeyShort.DELETE,         // DELETE
+            ['\uE018'] = VirtualKeyShort.LWIN,           // SEMICOLON mapped to Left Windows as placeholder
+            ['\uE019'] = VirtualKeyShort.RWIN,           // EQUALS mapped to Right Windows as placeholder
+            ['\uE01A'] = VirtualKeyShort.MULTIPLY,       // NUMPAD MULTIPLY
+            ['\uE01B'] = VirtualKeyShort.ADD,            // NUMPAD ADD
+            ['\uE01C'] = VirtualKeyShort.SEPARATOR,      // SEPARATOR
+            ['\uE01D'] = VirtualKeyShort.SUBTRACT,       // NUMPAD SUBTRACT
+            ['\uE01E'] = VirtualKeyShort.DECIMAL,        // NUMPAD DECIMAL
+            ['\uE01F'] = VirtualKeyShort.DIVIDE,         // NUMPAD DIVIDE
+            ['\uE020'] = VirtualKeyShort.F1,             // F1
+            ['\uE021'] = VirtualKeyShort.F2,             // F2
+            ['\uE022'] = VirtualKeyShort.F3,             // F3
+            ['\uE023'] = VirtualKeyShort.F4,             // F4
+            ['\uE024'] = VirtualKeyShort.F5,             // F5
+            ['\uE025'] = VirtualKeyShort.F6,             // F6
+            ['\uE026'] = VirtualKeyShort.F7,             // F7
+            ['\uE027'] = VirtualKeyShort.F8,             // F8
+            ['\uE028'] = VirtualKeyShort.F9,             // F9
+            ['\uE029'] = VirtualKeyShort.F10,            // F10
+            ['\uE02A'] = VirtualKeyShort.F11,            // F11
+            ['\uE02B'] = VirtualKeyShort.F12,            // F12
+            ['\uE02C'] = VirtualKeyShort.LWIN,           // META (Left Windows key)
+            ['\uE031'] = VirtualKeyShort.NUMLOCK,        // NUMPAD 0 (Mapped to NUMLOCK as placeholder)
+            ['\uE032'] = VirtualKeyShort.NUMPAD1,        // NUMPAD 1
+            ['\uE033'] = VirtualKeyShort.NUMPAD2,        // NUMPAD 2
+            ['\uE034'] = VirtualKeyShort.NUMPAD3,        // NUMPAD 3
+            ['\uE035'] = VirtualKeyShort.NUMPAD4,        // NUMPAD 4
+            ['\uE036'] = VirtualKeyShort.NUMPAD5,        // NUMPAD 5
+            ['\uE037'] = VirtualKeyShort.NUMPAD6,        // NUMPAD 6
+            ['\uE038'] = VirtualKeyShort.NUMPAD7,        // NUMPAD 7
+            ['\uE039'] = VirtualKeyShort.NUMPAD8,        // NUMPAD 8
+            ['\uE03A'] = VirtualKeyShort.NUMPAD9,        // NUMPAD 9
+            ['\uE03B'] = VirtualKeyShort.SEPARATOR,      // Separator
+            ['\uE03C'] = VirtualKeyShort.SNAPSHOT,       // Print Screen
+            ['\uE03D'] = VirtualKeyShort.LWIN,           // LEFT WIN (META)
+            ['\uE03E'] = VirtualKeyShort.RWIN,           // RIGHT WIN
+            ['\uE03F'] = VirtualKeyShort.APPS,           // APPS (Context menu key)
+            // Add any other special mappings or corrections as necessary.
+        };
+
+
+        public async Task DispatchSendKeysUsingFlaUICore(string text)
+        {
+            ResetModifiers();
+            var regularTextBuffer = new StringBuilder();
+
+            foreach (var keyChar in text)
+            {
+                if (keyChar == '\uE000') // NULL
+                {
+                    if (regularTextBuffer.Length > 0)
+                    {
+                        Keyboard.Type(regularTextBuffer.ToString());
+                        regularTextBuffer.Clear();
+                        await Task.Delay(50);
+                    }
+                    ReleaseAllModifiers();
+                }
+                else if (KeyMap.ContainsKey(keyChar))
+                {
+                    // Dispatch any buffered regular text first
+                    if (regularTextBuffer.Length > 0)
+                    {
+                        Keyboard.Type(regularTextBuffer.ToString());
+                        regularTextBuffer.Clear();
+                        await Task.Delay(50);
+                    }
+
+                    var vk = KeyMap[keyChar];
+                    if (IsModifierKey(vk))
+                    {
+                        PressModifier(vk);
+                    }
+                    else
+                    {
+                        // Non-modifier special key
+                        Keyboard.Press(vk);
+                        Keyboard.Release(vk);
+                        await Task.Delay(50);
+                    }
+                }
+                else
+                {
+                    // Regular character, buffer it
+                    regularTextBuffer.Append(keyChar);
+                }
+            }
+
+            // Dispatch remaining buffered regular text
+            if (regularTextBuffer.Length > 0)
+            {
+                Keyboard.Type(regularTextBuffer.ToString());
+                await Task.Delay(50);
+            }
+
+            // Final cleanup
+            ReleaseAllModifiers();
+        }
+
+        private void PressModifier(VirtualKeyShort modifier)
+        {
+            if (!_pressedModifiers.Contains(modifier))
+            {
+                Keyboard.Press(modifier);
+                _pressedModifiers.Push(modifier);
+            }
+        }
+
+        private void ReleaseAllModifiers()
+        {
+            while (_pressedModifiers.Count > 0)
+            {
+                var mod = _pressedModifiers.Pop();
+                Keyboard.Release(mod);
+            }
+        }
+
+        private void ResetModifiers()
+        {
+            ReleaseAllModifiers();
+        }
+
+        private static bool IsModifierKey(VirtualKeyShort key) =>
+            key is VirtualKeyShort.SHIFT or VirtualKeyShort.CONTROL or VirtualKeyShort.ALT or VirtualKeyShort.LWIN;
     }
 }

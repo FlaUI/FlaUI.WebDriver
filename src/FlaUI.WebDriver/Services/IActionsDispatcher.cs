@@ -6,5 +6,7 @@ namespace FlaUI.WebDriver.Services
         Task DispatchAction(Session session, Action action);
         Task DispatchActionsForString(Session session, string inputId, KeyInputSource source, string text);
         Task DispatchActionsForStringUsingFlaUICore(Session session, string inputId, KeyInputSource source, string text);
+
+        Task DispatchSendKeysUsingFlaUICore(string text);
     }
 }

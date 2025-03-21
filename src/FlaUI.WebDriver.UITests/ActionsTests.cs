@@ -87,6 +87,71 @@ namespace FlaUI.WebDriver.UITests
         }
 
         [Test]
+        public void SendKeys_Actions1_AreSupported()
+        {
+            var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            element.Clear();
+            element.SendKeys("One Two Three");
+            element.SendKeys(Keys.Home);
+            element.SendKeys(Keys.Shift + Keys.Control + Keys.ArrowRight);
+            element.SendKeys(Keys.Delete);
+
+            // Corresponds to:
+            // Actions actions = new Actions(_driver);
+            // actions
+            //     .Click(element)
+            //     .SendKeys("One Two Three")         
+            //     .SendKeys(Keys.Home)
+            //     .KeyDown(Keys.Shift)      
+            //     .KeyDown(Keys.Control)
+            //     .SendKeys(Keys.ArrowRight)
+            //     .KeyUp(Keys.Control)
+            //     .KeyUp(Keys.Shift)
+            //     .SendKeys(Keys.Delete)
+            //     .Perform(); 
+
+            var refreshedElement = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            Assert.That(refreshedElement.Text, Is.EqualTo("Two Three"));
+        }
+
+        [Test]
+        public void SendKeys_Actions2_AreSupported()
+        {
+            var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            element.SendKeys(Keys.Control + "a");
+            element.SendKeys(Keys.Control + "c");
+            element.SendKeys(Keys.Delete);
+            element.SendKeys("One Two Three");
+            element.SendKeys(Keys.Control + "a");
+            element.SendKeys(Keys.Delete);
+            element.SendKeys(Keys.Control + "v");
+
+            // Corresponds to:
+            // Actions actions = new Actions(_driver);
+            // actions
+            //     .Click(element)         
+            //     .KeyDown(Keys.Control)
+            //     .SendKeys("a")
+            //     .KeyUp(Keys.Control)      // Select all text
+            //     .KeyDown(Keys.Control)
+            //     .SendKeys("c")
+            //     .KeyUp(Keys.Control)      // Copy selected text to clipboard
+            //     .SendKeys(Keys.Delete)    // Delete selected text
+            //     .SendKeys("One Two Three")// Input some other text
+            //     .KeyDown(Keys.Control)
+            //     .SendKeys("a")
+            //     .KeyUp(Keys.Control)
+            //     .SendKeys(Keys.Delete)
+            //     .KeyDown(Keys.Control)
+            //     .SendKeys("v")       
+            //     .KeyUp(Keys.Control) // Paste from clipboard
+            //     .Perform(); 
+
+            var refreshedElement = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));
+            Assert.That(refreshedElement.Text, Is.EqualTo("Test TextBox"));
+        }
+
+        [Test]
         public void ReleaseActions_Default_ReleasesKeys()
         {
             var element = _driver.FindElement(ExtendedBy.AccessibilityId("TextBox"));

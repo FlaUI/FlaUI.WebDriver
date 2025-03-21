@@ -218,7 +218,8 @@ namespace FlaUI.WebDriver.Controllers
 
             try
             {
-                await _actionsDispatcher.DispatchActionsForStringUsingFlaUICore(session, inputId, source, elementSendKeysRequest.Text);
+                //await _actionsDispatcher.DispatchActionsForStringUsingFlaUICore(session, inputId, source, elementSendKeysRequest.Text);
+                await _actionsDispatcher.DispatchSendKeysUsingFlaUICore(elementSendKeysRequest.Text);
             }
             finally
             {
