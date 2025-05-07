@@ -1,4 +1,4 @@
-@@ -0,0 +1,165 @@
+@@ -0,0 +1,139 @@
 using FlaUI.WebDriver.Models;
 using Microsoft.AspNetCore.Mvc;
 using FlaUI.Core.AutomationElements;
@@ -54,27 +54,11 @@ namespace FlaUI.WebDriver.Controllers
             writer.WriteStartElement(controlType);
 
             var properties = element.Properties;
-            WriteAttributeIfNotNull(writer, "AcceleratorKey", properties.AcceleratorKey);
-            WriteAttributeIfNotNull(writer, "AccessKey", properties.AccessKey);
             WriteAttributeIfNotNull(writer, "AutomationId", properties.AutomationId);
             WriteAttributeIfNotNull(writer, "ClassName", properties.ClassName);
             WriteAttributeIfNotNull(writer, "FrameworkId", properties.FrameworkId);
-            WriteAttributeIfNotNull(writer, "HasKeyboardFocus", properties.HasKeyboardFocus);
-            WriteAttributeIfNotNull(writer, "HelpText", properties.HelpText);
-            WriteAttributeIfNotNull(writer, "IsContentElement", properties.IsContentElement);
-            WriteAttributeIfNotNull(writer, "IsControlElement", properties.IsControlElement);
             WriteAttributeIfNotNull(writer, "IsEnabled", properties.IsEnabled);
-            WriteAttributeIfNotNull(writer, "IsKeyboardFocusable", properties.IsKeyboardFocusable);
-            WriteAttributeIfNotNull(writer, "IsOffscreen", properties.IsOffscreen);
-            WriteAttributeIfNotNull(writer, "IsPassword", properties.IsPassword);
-            WriteAttributeIfNotNull(writer, "IsRequiredForForm", properties.IsRequiredForForm);
-            WriteAttributeIfNotNull(writer, "ItemStatus", properties.ItemStatus);
-            WriteAttributeIfNotNull(writer, "ItemType", properties.ItemType);
-            WriteAttributeIfNotNull(writer, "LocalizedControlType", properties.LocalizedControlType);
             WriteAttributeIfNotNull(writer, "Name", properties.Name);
-            WriteAttributeIfNotNull(writer, "Orientation", properties.Orientation);
-            WriteAttributeIfNotNull(writer, "ProcessId", properties.ProcessId);
-            WriteAttributeIfNotNull(writer, "RuntimeId", properties.RuntimeId);
 
             var bounds = element.BoundingRectangle;
             writer.WriteAttributeString("x", (bounds.X - rootBounds.X).ToString());
@@ -90,8 +74,6 @@ namespace FlaUI.WebDriver.Controllers
                 WriteAttributeIfNotNull(writer, "CanMinimize", windowPattern.CanMinimize);
                 WriteAttributeIfNotNull(writer, "IsModal", windowPattern.IsModal);
                 WriteAttributeIfNotNull(writer, "WindowVisualState", windowPattern.WindowVisualState);
-                WriteAttributeIfNotNull(writer, "WindowInteractionState", windowPattern.WindowInteractionState);
-                WriteAttributeIfNotNull(writer, "IsTopmost", windowPattern.IsTopmost);
             }
 
             if (patterns.Scroll.IsSupported)
@@ -101,26 +83,18 @@ namespace FlaUI.WebDriver.Controllers
                 WriteAttributeIfNotNull(writer, "VerticallyScrollable", scrollPattern.VerticallyScrollable);
                 WriteAttributeIfNotNull(writer, "HorizontalScrollPercent", scrollPattern.HorizontalScrollPercent);
                 WriteAttributeIfNotNull(writer, "VerticalScrollPercent", scrollPattern.VerticalScrollPercent);
-                WriteAttributeIfNotNull(writer, "HorizontalViewSize", scrollPattern.HorizontalViewSize);
-                WriteAttributeIfNotNull(writer, "VerticalViewSize", scrollPattern.VerticalViewSize);
             }
 
             if (patterns.SelectionItem.IsSupported)
             {
                 var selectionItemPattern = patterns.SelectionItem.Pattern;
                 WriteAttributeIfNotNull(writer, "IsSelected", selectionItemPattern.IsSelected);
-                if (selectionItemPattern.SelectionContainer != null)
-                {
-                    writer.WriteAttributeString("SelectionContainer", selectionItemPattern.SelectionContainer.ToString());
-                }
             }
 
             if (patterns.ExpandCollapse.IsSupported)
             {
                 WriteAttributeIfNotNull(writer, "ExpandCollapseState", patterns.ExpandCollapse.Pattern.ExpandCollapseState);
             }
-
-            WriteAttributeIfNotNull(writer, "IsAvailable", element.IsAvailable);
 
             var children = element.FindAllChildren();
             if (children != null)
