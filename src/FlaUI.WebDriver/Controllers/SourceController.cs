@@ -1,4 +1,4 @@
-@@ -0,0 +1,139 @@
+@@ -0,0 +1,162 @@
 using FlaUI.WebDriver.Models;
 using Microsoft.AspNetCore.Mvc;
 using FlaUI.Core.AutomationElements;
@@ -14,7 +14,6 @@ namespace FlaUI.WebDriver.Controllers
     {
         private readonly ILogger<SourceController> _logger;
         private readonly ISessionRepository _sessionRepository;
-        private const int InitialStringBuilderCapacity = 64 * 1024; // 64KB initial capacity
 
         public SourceController(ILogger<SourceController> logger, ISessionRepository sessionRepository)
         {
@@ -38,13 +37,17 @@ namespace FlaUI.WebDriver.Controllers
             {
                 Indent = true,
                 IndentChars = "  ",
-                Encoding = Encoding.Unicode,
-                OmitXmlDeclaration = true
+                Encoding = Encoding.Unicode
             };
 
-            var stringBuilder = new StringBuilder(InitialStringBuilderCapacity);
-            using var writer = XmlWriter.Create(stringBuilder, settings);
-            WriteElementToXml(writer, element, rootBounds);
+            var stringBuilder = new StringBuilder();
+            using (var writer = XmlWriter.Create(stringBuilder, settings))
+            {
+                writer.WriteStartDocument();
+                WriteElementToXml(writer, element, rootBounds);
+                writer.WriteEndDocument();
+            }
+
             return stringBuilder.ToString();
         }
 
@@ -53,12 +56,27 @@ namespace FlaUI.WebDriver.Controllers
             var controlType = element.ControlType.ToString();
             writer.WriteStartElement(controlType);
 
-            var properties = element.Properties;
-            WriteAttributeIfNotNull(writer, "AutomationId", properties.AutomationId);
-            WriteAttributeIfNotNull(writer, "ClassName", properties.ClassName);
-            WriteAttributeIfNotNull(writer, "FrameworkId", properties.FrameworkId);
-            WriteAttributeIfNotNull(writer, "IsEnabled", properties.IsEnabled);
-            WriteAttributeIfNotNull(writer, "Name", properties.Name);
+            WritePropertyAttribute(writer, "AcceleratorKey", element.Properties.AcceleratorKey);
+            WritePropertyAttribute(writer, "AccessKey", element.Properties.AccessKey);
+            WritePropertyAttribute(writer, "AutomationId", element.Properties.AutomationId);
+            WritePropertyAttribute(writer, "ClassName", element.Properties.ClassName);
+            WritePropertyAttribute(writer, "FrameworkId", element.Properties.FrameworkId);
+            WritePropertyAttribute(writer, "HasKeyboardFocus", element.Properties.HasKeyboardFocus);
+            WritePropertyAttribute(writer, "HelpText", element.Properties.HelpText);
+            WritePropertyAttribute(writer, "IsContentElement", element.Properties.IsContentElement);
+            WritePropertyAttribute(writer, "IsControlElement", element.Properties.IsControlElement);
+            WritePropertyAttribute(writer, "IsEnabled", element.Properties.IsEnabled);
+            WritePropertyAttribute(writer, "IsKeyboardFocusable", element.Properties.IsKeyboardFocusable);
+            WritePropertyAttribute(writer, "IsOffscreen", element.Properties.IsOffscreen);
+            WritePropertyAttribute(writer, "IsPassword", element.Properties.IsPassword);
+            WritePropertyAttribute(writer, "IsRequiredForForm", element.Properties.IsRequiredForForm);
+            WritePropertyAttribute(writer, "ItemStatus", element.Properties.ItemStatus);
+            WritePropertyAttribute(writer, "ItemType", element.Properties.ItemType);
+            WritePropertyAttribute(writer, "LocalizedControlType", element.Properties.LocalizedControlType);
+            WritePropertyAttribute(writer, "Name", element.Properties.Name);
+            WritePropertyAttribute(writer, "Orientation", element.Properties.Orientation);
+            WritePropertyAttribute(writer, "ProcessId", element.Properties.ProcessId);
+            WritePropertyAttribute(writer, "RuntimeId", element.Properties.RuntimeId);
 
             var bounds = element.BoundingRectangle;
             writer.WriteAttributeString("x", (bounds.X - rootBounds.X).ToString());
@@ -66,49 +84,54 @@ namespace FlaUI.WebDriver.Controllers
             writer.WriteAttributeString("width", bounds.Width.ToString());
             writer.WriteAttributeString("height", bounds.Height.ToString());
 
-            var patterns = element.Patterns;
-            if (patterns.Window.IsSupported)
+            if (element.Patterns.Window.IsSupported)
             {
-                var windowPattern = patterns.Window.Pattern;
-                WriteAttributeIfNotNull(writer, "CanMaximize", windowPattern.CanMaximize);
-                WriteAttributeIfNotNull(writer, "CanMinimize", windowPattern.CanMinimize);
-                WriteAttributeIfNotNull(writer, "IsModal", windowPattern.IsModal);
-                WriteAttributeIfNotNull(writer, "WindowVisualState", windowPattern.WindowVisualState);
+                var windowPattern = element.Patterns.Window.Pattern;
+                WritePropertyAttribute(writer, "CanMaximize", windowPattern.CanMaximize);
+                WritePropertyAttribute(writer, "CanMinimize", windowPattern.CanMinimize);
+                WritePropertyAttribute(writer, "IsModal", windowPattern.IsModal);
+                WritePropertyAttribute(writer, "WindowVisualState", windowPattern.WindowVisualState);
+                WritePropertyAttribute(writer, "WindowInteractionState", windowPattern.WindowInteractionState);
+                WritePropertyAttribute(writer, "IsTopmost", windowPattern.IsTopmost);
             }
 
-            if (patterns.Scroll.IsSupported)
+            if (element.Patterns.Scroll.IsSupported)
             {
-                var scrollPattern = patterns.Scroll.Pattern;
-                WriteAttributeIfNotNull(writer, "HorizontallyScrollable", scrollPattern.HorizontallyScrollable);
-                WriteAttributeIfNotNull(writer, "VerticallyScrollable", scrollPattern.VerticallyScrollable);
-                WriteAttributeIfNotNull(writer, "HorizontalScrollPercent", scrollPattern.HorizontalScrollPercent);
-                WriteAttributeIfNotNull(writer, "VerticalScrollPercent", scrollPattern.VerticalScrollPercent);
+                var scrollPattern = element.Patterns.Scroll.Pattern;
+                WritePropertyAttribute(writer, "HorizontallyScrollable", scrollPattern.HorizontallyScrollable);
+                WritePropertyAttribute(writer, "VerticallyScrollable", scrollPattern.VerticallyScrollable);
+                WritePropertyAttribute(writer, "HorizontalScrollPercent", scrollPattern.HorizontalScrollPercent);
+                WritePropertyAttribute(writer, "VerticalScrollPercent", scrollPattern.VerticalScrollPercent);
+                WritePropertyAttribute(writer, "HorizontalViewSize", scrollPattern.HorizontalViewSize);
+                WritePropertyAttribute(writer, "VerticalViewSize", scrollPattern.VerticalViewSize);
             }
 
-            if (patterns.SelectionItem.IsSupported)
+            if (element.Patterns.SelectionItem.IsSupported)
             {
-                var selectionItemPattern = patterns.SelectionItem.Pattern;
-                WriteAttributeIfNotNull(writer, "IsSelected", selectionItemPattern.IsSelected);
-            }
-
-            if (patterns.ExpandCollapse.IsSupported)
-            {
-                WriteAttributeIfNotNull(writer, "ExpandCollapseState", patterns.ExpandCollapse.Pattern.ExpandCollapseState);
-            }
-
-            var children = element.FindAllChildren();
-            if (children != null)
-            {
-                foreach (var child in children)
+                var selectionItemPattern = element.Patterns.SelectionItem.Pattern;
+                WritePropertyAttribute(writer, "IsSelected", selectionItemPattern.IsSelected);
+                if (selectionItemPattern.SelectionContainer != null)
                 {
-                    WriteElementToXml(writer, child, rootBounds);
+                    WritePropertyAttribute(writer, "SelectionContainer", selectionItemPattern.SelectionContainer.ToString());
                 }
+            }
+
+            if (element.Patterns.ExpandCollapse.IsSupported)
+            {
+                WritePropertyAttribute(writer, "ExpandCollapseState", element.Patterns.ExpandCollapse.Pattern.ExpandCollapseState);
+            }
+
+            WritePropertyAttribute(writer, "IsAvailable", element.IsAvailable);
+
+            foreach (var child in element.FindAllChildren())
+            {
+                WriteElementToXml(writer, child, rootBounds);
             }
 
             writer.WriteEndElement();
         }
 
-        private void WriteAttributeIfNotNull<T>(XmlWriter writer, string name, T? value)
+        private void WritePropertyAttribute<T>(XmlWriter writer, string name, T value)
         {
             if (value != null)
             {
