@@ -1,4 +1,3 @@
-@@ -0,0 +1,162 @@
 using FlaUI.WebDriver.Models;
 using Microsoft.AspNetCore.Mvc;
 using FlaUI.Core.AutomationElements;
@@ -53,7 +52,15 @@ namespace FlaUI.WebDriver.Controllers
 
         private void WriteElementToXml(XmlWriter writer, AutomationElement element, System.Drawing.Rectangle rootBounds)
         {
-            var controlType = element.ControlType.ToString();
+            string controlType;
+            try
+            {
+                controlType = element.ControlType.ToString();
+            }
+            catch (FlaUI.Core.Exceptions.PropertyNotSupportedException)
+            {
+                controlType = "Unknown";
+            }
             writer.WriteStartElement(controlType);
 
             WritePropertyAttribute(writer, "AcceleratorKey", element.Properties.AcceleratorKey);
