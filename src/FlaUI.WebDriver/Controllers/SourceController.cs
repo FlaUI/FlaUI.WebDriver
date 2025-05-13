@@ -83,7 +83,7 @@ namespace FlaUI.WebDriver.Controllers
             WritePropertyAttribute(writer, "Name", element.Properties.Name);
             WritePropertyAttribute(writer, "Orientation", element.Properties.Orientation);
             WritePropertyAttribute(writer, "ProcessId", element.Properties.ProcessId);
-            WritePropertyAttribute(writer, "RuntimeId", element.Properties.RuntimeId);
+            WritePropertyAttribute(writer, "RuntimeId", Session.GetRuntimeId(element));
 
             var bounds = element.BoundingRectangle;
             writer.WriteAttributeString("x", (bounds.X - rootBounds.X).ToString());
