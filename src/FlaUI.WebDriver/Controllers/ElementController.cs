@@ -174,11 +174,11 @@ namespace FlaUI.WebDriver.Controllers
             var isSelected = false;
             if (element.Patterns.SelectionItem.IsSupported)
             {
-                isSelected = element.Patterns.SelectionItem.PatternOrDefault.IsSelected.ValueOrDefault;
+                isSelected = element.Patterns.SelectionItem.TryGetPattern(out var pattern) && pattern.IsSelected.ValueOrDefault;
             }
             else if (element.Patterns.Toggle.IsSupported)
             {
-                isSelected = element.Patterns.Toggle.PatternOrDefault.ToggleState.ValueOrDefault == Core.Definitions.ToggleState.On;
+                isSelected = element.Patterns.Toggle.PatternOrDefault?.ToggleState.ValueOrDefault == Core.Definitions.ToggleState.On;
             }
             return await Task.FromResult(WebDriverResult.Success(isSelected));
         }
