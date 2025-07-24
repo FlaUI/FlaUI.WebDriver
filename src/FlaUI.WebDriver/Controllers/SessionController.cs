@@ -91,7 +91,7 @@ namespace FlaUI.WebDriver.Controllers
                     if (appPath.EndsWith("!App"))
                     {
                         isAppOwnedBySession = true;
-                        return Application.LaunchStoreApp(appPath, appArguments);
+                        return Application.LaunchStoreApp(appPath, appArguments ?? "");
                     }
 
                     var processStartInfo = new ProcessStartInfo(appPath, appArguments ?? "");
