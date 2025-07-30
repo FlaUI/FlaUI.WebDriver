@@ -172,7 +172,7 @@ namespace FlaUI.WebDriver
             App?.Dispose();
         }
 
-        private string? GetRuntimeId(AutomationElement element)
+        public static string? GetRuntimeId(AutomationElement element)
         {
             if (!element.Properties.RuntimeId.IsSupported)
             {
